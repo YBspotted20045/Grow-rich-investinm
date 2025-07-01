@@ -1,27 +1,24 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import RecurringBusiness from './pages/RecurringBusiness';
-import Referral from './pages/Referral';
-import Withdrawal from './pages/Withdrawal';
-import Profile from './pages/Profile';
+// src/App.jsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
+const App = () => {
+  const isLoggedIn = !!localStorage.getItem("token");
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/recurring" element={<RecurringBusiness />} />
-        <Route path="/referral" element={<Referral />} />
-        <Route path="/withdrawal" element={<Withdrawal />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/" element={<Navigate to="/signup" />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="*" element={<h2>404 | Page Not Found</h2>} />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
