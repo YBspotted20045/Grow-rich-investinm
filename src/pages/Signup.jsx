@@ -1,88 +1,86 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import API from '../axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../axios";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    referralCode: '',
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
   });
 
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
-      await API.post('/auth/signup', form);
-      navigate('/verify');
+      const res = await API.post("/api/auth/register", formData);
+      alert("Signup successful! Please log in.");
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed');
+      console.error(err);
+      setError("Signup failed. Please try again.");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-green-300">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">Create Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded shadow-md w-96"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 
-        {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded"
-          value={form.name}
-          onChange={handleChange}
-        />
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
         <input
           type="email"
           name="email"
           placeholder="Email"
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded"
-          value={form.email}
           onChange={handleChange}
+          value={formData.email}
+          required
+          className="w-full mb-4 px-4 py-2 border rounded"
         />
 
         <input
           type="password"
           name="password"
           placeholder="Password"
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded"
-          value={form.password}
           onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="referralCode"
-          placeholder="Referral Code (Optional)"
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded"
-          value={form.referralCode}
-          onChange={handleChange}
+          value={formData.password}
+          required
+          className="w-full mb-4 px-4 py-2 border rounded"
         />
 
         <button
-          onClick={handleSignup}
+          type="submit"
+          disabled={loading}
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
         >
-          Sign Up
+          {loading ? "Signing up..." : "Sign Up"}
         </button>
 
-        <p className="text-center text-sm mt-4">
-          Already have an account?{' '}
-          <Link to="/login" className="text-green-600 hover:underline">
-            Log in
-          </Link>
+        <p className="text-sm mt-4 text-center">
+          Already have an account?{" "}
+          <span
+            className="text-blue-600 cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
         </p>
-      </div>
+      </form>
     </div>
   );
 };
