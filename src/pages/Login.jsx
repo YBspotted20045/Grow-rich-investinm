@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import API from '../axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     try {
-      const res = await API.post('/auth/login', form);
-      localStorage.setItem('token', res.data.token);
+      const res = await API.post('/auth/login', { email, password });
+      const token = res.data.token;
+      localStorage.setItem('token', token);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
@@ -23,38 +20,42 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 shadow-md rounded-lg w-96"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-purple-300">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold text-purple-700 mb-6 text-center">Login</h2>
+
+        {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+
         <input
           type="email"
-          name="email"
           placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          required
+          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="password"
-          name="password"
           placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          required
+          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
+
         <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          onClick={handleLogin}
+          className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition"
         >
           Login
         </button>
-      </form>
+
+        <p className="text-center text-sm mt-4">
+          Don’t have an account?{' '}
+          <Link to="/signup" className="text-purple-600 hover:underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
