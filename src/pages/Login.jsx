@@ -1,61 +1,68 @@
-// src/pages/Login.jsx
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import API from "../axios";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import API from '../axios';
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: ''
   });
-  const [error, setError] = useState("");
+
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setLoading(true);
 
     try {
-      const res = await API.post("/auth/login", formData);
-      if (res.data?.token) {
-        localStorage.setItem("token", res.data.token);
-        navigate("/dashboard");
-      } else {
-        setError("Login failed: no token received");
-      }
+      const response = await API.post('/auth/login', formData);
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard'); // Redirect to dashboard or homepage
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err?.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth">
+    <div className="auth-form">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
-          placeholder="Email"
           name="email"
+          placeholder="Enter Email"
+          value={formData.email}
           onChange={handleChange}
           required
         />
         <input
           type="password"
-          placeholder="Password"
           name="password"
+          placeholder="Enter Password"
+          value={formData.password}
           onChange={handleChange}
           required
         />
-        <button type="submit">Login</button>
-        {error && <p className="error">{error}</p>}
-        <p>
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </p>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <p>
+        Don't have an account? <a href="/signup">Sign up</a>
+      </p>
     </div>
   );
 };
