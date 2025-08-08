@@ -1,76 +1,72 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import API from "../axios";
 import "./Signup.css";
-import axios from "../axios";
 
-const statesInNigeria = [
+const statesList = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
-  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT",
-  "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi",
-  "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo",
-  "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
+  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT - Abuja",
+  "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara",
+  "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau",
+  "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
 ];
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
-    state: "",
     age: "",
+    state: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
-  
-  const [errors, setErrors] = useState({});
 
-  const validate = () => {
-    let newErrors = {};
-
-    if (!formData.fullName.trim() || formData.fullName.length < 2) {
-      newErrors.fullName = "Full name is required (min 2 characters).";
-    }
-    if (!formData.state) {
-      newErrors.state = "Please select your state.";
-    }
-    if (!formData.age || isNaN(formData.age) || Number(formData.age) < 18) {
-      newErrors.age = "Age must be a number and at least 18.";
-    }
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Valid email is required.";
-    }
-    if (!formData.password || formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters.";
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    if (!formData.fullName || !formData.age || !formData.state || !formData.email || !formData.password || !formData.confirmPassword) {
+      return setError("All fields are required.");
+    }
+
+    if (parseInt(formData.age) < 18) {
+      return setError("You must be at least 18 years old to register.");
+    }
+
+    if (formData.password.length < 8) {
+      return setError("Password must be at least 8 characters long.");
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return setError("Passwords do not match.");
+    }
 
     try {
-      await axios.post("/signup", formData);
-      alert("Signup successful!");
-    } catch (error) {
-      alert(error.response?.data?.message || "Signup failed");
+      await API.post("/auth/signup", formData);
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed. Try again.");
     }
   };
 
   return (
     <div className="signup-container">
-      <div className="logo-container">
-        <img src="/logo.png" alt="GrowRich Logo" className="floating-logo" />
-      </div>
+      <div className="floating-logos"></div>
       <form className="signup-form" onSubmit={handleSubmit}>
-        <h2>Create Account</h2>
+        <img src="/logo.png" alt="Logo" className="form-logo" />
+
+        <h2>Create an Account</h2>
+
+        {error && <p className="error-text">{error}</p>}
 
         <input
           type="text"
@@ -79,19 +75,6 @@ export default function Signup() {
           value={formData.fullName}
           onChange={handleChange}
         />
-        {errors.fullName && <span className="error">{errors.fullName}</span>}
-
-        <select
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-        >
-          <option value="">Select State</option>
-          {statesInNigeria.map((state) => (
-            <option key={state} value={state}>{state}</option>
-          ))}
-        </select>
-        {errors.state && <span className="error">{errors.state}</span>}
 
         <input
           type="number"
@@ -100,16 +83,27 @@ export default function Signup() {
           value={formData.age}
           onChange={handleChange}
         />
-        {errors.age && <span className="error">{errors.age}</span>}
+
+        <select
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+        >
+          <option value="">Select Your State</option>
+          {statesList.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
 
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
         />
-        {errors.email && <span className="error">{errors.email}</span>}
 
         <input
           type="password"
@@ -118,7 +112,6 @@ export default function Signup() {
           value={formData.password}
           onChange={handleChange}
         />
-        {errors.password && <span className="error">{errors.password}</span>}
 
         <input
           type="password"
@@ -127,12 +120,13 @@ export default function Signup() {
           value={formData.confirmPassword}
           onChange={handleChange}
         />
-        {errors.confirmPassword && (
-          <span className="error">{errors.confirmPassword}</span>
-        )}
 
         <button type="submit">Sign Up</button>
+
+        <p className="switch-text">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
       </form>
     </div>
   );
-          }
+}
