@@ -32,11 +32,15 @@ const Login = () => {
   return (
     <div className="login-page">
       {/* Floating animated logos */}
-      <img src="/logo.png" alt="logo" className="floating-logo" />
-      <img src="/logo.png" alt="logo" className="floating-logo" />
-      <img src="/logo.png" alt="logo" className="floating-logo" />
-      <img src="/logo.png" alt="logo" className="floating-logo" />
-      <img src="/logo.png" alt="logo" className="floating-logo" />
+      {[...Array(6)].map((_, i) => (
+        <img
+          key={i}
+          src="/logo.png"
+          alt="logo"
+          className="floating-logo"
+          style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%` }}
+        />
+      ))}
 
       {/* Login Card */}
       <div className="login-card">
