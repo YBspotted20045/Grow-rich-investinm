@@ -1,71 +1,96 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import API from "../axios";
+import { Link } from "react-router-dom";
 import "./Login.css";
 
-export default function Login() {
-  const navigate = useNavigate();
+function Login() {
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    password: ""
   });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const validate = () => {
+    let newErrors = {};
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+    return newErrors;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    setErrors(validationErrors);
 
-    if (!formData.email || !formData.password) {
-      return setError("Please fill in all fields.");
+    if (Object.keys(validationErrors).length === 0) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        alert("Login successful");
+      }, 2000);
     }
+  };
 
-    try {
-      await API.post("/auth/login", formData);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Try again.");
-    }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
-    <div className="login-container">
-      <div className="floating-logos"></div>
-      <form className="login-form" onSubmit={handleSubmit}>
-        <img src="/logo.png" alt="Logo" className="form-logo" />
+    <div className="login-page">
+      {/* Moving Logo Background */}
+      <div className="background-animation">
+        <img src="/logo.png" alt="Logo" className="floating-logo" />
+        <img src="/logo.png" alt="Logo" className="floating-logo small" />
+        <img src="/logo.png" alt="Logo" className="floating-logo medium" />
+      </div>
 
+      {/* Dark overlay for readability */}
+      <div className="dark-overlay"></div>
+
+      {/* Login Form */}
+      <div className="login-container">
         <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="text"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            {errors.email && <span className="error">{errors.email}</span>}
+          </div>
 
-        {error && <p className="error-text">{error}</p>}
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            {errors.password && <span className="error">{errors.password}</span>}
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-
-        <button type="submit">Login</button>
-
-        <p className="switch-text">
-          Don’t have an account? <Link to="/signup">Sign Up</Link>
+          <button type="submit" disabled={loading}>
+            {loading ? <span className="loader"></span> : "Login"}
+          </button>
+        </form>
+        <p className="signup-link">
+          Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 }
+
+export default Login;
