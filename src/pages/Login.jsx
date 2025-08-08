@@ -1,48 +1,51 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import API from "../axios"; // your centralized Axios instance
-import logo from "../assets/logo.png"; // adjust path if needed
-import "./login.css"; // optional: create this CSS if you want custom styles
+import { useNavigate, Link } from "react-router-dom";
+import axios from "../axios";
+import logo from "../assets/logo.png";
+import "./Login.css";
 
-const Login = () => {
+function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    password: ""
   });
+
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.password.length < 8) {
-      return setError("Password must be at least 8 characters");
-    }
+    setLoading(true);
+    setError("");
 
     try {
-      setLoading(true);
-      setError("");
-
-      const res = await API.post("/api/auth/login", formData);
-      localStorage.setItem("token", res.data.token);
-      navigate("/dashboard"); // adjust this to your dashboard route
+      const res = await axios.post("/api/users/login", formData);
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        navigate("/dashboard"); // go to user dashboard
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Login failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleLogin}>
-        <img src={logo} alt="Logo" className="logo" />
+    <div className="login-background">
+      <div className="logo-wall">
+        {Array.from({ length: 30 }).map((_, i) => (
+          <img key={i} src={logo} alt="logo" className="faint-logo" />
+        ))}
+      </div>
+
+      <form className="login-form" onSubmit={handleSubmit}>
+        <img src={logo} alt="GrowRich Logo" className="main-logo" />
         <h2>Welcome Back</h2>
 
         {error && <p className="error">{error}</p>}
@@ -53,43 +56,31 @@ const Login = () => {
           placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
-          disabled={loading}
           required
+          disabled={loading}
         />
 
-        <div className="password-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Password (min. 8 characters)"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={loading}
-            required
-          />
-          <button
-            type="button"
-            className="toggle-password"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? "Hide" : "Show"}
-          </button>
-        </div>
-
-        <button
-          type="submit"
-          className="login-button"
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          minLength={8}
           disabled={loading}
-        >
+        />
+
+        <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        <p className="switch-page">
-          Don’t have an account? <Link to="/signup">Sign up</Link>
+        <p className="switch-text">
+          Don’t have an account? <Link to="/Signup">Sign up</Link>
         </p>
       </form>
     </div>
   );
-};
+}
 
 export default Login;
