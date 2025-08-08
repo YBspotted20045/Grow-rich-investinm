@@ -1,89 +1,94 @@
 .login-container {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  background-color: #f5f5f5;
+  height: 100vh;
+  background: white;
   overflow: hidden;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
-.animated-logo-background {
+/* Bright floating logos in background */
+.floating-logos {
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
+  overflow: hidden;
 }
 
 .floating-logo {
   position: absolute;
   width: 80px;
-  opacity: 0.3;
-  animation: floatLogo linear infinite;
-  pointer-events: none;
-  filter: brightness(2); /* Make it brighter */
+  opacity: 1; /* ⚡️ Fully visible */
+  filter: brightness(4); /* ⚡️ 3-4 times brighter */
+  animation: floatLogo 20s linear infinite;
+  top: calc(100% * var(--rand-top));
+  left: calc(100% * var(--rand-left));
 }
+
+/* Random positions via inline style */
+.floating-logo:nth-child(1) { top: 5%; left: 10%; animation-duration: 18s; }
+.floating-logo:nth-child(2) { top: 20%; left: 80%; animation-duration: 22s; }
+.floating-logo:nth-child(3) { top: 40%; left: 50%; animation-duration: 25s; }
+.floating-logo:nth-child(4) { top: 60%; left: 30%; animation-duration: 19s; }
+.floating-logo:nth-child(5) { top: 75%; left: 70%; animation-duration: 26s; }
+.floating-logo:nth-child(6) { top: 85%; left: 20%; animation-duration: 24s; }
+.floating-logo:nth-child(7) { top: 10%; left: 60%; animation-duration: 21s; }
 
 @keyframes floatLogo {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-50px) rotate(180deg);
-  }
-  100% {
-    transform: translateY(0) rotate(360deg);
-  }
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-50px) rotate(180deg); }
+  100% { transform: translateY(0px) rotate(360deg); }
 }
 
+/* Login form */
 .login-form {
   position: relative;
   z-index: 2;
-  background: white;
+  background: rgba(255, 255, 255, 0.97);
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.2);
   width: 100%;
   max-width: 400px;
+  text-align: center;
 }
 
-.login-form h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.main-logo {
+  width: 120px;
+  display: block;
+  margin: 0 auto 20px;
 }
 
 .login-form input {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-size: 16px;
 }
 
 .login-form button {
   width: 100%;
-  padding: 12px;
-  background-color: #28a745;
+  padding: 14px;
+  background-color: #00b300;
   color: white;
-  font-weight: bold;
+  font-size: 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s;
 }
 
 .login-form button:hover {
-  background-color: #218838;
+  background-color: #009900;
 }
 
-.login-form button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.login-form .main-logo {
-  width: 100px;
-  display: block;
-  margin: 0 auto 20px;
+.login-form .link {
+  color: #00b300;
+  font-weight: bold;
+  text-decoration: none;
 }
