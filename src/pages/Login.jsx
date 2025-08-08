@@ -1,70 +1,71 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import API from "../axios";
 import "./Login.css";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  // Floating logos array
-  const floatingLogos = Array.from({ length: 6 }, (_, i) => ({
-    id: i,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    duration: `${5 + Math.random() * 5}s`,
-  }));
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.email || !formData.password) {
+      return setError("Please fill in all fields.");
+    }
+
+    try {
+      await API.post("/auth/login", formData);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Try again.");
+    }
+  };
 
   return (
     <div className="login-container">
-      {/* Floating background logos */}
-      {floatingLogos.map((logo) => (
-        <img
-          key={logo.id}
-          src="/logo.png"
-          alt="Floating Logo"
-          className="floating-logo"
-          style={{
-            top: logo.top,
-            left: logo.left,
-            animationDuration: logo.duration,
-          }}
-        />
-      ))}
+      <div className="floating-logos"></div>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <img src="/logo.png" alt="Logo" className="form-logo" />
 
-      {/* Main logo */}
-      <div className="main-logo-wrapper">
-        <img src="/logo.png" alt="Main Logo" className="main-logo" />
-      </div>
-
-      {/* Login form */}
-      <form className="login-form">
         <h2>Login</h2>
+
+        {error && <p className="error-text">{error}</p>}
+
         <input
           type="email"
+          name="email"
           placeholder="Email Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          value={formData.email}
+          onChange={handleChange}
         />
 
         <input
           type="password"
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
         />
 
         <button type="submit">Login</button>
 
-        {/* Link to Signup */}
-        <p className="signup-link">
-          Don't have an account? <Link to="/signup">Sign up here</Link>
+        <p className="switch-text">
+          Don’t have an account? <Link to="/signup">Sign Up</Link>
         </p>
       </form>
     </div>
   );
-};
-
-export default Login;
+}
