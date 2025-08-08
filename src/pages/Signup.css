@@ -1,48 +1,88 @@
 .signup-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  margin: auto;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f0f8ff, #e6ffe6);
 }
 
-.signup-container h2 {
+.signup-form-box {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+.signup-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.signup-form-box h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.signup-form-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signup-form-box input,
+.signup-form-box select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.signup-form-box button {
+  padding: 0.75rem;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form-box button:disabled {
+  background-color: #94d3a2;
+  cursor: not-allowed;
+}
+
+.signup-form-box button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.error {
+  color: red;
+  font-size: 0.9rem;
   margin-bottom: 1rem;
 }
 
-.signup-container form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+.switch-auth {
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 
-.signup-container input,
-.signup-container select,
-.signup-container button {
-  margin: 0.5rem 0;
-  padding: 0.7rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+.switch-auth a {
+  color: #007bff;
+  text-decoration: none;
 }
 
-.signup-container button {
-  background-color: #2ecc71;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.signup-container button:hover {
-  background-color: #27ae60;
-}
-
-.signup-container button:disabled {
-  background-color: #a5d6a7;
-  cursor: not-allowed;
+.disabled input,
+.disabled select,
+.disabled button {
+  pointer-events: none;
+  opacity: 0.6;
 }
