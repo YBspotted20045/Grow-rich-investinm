@@ -1,64 +1,56 @@
-import React, { useState } from 'react';
-import axios from '../axios';
-import './Signup.css';
-import logo from '../assets/logo.png';
-
-const statesOfNigeria = [
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
-  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT - Abuja",
-  "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara",
-  "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
-  "Sokoto", "Taraba", "Yobe", "Zamfara"
-];
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
+import "./signup.css";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    age: '',
-    state: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    fullName: "",
+    age: "",
+    email: "",
+    state: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+
+  const statesOfNigeria = [
+    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
+    "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT",
+    "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi",
+    "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo",
+    "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
+  ];
 
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (formData.password.length < 8) {
-      return setError("Password must be at least 8 characters long.");
+      setError("Password must be at least 8 characters long.");
+      return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match.");
+      setError("Passwords do not match.");
+      return;
     }
 
+    setLoading(true);
+
     try {
-      setLoading(true);
-
-      const res = await axios.post('/api/users/register', {
-        fullName: formData.fullName,
-        age: formData.age,
-        state: formData.state,
-        email: formData.email,
-        password: formData.password
-      });
-
-      console.log("Signup success:", res.data);
-      // Optionally redirect or show success message here
+      // Replace this URL with your backend signup endpoint
+      const response = await axios.post("https://your-backend-api.com/api/signup", formData);
+      alert("Signup successful!");
     } catch (err) {
-      console.error("Signup error:", err);
-      setError(err?.response?.data?.message || "Signup failed. Try again.");
+      setError("Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -66,79 +58,76 @@ const Signup = () => {
 
   return (
     <div className="signup-container">
-      <img src={logo} alt="Logo" style={{ width: '70px', marginBottom: '1rem', opacity: 0.8 }} />
-      <h2>Create an Account</h2>
-
-      <form onSubmit={handleSubmit}>
-        <input
-          name="fullName"
-          type="text"
-          placeholder="Full Name"
-          value={formData.fullName}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-
-        <input
-          name="age"
-          type="number"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-
-        <select
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        >
-          <option value="">Select State</option>
-          {statesOfNigeria.map((state, index) => (
-            <option key={index} value={state}>{state}</option>
-          ))}
-        </select>
-
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-
-        <input
-          name="password"
-          type="password"
-          placeholder="Password (min 8 characters)"
-          value={formData.password}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-
-        <input
-          name="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          disabled={loading}
-          required
-        />
-
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing up...' : 'Sign Up'}
-        </button>
-      </form>
-
-      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+      <div className="signup-form-box">
+        <img src={logo} alt="Logo" className="signup-logo" />
+        <h2>Create an Account</h2>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit} className={loading ? "disabled" : ""}>
+          <input
+            type="text"
+            name="fullName"
+            placeholder="Full Name"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          />
+          <input
+            type="number"
+            name="age"
+            placeholder="Age"
+            value={formData.age}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          />
+          <select
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          >
+            <option value="">Select your state</option>
+            {statesOfNigeria.map((state, index) => (
+              <option key={index} value={state}>{state}</option>
+            ))}
+          </select>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password (min 8 characters)"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing Up..." : "Sign Up"}
+          </button>
+        </form>
+        <p className="switch-auth">
+          Already have an account? <Link to="/login">Login here</Link>
+        </p>
+      </div>
     </div>
   );
 };
