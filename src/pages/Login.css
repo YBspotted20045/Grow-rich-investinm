@@ -1,108 +1,153 @@
-/* Container */
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #f0f8ff, #d9f4ff);
+/* Full-page setup */
+.login-page {
   position: relative;
+  width: 100%;
+  height: 100vh;
   overflow: hidden;
-  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-/* Floating background logos */
-.floating-logos {
+/* Moving background logos */
+.background-animation {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("/logo.png");
-  background-repeat: repeat;
-  background-size: 80px;
-  animation: floatLogos 25s linear infinite;
-  opacity: 0.5; /* 50/50 light */
   z-index: 0;
+  overflow: hidden;
 }
 
-@keyframes floatLogos {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 200px 200px;
-  }
+.floating-logo {
+  position: absolute;
+  animation: float 20s linear infinite;
+  opacity: 0.15;
 }
 
-/* Form styling */
-.login-form {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 35px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  max-width: 400px;
+.floating-logo.small {
+  width: 40px;
+  top: 15%;
+  left: 10%;
+  animation-duration: 18s;
+}
+
+.floating-logo.medium {
+  width: 70px;
+  bottom: 20%;
+  right: 15%;
+  animation-duration: 25s;
+}
+
+.floating-logo {
+  width: 100px;
+  top: 50%;
+  left: 50%;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+
+/* Dark overlay */
+.dark-overlay {
+  position: absolute;
   width: 100%;
-  position: relative;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65); /* Semi-black */
   z-index: 1;
-  text-align: center;
 }
 
-/* Logo at the top of form */
-.form-logo {
-  width: 80px;
-  margin-bottom: 15px;
-}
-
-/* Form elements */
-.login-form h2 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-  color: #222;
-}
-
-.login-form input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #1a8cff;
+/* Login form container */
+.login-container {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.15); /* Transparent */
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 400px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   color: white;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.login-form button:hover {
-  background: #0066cc;
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  font-size: 14px;
 }
 
 /* Error text */
-.error-text {
-  color: red;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
+.error {
+  color: #ff6b6b;
+  font-size: 13px;
 }
 
-/* Switch text for signup link */
-.switch-text {
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  background: green;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background: #0d820d;
+}
+
+/* Loading spinner */
+.loader {
+  border: 3px solid white;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Signup link */
+.signup-link {
+  text-align: center;
   margin-top: 15px;
-  font-size: 0.9rem;
 }
 
-.switch-text a {
-  color: #1a8cff;
+.signup-link a {
+  color: #00ff88;
   text-decoration: none;
 }
 
-.switch-text a:hover {
+.signup-link a:hover {
   text-decoration: underline;
 }
