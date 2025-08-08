@@ -1,76 +1,118 @@
-.login-container {
-  position: relative;
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  background-color: #f2f2f2;
+  background-color: #f5f5f5;
+  position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.logo-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Login card */
+.login-card {
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  padding: 40px;
-  justify-content: center;
-  align-items: center;
-  z-index: 0;
+  max-width: 400px;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  position: relative;
 }
 
-.faded-logo {
+/* Input fields */
+.login-card input {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Login button */
+.login-card button {
+  width: 100%;
+  padding: 10px;
+  background-color: #0a7e07;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.login-card button:hover {
+  background-color: #086c05;
+}
+
+/* Link to Signup */
+.login-card .link {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 14px;
+}
+
+.login-card .link a {
+  color: #0a7e07;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-card .link a:hover {
+  text-decoration: underline;
+}
+
+/* Background floating logos */
+.floating-logo {
+  position: absolute;
   width: 80px;
   height: 80px;
-  opacity: 0.08;
+  opacity: 0.3;
   object-fit: contain;
+  animation: floatLogo 25s linear infinite;
 }
 
-.login-form-box {
-  background-color: white;
-  padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-  z-index: 2;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
+/* Add different delays and positions to multiple logos */
+.floating-logo:nth-child(1) {
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
 }
 
-.login-form-box h2 {
-  margin-bottom: 20px;
-  color: #333;
+.floating-logo:nth-child(2) {
+  top: 50%;
+  left: 80%;
+  animation-delay: 5s;
 }
 
-.login-form-box input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.floating-logo:nth-child(3) {
+  top: 75%;
+  left: 20%;
+  animation-delay: 10s;
 }
 
-.login-form-box button {
-  width: 100%;
-  padding: 12px;
-  background-color: green;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.floating-logo:nth-child(4) {
+  top: 30%;
+  left: 60%;
+  animation-delay: 15s;
 }
 
-.login-form-box button:hover {
-  background-color: darkgreen;
+.floating-logo:nth-child(5) {
+  top: 5%;
+  left: 45%;
+  animation-delay: 20s;
 }
 
-.login-form-box p {
-  margin-top: 15px;
-  font-size: 14px;
+/* Keyframes for random floating */
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-40px) rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg) scale(1);
+  }
 }
