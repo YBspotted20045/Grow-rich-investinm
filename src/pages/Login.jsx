@@ -2,95 +2,72 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Login.css";
 
-function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-  const [errors, setErrors] = useState({});
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const validate = () => {
-    let newErrors = {};
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-    return newErrors;
-  };
-
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
+    setLoading(true);
 
-    if (Object.keys(validationErrors).length === 0) {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        alert("Login successful");
-      }, 2000);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setTimeout(() => {
+      setLoading(false);
+      alert("Login successful (demo)");
+    }, 2000);
   };
 
   return (
     <div className="login-page">
-      {/* Moving Logo Background */}
-      <div className="background-animation">
-        <img src="/logo.png" alt="Logo" className="floating-logo" />
-        <img src="/logo.png" alt="Logo" className="floating-logo small" />
-        <img src="/logo.png" alt="Logo" className="floating-logo medium" />
+      {/* Moving logos */}
+      <div className="moving-logos">
+        {[...Array(15)].map((_, i) => (
+          <img
+            key={i}
+            src="/logo.png"
+            alt="logo"
+            className="floating-logo"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${10 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
       </div>
 
-      {/* Dark overlay for readability */}
-      <div className="dark-overlay"></div>
-
-      {/* Login Form */}
-      <div className="login-container">
+      {/* Transparent login form */}
+      <form className="login-form" onSubmit={handleLogin}>
         <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            {errors.email && <span className="error">{errors.email}</span>}
-          </div>
+        <input
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password (min 8 characters)"
+          minLength={8}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {errors.password && <span className="error">{errors.password}</span>}
-          </div>
+        <button
+          type="submit"
+          className="login-btn"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Login"}
+        </button>
 
-          <button type="submit" disabled={loading}>
-            {loading ? <span className="loader"></span> : "Login"}
-          </button>
-        </form>
         <p className="signup-link">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
+          Don't have an account?{" "}
+          <Link to="/signup">Sign up here</Link>
         </p>
-      </div>
+      </form>
     </div>
   );
 }
-
-export default Login;
