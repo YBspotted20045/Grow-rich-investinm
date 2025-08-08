@@ -1,48 +1,46 @@
-import React, { useState } from "react";
-import "./Login.css";
-import { Link } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import React from "react";
+import "../styles/Login.css";
+import logo from "../assets/logo.png"; // ✅ Using assets folder
+
+const FloatingLogos = () => {
+  const logoCount = 10;
+  const logos = [];
+
+  for (let i = 0; i < logoCount; i++) {
+    const style = {
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      animationDuration: `${3 + Math.random() * 2}s`, // Faster
+      width: "80px", // Bigger logo size
+      height: "80px",
+      opacity: 1, // Very bright
+      filter: "brightness(4)", // 4× brightness
+    };
+    logos.push(
+      <img
+        key={i}
+        src={logo}
+        alt="Floating Logo"
+        className="floating-logo"
+        style={style}
+      />
+    );
+  }
+
+  return <div className="floating-logos">{logos}</div>;
+};
 
 const Login = () => {
-  const [loading, setLoading] = useState(false);
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // simulate login delay
-    setTimeout(() => {
-      setLoading(false);
-      alert("Login successful!");
-    }, 2000);
-  };
-
   return (
     <div className="login-container">
-      {/* Background floating logos */}
-      <div className="floating-logos">
-        {[...Array(7)].map((_, i) => (
-          <img key={i} src={logo} alt="Logo" className="floating-logo" />
-        ))}
-      </div>
-
-      {/* Login form */}
+      <FloatingLogos />
       <div className="login-form">
-        <img src={logo} alt="Logo" className="main-logo" />
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
+        <h2>Login to Your Account</h2>
+        <form>
           <input type="email" placeholder="Email" required />
           <input type="password" placeholder="Password" required />
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
+          <button type="submit">Login</button>
         </form>
-        <p>
-          Don’t have an account?{" "}
-          <Link to="/Signup" className="link">
-            Sign up
-          </Link>
-        </p>
       </div>
     </div>
   );
