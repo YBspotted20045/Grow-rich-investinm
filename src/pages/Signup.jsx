@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './signup.css';
+import './Signup.css';
 import logo from '../assets/logo.png'; // Ensure logo.png is in src/assets/
 
 const statesInNigeria = [
