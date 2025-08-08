@@ -7,14 +7,13 @@ import API from '../axios';
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullname: '',
+    name: '',
     email: '',
-    phone: '',
     password: '',
   });
 
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,35 +21,37 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
-    
+    setError('');
+
     try {
-      const response = await API.post('/api/users/register', formData);
-      if (response.data.success) {
-        navigate('/login');
-      } else {
-        setError(response.data.message || 'Signup failed');
-      }
+      const res = await API.post('/api/auth/register', formData);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Try a different email.');
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Signup failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="signup-container">
+    <div className="signup-page">
       <h2>Create Your Account</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="fullname"
+          name="name"
           placeholder="Full Name"
-          value={formData.fullname}
+          value={formData.name}
           onChange={handleChange}
           required
         />
+
         <input
           type="email"
           name="email"
@@ -59,27 +60,23 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
+
         <input
           type="password"
           name="password"
-          placeholder="Create Password"
+          placeholder="Password"
           value={formData.password}
           onChange={handleChange}
           required
         />
+
         <button type="submit" disabled={loading}>
-          {loading ? 'Creating Account...' : 'Sign Up'}
+          {loading ? 'Creating account...' : 'Register'}
         </button>
-        {error && <p className="error">{error}</p>}
+
+        {error && <p className="error-message">{error}</p>}
       </form>
+
       <p>
         Already have an account? <a href="/login">Login</a>
       </p>
