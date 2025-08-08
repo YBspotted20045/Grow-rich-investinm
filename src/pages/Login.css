@@ -1,118 +1,71 @@
 .login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
   position: relative;
+  height: 100vh;
+  width: 100%;
+  background: #f9f9f9;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Login card */
+.floating-logo {
+  position: absolute;
+  width: 120px; /* 2x bigger */
+  opacity: 0.85;
+  z-index: 1;
+  animation: float 6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-50px) translateX(50px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(30px) translateX(-30px) rotate(360deg);
+  }
+}
+
 .login-card {
+  position: relative;
+  z-index: 10;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
   width: 100%;
   max-width: 400px;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-  z-index: 10;
-  position: relative;
 }
 
-/* Input fields */
 .login-card input {
   width: 100%;
-  padding: 10px;
-  margin: 12px 0;
+  padding: 12px;
+  margin-bottom: 1rem;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-/* Login button */
 .login-card button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #0a7e07;
   color: white;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
-  margin-top: 12px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .login-card button:hover {
-  background-color: #086c05;
+  background-color: #065e05;
 }
 
-/* Link to Signup */
 .login-card .link {
   margin-top: 1rem;
   text-align: center;
-  font-size: 14px;
-}
-
-.login-card .link a {
-  color: #0a7e07;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.login-card .link a:hover {
-  text-decoration: underline;
-}
-
-/* Background floating logos */
-.floating-logo {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  opacity: 0.3;
-  object-fit: contain;
-  animation: floatLogo 25s linear infinite;
-}
-
-/* Add different delays and positions to multiple logos */
-.floating-logo:nth-child(1) {
-  top: 10%;
-  left: 5%;
-  animation-delay: 0s;
-}
-
-.floating-logo:nth-child(2) {
-  top: 50%;
-  left: 80%;
-  animation-delay: 5s;
-}
-
-.floating-logo:nth-child(3) {
-  top: 75%;
-  left: 20%;
-  animation-delay: 10s;
-}
-
-.floating-logo:nth-child(4) {
-  top: 30%;
-  left: 60%;
-  animation-delay: 15s;
-}
-
-.floating-logo:nth-child(5) {
-  top: 5%;
-  left: 45%;
-  animation-delay: 20s;
-}
-
-/* Keyframes for random floating */
-@keyframes floatLogo {
-  0% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translateY(-40px) rotate(180deg) scale(1.2);
-  }
-  100% {
-    transform: translateY(0px) rotate(360deg) scale(1);
-  }
+  color: #444;
 }
