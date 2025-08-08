@@ -1,50 +1,43 @@
 import React, { useState } from "react";
+import "./Login.css";
+import axios from "../axios";
 import { useNavigate } from "react-router-dom";
-import API from "../axios";
 
 export default function Login() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
     try {
-      const res = await API.post("/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
+      await axios.post("/login", { email, password });
+      alert("Login successful!");
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Try again.");
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      {/* Logo with glow + floating animation */}
-      <img
-        src="/logo.png"
-        alt="GrowRich Logo"
-        className="w-32 h-32 mb-6 animate-float"
-        style={{
-          filter: "brightness(4) drop-shadow(0 0 20px #00ff99)",
-        }}
-      />
+    <div className="login-container">
+      <div className="logo-container">
+        <img src="/logo.png" alt="GrowRich Logo" className="floating-logo" />
+      </div>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
 
-      <h1 className="text-3xl font-bold mb-4">Login to GrowRich</h1>
-
-      {error && <p className="text-red-500 mb-3">{error}</p>}
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-800 p-6 rounded-lg shadow-lg w-80"
-      >
         <input
           type="email"
           placeholder="Email"
-          className="w-full p-2 mb-3 rounded bg-gray-700 focus:outline-none"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -52,17 +45,23 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 mb-4 rounded bg-gray-700 focus:outline-none"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button
-          type="submit"
-          className="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded"
-        >
-          Login
-        </button>
+        {error && <span className="error">{error}</span>}
+
+        <button type="submit">Login</button>
+
+        <p className="signup-link">
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/signup")}
+            style={{ color: "#00a86b", cursor: "pointer", fontWeight: "bold" }}
+          >
+            Sign up here
+          </span>
+        </p>
       </form>
     </div>
   );
