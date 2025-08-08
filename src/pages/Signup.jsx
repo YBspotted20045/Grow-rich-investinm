@@ -1,132 +1,146 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import API from "../axios";
 import "./Signup.css";
 
-const statesList = [
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
-  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT - Abuja",
-  "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara",
-  "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau",
-  "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
-];
-
-export default function Signup() {
-  const navigate = useNavigate();
+const Signup = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     age: "",
     state: "",
     email: "",
-    password: "",
-    confirmPassword: "",
+    password: ""
   });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const [error, setError] = useState("");
+  const states = [
+    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
+    "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", 
+    "FCT - Abuja", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina",
+    "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo",
+    "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
+  ];
+
+  const validate = () => {
+    let temp = {};
+    if (!formData.fullName) temp.fullName = "Full name is required";
+    if (!formData.age || formData.age < 18) temp.age = "You must be at least 18 years old";
+    if (!formData.state) temp.state = "Please select your state";
+    if (!formData.email) temp.email = "Email is required";
+    if (!formData.password || formData.password.length < 8)
+      temp.password = "Password must be at least 8 characters";
+    setErrors(temp);
+    return Object.keys(temp).length === 0;
+  };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
 
-    if (!formData.fullName || !formData.age || !formData.state || !formData.email || !formData.password || !formData.confirmPassword) {
-      return setError("All fields are required.");
-    }
-
-    if (parseInt(formData.age) < 18) {
-      return setError("You must be at least 18 years old to register.");
-    }
-
-    if (formData.password.length < 8) {
-      return setError("Password must be at least 8 characters long.");
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match.");
-    }
-
+    setLoading(true);
     try {
       await API.post("/auth/signup", formData);
-      navigate("/login");
+      alert("Sign-up successful! Please login.");
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed. Try again.");
+      alert("Error signing up: " + (err.response?.data?.message || err.message));
     }
+    setLoading(false);
   };
 
   return (
-    <div className="signup-container">
-      <div className="floating-logos"></div>
-      <form className="signup-form" onSubmit={handleSubmit}>
-        <img src="/logo.png" alt="Logo" className="form-logo" />
+    <div className="signup-page">
+      {/* Moving background logos */}
+      <div className="background-animation">
+        <img src="/logo.png" alt="Floating logo" className="floating-logo small" />
+        <img src="/logo.png" alt="Floating logo" className="floating-logo medium" />
+      </div>
 
-        <h2>Create an Account</h2>
+      {/* Dark overlay */}
+      <div className="dark-overlay"></div>
 
-        {error && <p className="error-text">{error}</p>}
+      <div className="signup-container">
+        <h2>Create Account</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.fullName && <p className="error">{errors.fullName}</p>}
+          </div>
 
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          value={formData.fullName}
-          onChange={handleChange}
-        />
+          <div className="form-group">
+            <label>Age</label>
+            <input
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.age && <p className="error">{errors.age}</p>}
+          </div>
 
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
-        />
+          <div className="form-group">
+            <label>State</label>
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              disabled={loading}
+            >
+              <option value="">-- Select State --</option>
+              {states.map((state, index) => (
+                <option key={index} value={state}>{state}</option>
+              ))}
+            </select>
+            {errors.state && <p className="error">{errors.state}</p>}
+          </div>
 
-        <select
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-        >
-          <option value="">Select Your State</option>
-          {statesList.map((state) => (
-            <option key={state} value={state}>
-              {state}
-            </option>
-          ))}
-        </select>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-        />
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            {errors.password && <p className="error">{errors.password}</p>}
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password (min 8 characters)"
-          value={formData.password}
-          onChange={handleChange}
-        />
+          <button type="submit" disabled={loading}>
+            {loading ? <span className="loader"></span> : "Sign Up"}
+          </button>
+        </form>
 
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-        />
-
-        <button type="submit">Sign Up</button>
-
-        <p className="switch-text">
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
-      </form>
+        <div className="login-link">
+          Already have an account? <Link to="/login">Login here</Link>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Signup;
