@@ -1,58 +1,144 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from '../axios'; // if you're using centralized API
-import './Signup.css';
+import './signup.css';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
+    name: '',
+    age: '',
     email: '',
     password: '',
+    confirmPassword: '',
+    state: ''
   });
-  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post('/api/auth/signup', formData);
-      alert('Signup successful!');
-      setFormData({ email: '', password: '' });
-    } catch (err) {
-      alert(err.response?.data?.message || 'Signup failed');
+
+    const { name, age, email, password, confirmPassword, state } = formData;
+
+    if (!name || !age || !email || !password || !confirmPassword || !state) {
+      setError('All fields are required.');
+      return;
     }
-    setLoading(false);
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setError('');
+    console.log('Registration successful:', formData);
+    // Send formData to your backend
   };
 
   return (
     <div className="signup-container">
+      <div className="signup-background-logo" />
       <form className="signup-form" onSubmit={handleSubmit}>
         <h2>Register</h2>
+        {error && <p className="error">{error}</p>}
+
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+
+        <input
+          type="number"
+          name="age"
+          placeholder="Age"
+          value={formData.age}
+          onChange={handleChange}
+        />
+
         <input
           type="email"
           name="email"
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          required
         />
+
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="Password (min 8 characters)"
           value={formData.password}
           onChange={handleChange}
-          required
         />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing up...' : 'Sign Up'}
-        </button>
-        <div className="link">
-          Already have an account? <Link to="/login">Login</Link>
-        </div>
+
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+
+        <select
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+        >
+          <option value="">Select State</option>
+          <option value="Abia">Abia</option>
+          <option value="Adamawa">Adamawa</option>
+          <option value="Akwa Ibom">Akwa Ibom</option>
+          <option value="Anambra">Anambra</option>
+          <option value="Bauchi">Bauchi</option>
+          <option value="Bayelsa">Bayelsa</option>
+          <option value="Benue">Benue</option>
+          <option value="Borno">Borno</option>
+          <option value="Cross River">Cross River</option>
+          <option value="Delta">Delta</option>
+          <option value="Ebonyi">Ebonyi</option>
+          <option value="Edo">Edo</option>
+          <option value="Ekiti">Ekiti</option>
+          <option value="Enugu">Enugu</option>
+          <option value="Gombe">Gombe</option>
+          <option value="Imo">Imo</option>
+          <option value="Jigawa">Jigawa</option>
+          <option value="Kaduna">Kaduna</option>
+          <option value="Kano">Kano</option>
+          <option value="Katsina">Katsina</option>
+          <option value="Kebbi">Kebbi</option>
+          <option value="Kogi">Kogi</option>
+          <option value="Kwara">Kwara</option>
+          <option value="Lagos">Lagos</option>
+          <option value="Nasarawa">Nasarawa</option>
+          <option value="Niger">Niger</option>
+          <option value="Ogun">Ogun</option>
+          <option value="Ondo">Ondo</option>
+          <option value="Osun">Osun</option>
+          <option value="Oyo">Oyo</option>
+          <option value="Plateau">Plateau</option>
+          <option value="Rivers">Rivers</option>
+          <option value="Sokoto">Sokoto</option>
+          <option value="Taraba">Taraba</option>
+          <option value="Yobe">Yobe</option>
+          <option value="Zamfara">Zamfara</option>
+          <option value="FCT">FCT</option>
+        </select>
+
+        <button type="submit">Sign Up</button>
+
+        <p className="login-link">
+          Already have an account? <a href="/login">Login</a>
+        </p>
       </form>
     </div>
   );
