@@ -1,75 +1,93 @@
-// src/pages/Login.jsx
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import API from '../axios';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import API from "../axios"; // your centralized Axios instance
+import logo from "../assets/logo.png"; // adjust path if needed
+import "./login.css"; // optional: create this CSS if you want custom styles
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+
+    if (formData.password.length < 8) {
+      return setError("Password must be at least 8 characters");
+    }
 
     try {
-      const res = await API.post('/api/auth/login', formData);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/dashboard');
+      setLoading(true);
+      setError("");
+
+      const res = await API.post("/api/auth/login", formData);
+      localStorage.setItem("token", res.data.token);
+      navigate("/dashboard"); // adjust this to your dashboard route
     } catch (err) {
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Login failed. Please try again.');
-      }
+      setError(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-page">
-      <h2>Login to Your Account</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleLogin}>
+        <img src={logo} alt="Logo" className="logo" />
+        <h2>Welcome Back</h2>
+
+        {error && <p className="error">{error}</p>}
+
         <input
           type="email"
           name="email"
           placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
+          disabled={loading}
           required
         />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+        <div className="password-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password (min. 8 characters)"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
+          <button
+            type="button"
+            className="toggle-password"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+        <button
+          type="submit"
+          className="login-button"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
 
-        {error && <p className="error-message">{error}</p>}
+        <p className="switch-page">
+          Don’t have an account? <Link to="/signup">Sign up</Link>
+        </p>
       </form>
-
-      <p>
-        Don't have an account? <a href="/signup">Register</a>
-      </p>
     </div>
   );
 };
