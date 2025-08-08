@@ -1,51 +1,69 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import '../../App.css'; // Make sure your animation is in this CSS
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../axios";
 
-const Login = () => {
+export default function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const res = await API.post("/auth/login", { email, password });
+      localStorage.setItem("token", res.data.token);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Try again.");
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md text-center">
-        {/* Bright animated logo */}
-        <img
-          src="/logo.png"
-          alt="Logo"
-          style={{
-            width: '180px',
-            margin: '0 auto 20px',
-            animation: 'float 3s ease-in-out infinite',
-            filter: 'brightness(600%)'
-          }}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+      {/* Logo with glow + floating animation */}
+      <img
+        src="/logo.png"
+        alt="GrowRich Logo"
+        className="w-32 h-32 mb-6 animate-float"
+        style={{
+          filter: "brightness(4) drop-shadow(0 0 20px #00ff99)",
+        }}
+      />
+
+      <h1 className="text-3xl font-bold mb-4">Login to GrowRich</h1>
+
+      {error && <p className="text-red-500 mb-3">{error}</p>}
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 p-6 rounded-lg shadow-lg w-80"
+      >
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full p-2 mb-3 rounded bg-gray-700 focus:outline-none"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
-        <h2 className="text-2xl font-bold mb-6">Login to GrowRich</h2>
-        <form>
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full mb-4 p-2 border border-gray-300 rounded"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full mb-4 p-2 border border-gray-300 rounded"
-          />
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
-          >
-            Login
-          </button>
-        </form>
-        <p className="mt-4">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-green-600 font-semibold hover:underline">
-            Sign Up
-          </Link>
-        </p>
-      </div>
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full p-2 mb-4 rounded bg-gray-700 focus:outline-none"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded"
+        >
+          Login
+        </button>
+      </form>
     </div>
   );
-};
-
-export default Login;
+}
