@@ -1,5 +1,5 @@
 // src/pages/Signup.jsx
-
+import '../styles/Signup.css';
 import React, { useState } from 'react';
 import axios from '../axios';
 import { useNavigate } from 'react-router-dom';
