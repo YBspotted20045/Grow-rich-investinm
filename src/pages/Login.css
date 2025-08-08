@@ -1,71 +1,108 @@
+/* Container */
 .login-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background-color: #ffffff;
+  min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f0f8ff, #d9f4ff);
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
 }
 
+/* Floating background logos */
 .floating-logos {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  overflow: hidden;
+  background-image: url("/logo.png");
+  background-repeat: repeat;
+  background-size: 80px;
+  animation: floatLogos 25s linear infinite;
+  opacity: 0.5; /* 50/50 light */
   z-index: 0;
 }
 
-.floating-logo {
-  position: absolute;
-  animation-name: float;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0) rotate(0deg);
+@keyframes floatLogos {
+  from {
+    background-position: 0 0;
   }
-  50% {
-    transform: translateY(-50px) rotate(180deg);
-  }
-  100% {
-    transform: translateY(0) rotate(360deg);
+  to {
+    background-position: 200px 200px;
   }
 }
 
+/* Form styling */
 .login-form {
-  position: relative;
-  z-index: 2;
-  padding: 40px;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 320px;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
   text-align: center;
 }
 
+/* Logo at the top of form */
+.form-logo {
+  width: 80px;
+  margin-bottom: 15px;
+}
+
+/* Form elements */
 .login-form h2 {
-  margin-bottom: 20px;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #222;
 }
 
 .login-form input {
-  display: block;
   width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
 }
 
 .login-form button {
-  padding: 10px 20px;
-  background-color: green;
-  color: white;
+  width: 100%;
+  padding: 12px;
   border: none;
-  font-size: 16px;
+  border-radius: 8px;
+  background: #1a8cff;
+  color: white;
+  font-size: 1.1rem;
   cursor: pointer;
-  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.login-form button:hover {
+  background: #0066cc;
+}
+
+/* Error text */
+.error-text {
+  color: red;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+/* Switch text for signup link */
+.switch-text {
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.switch-text a {
+  color: #1a8cff;
+  text-decoration: none;
+}
+
+.switch-text a:hover {
+  text-decoration: underline;
 }
