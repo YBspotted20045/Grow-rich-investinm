@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 
 export default function Login() {
@@ -8,10 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setErr("");
+
     if (!/\S+@\S+\.\S+/.test(email)) return setErr("Please enter a valid email.");
     if (password.length < 8) return setErr("Password must be at least 8 characters.");
 
@@ -19,13 +21,13 @@ export default function Login() {
     // simulate API call
     setTimeout(() => {
       setLoading(false);
-      alert("Login successful (demo)");
-    }, 1800);
+      // success → redirect to dashboard
+      navigate("/dashboard");
+    }, 1500);
   };
 
   return (
     <div className="lux-login-page">
-      {/* decorative layers */}
       <div className="lux-waves" />
       <div className="lux-particles">
         {[...Array(25)].map((_, i) => (
@@ -38,13 +40,11 @@ export default function Login() {
         ))}
       </div>
 
-      {/* Top center big logo */}
       <div className="top-logo">
         <img src="/logo.png" alt="GrowRichInvestments" className="top-logo-img" />
         <div className="logo-sweep" />
       </div>
 
-      {/* Moving small logos */}
       <div className="moving-logos">
         {[...Array(30)].map((_, i) => (
           <img
@@ -62,11 +62,20 @@ export default function Login() {
         ))}
       </div>
 
-      {/* Frosted form */}
       <div className="form-wrap">
         <form className="lux-form" onSubmit={handleSubmit}>
           <h2>Welcome back</h2>
-          {err && <div className="form-error">{err}</div>}
+
+          {err && <div className="form-error" style={{
+            backgroundColor: "rgba(255, 0, 0, 0.15)",
+            color: "#ff4d4d",
+            border: "1px solid rgba(255,0,0,0.3)",
+            padding: "10px",
+            borderRadius: "8px",
+            marginBottom: "10px",
+            textAlign: "center",
+            fontWeight: "500"
+          }}>{err}</div>}
 
           <label>Email</label>
           <input
