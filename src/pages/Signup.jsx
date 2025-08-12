@@ -28,7 +28,7 @@ export default function Signup(){
   const navigate = useNavigate();
 
   // Get API URL from environment or use default
-  const API_BASE = 'https://grow-0nfm.onrender.com'; || 'https://your-render-backend.onrender.com';
+ const API_BASE = 'https://grow-0nfm.onrender.com';
 
   // Check referral code in real-time
   useEffect(() => {
