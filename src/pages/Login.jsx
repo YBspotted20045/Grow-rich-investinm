@@ -10,20 +10,53 @@ export default function Login() {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // Get API URL from environment or use default
+  const API_BASE = process.env.REACT_APP_API_URL || 'https://your-render-backend.onrender.com';
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErr("");
-
-    if (!/\S+@\S+\.\S+/.test(email)) return setErr("Please enter a valid email.");
-    if (password.length < 8) return setErr("Password must be at least 8 characters.");
-
     setLoading(true);
-    // simulate API call
-    setTimeout(() => {
+
+    // Client-side validation
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setErr("Please enter a valid email.");
       setLoading(false);
-      // success → redirect to dashboard
-      navigate("/dashboard");
-    }, 1500);
+      return;
+    }
+    if (password.length < 6) {
+      setErr("Password must be at least 6 characters.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save token and user data
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Redirect to dashboard
+        navigate('/dashboard');
+      } else {
+        setErr(data.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErr('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -81,7 +114,7 @@ export default function Login() {
           <input
             type="email"
             value={email}
-            onChange={(e)=>setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
             required
           />
@@ -90,9 +123,9 @@ export default function Login() {
           <input
             type="password"
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            minLength={8}
+            minLength={6}
             required
           />
 
@@ -107,4 +140,4 @@ export default function Login() {
       </div>
     </div>
   );
-}
+          }
