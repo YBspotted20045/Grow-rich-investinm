@@ -1,270 +1,166 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { API } from "../axios"; // centralized axios instance
-import ParticlesBackground from "./ParticlesBackground"; // optional animated background component
+import API from "../axios";
+
+const states = [
+  "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue",
+  "Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT Abuja",
+  "Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara",
+  "Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers",
+  "Sokoto","Taraba","Yobe","Zamfara"
+];
 
 const Signup = () => {
-  const navigate = useNavigate();
-
-  // Form state
   const [formData, setFormData] = useState({
     fullName: "",
-    state: "",
-    age: "",
     email: "",
     password: "",
     confirmPassword: "",
-    referralCode: "",
+    state: "",
+    otp: ""
   });
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [referralStatus, setReferralStatus] = useState(null); // null, "valid", "invalid"
-  const [referralMessage, setReferralMessage] = useState("");
-
-  // Debounced referral code validation
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const code = formData.referralCode.trim().toUpperCase();
-      if (code.length > 0) {
-        API.get(`/referral/check/${code}`)
-          .then((res) => {
-            if (res.data.valid) {
-              setReferralStatus("valid");
-              setReferralMessage("Referral code is valid!");
-            } else {
-              setReferralStatus("invalid");
-              setReferralMessage("Referral code is invalid.");
-            }
-          })
-          .catch(() => {
-            setReferralStatus("invalid");
-            setReferralMessage("Error validating referral code.");
-          });
-      } else {
-        setReferralStatus(null);
-        setReferralMessage("");
-      }
-    }, 500);
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => setTimer(t => t - 1), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
 
-    return () => clearTimeout(timer);
-  }, [formData.referralCode]);
-
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "referralCode" ? value.toUpperCase() : value,
-    }));
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Validate form before submit
-  const validate = () => {
-    const errs = {};
-    if (!formData.fullName.trim()) errs.fullName = "Full name is required.";
-    if (!formData.state.trim()) errs.state = "State is required.";
-    if (!formData.age || parseInt(formData.age) < 18)
-      errs.age = "You must be at least 18 years old.";
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
-      errs.email = "Invalid email address.";
-    if (!formData.password || formData.password.length < 6)
-      errs.password = "Password must be at least 6 characters.";
-    if (formData.password !== formData.confirmPassword)
-      errs.confirmPassword = "Passwords do not match.";
-    if (formData.referralCode && referralStatus === "invalid")
-      errs.referralCode = "Invalid referral code.";
-    return errs;
+  const sendOtp = async () => {
+    if (!formData.email) return setError("Email is required");
+    try {
+      await API.post("/auth/send-otp", { email: formData.email });
+      setOtpSent(true);
+      setTimer(60);
+      setMessage("OTP sent! Check your email.");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP");
+    }
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+  const verifyOtp = async () => {
+    if (timer === 0) {
+      setError("OTP expired! Please resend.");
       return;
     }
-    setErrors({});
-    setLoading(true);
-
     try {
-      const res = await API.post("/signup", formData);
-      if (res.data.success) {
-        alert("Signup successful! Redirecting to login...");
-        navigate("/login");
-      } else {
-        alert(res.data.message || "Signup failed.");
-      }
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Network error. Please try again later."
-      );
-    } finally {
-      setLoading(false);
+      await API.post("/auth/verify-otp", {
+        email: formData.email,
+        otp: formData.otp
+      });
+      setOtpVerified(true);
+      setMessage("OTP verified! You can now complete signup.");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid OTP");
+    }
+  };
+
+  const register = async () => {
+    if (!formData.fullName || !formData.email || !formData.state || !formData.password || !formData.confirmPassword) {
+      return setError("All fields are required");
+    }
+    if (formData.password.length < 8) {
+      return setError("Password must be at least 8 characters");
+    }
+    if (formData.password !== formData.confirmPassword) {
+      return setError("Passwords do not match");
+    }
+    try {
+      await API.post("/auth/register", {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        state: formData.state
+      });
+      setMessage("Registration successful!");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-100">
-      <ParticlesBackground />
-      <form
-        onSubmit={handleSubmit}
-        className="relative z-10 bg-white p-8 rounded-xl shadow-lg w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+    <div>
+      <h1>Signup</h1>
 
-        {/* Full Name */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Full Name</label>
+      {!otpSent && (
+        <div>
           <input
             type="text"
             name="fullName"
+            placeholder="Full Name"
             value={formData.fullName}
             onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              errors.fullName ? "border-red-500" : "border-gray-300"
-            }`}
           />
-          {errors.fullName && (
-            <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-          )}
-        </div>
-
-        {/* State */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">State</label>
-          <input
-            type="text"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              errors.state ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.state && (
-            <p className="text-red-500 text-sm mt-1">{errors.state}</p>
-          )}
-        </div>
-
-        {/* Age */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Age</label>
-          <input
-            type="number"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              errors.age ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.age && (
-            <p className="text-red-500 text-sm mt-1">{errors.age}</p>
-          )}
-        </div>
-
-        {/* Email */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Email</label>
           <input
             type="email"
             name="email"
+            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-          )}
-        </div>
-
-        {/* Password */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Password</label>
           <input
             type="password"
             name="password"
+            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              errors.password ? "border-red-500" : "border-gray-300"
-            }`}
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-          )}
-        </div>
-
-        {/* Confirm Password */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Confirm Password</label>
           <input
             type="password"
             name="confirmPassword"
+            placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              errors.confirmPassword ? "border-red-500" : "border-gray-300"
-            }`}
           />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-          )}
+          <select name="state" value={formData.state} onChange={handleChange}>
+            <option value="">Select State</option>
+            {states.map(state => <option key={state} value={state}>{state}</option>)}
+          </select>
+          <button onClick={sendOtp}>Send OTP</button>
         </div>
+      )}
 
-        {/* Referral Code */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Referral Code (optional)</label>
+      {otpSent && !otpVerified && (
+        <div>
           <input
             type="text"
-            name="referralCode"
-            value={formData.referralCode}
+            name="otp"
+            placeholder="Enter OTP"
+            value={formData.otp}
             onChange={handleChange}
-            className={`w-full border p-2 rounded ${
-              referralStatus === "invalid"
-                ? "border-red-500"
-                : referralStatus === "valid"
-                ? "border-green-500"
-                : "border-gray-300"
-            }`}
           />
-          {referralMessage && (
-            <p
-              className={`text-sm mt-1 ${
-                referralStatus === "valid" ? "text-green-600" : "text-red-500"
-              }`}
-            >
-              {referralMessage}
-            </p>
-          )}
-          {errors.referralCode && (
-            <p className="text-red-500 text-sm mt-1">{errors.referralCode}</p>
-          )}
+          <button onClick={verifyOtp} disabled={timer === 0}>Verify OTP</button>
+          <div>
+            {timer > 0 ? (
+              <span>OTP expires in {timer}s</span>
+            ) : (
+              <button onClick={sendOtp}>Resend OTP</button>
+            )}
+          </div>
         </div>
+      )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded font-semibold mt-4"
-        >
-          {loading ? "Signing up..." : "Sign Up"}
-        </button>
+      {otpVerified && (
+        <div>
+          <button onClick={register}>Complete Signup</button>
+        </div>
+      )}
 
-        <p className="text-center mt-4 text-sm">
-          Already have an account?{" "}
-          <span
-            className="text-blue-600 cursor-pointer"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </span>
-        </p>
-      </form>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {message && <p style={{ color: "green" }}>{message}</p>}
     </div>
   );
 };
