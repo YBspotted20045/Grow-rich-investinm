@@ -1,84 +1,168 @@
-// src/pages/Profile.jsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// src/pages/Signup.jsx
+import React, { useState, useEffect } from "react";
+import { API } from "../axios"; // centralized axios instance
+import "./Signup.css"; // keep your original styling
 
-export default function Profile() {
-  const [user, setUser] = useState(null);
-  const [coins, setCoins] = useState({ balance: 0, transactions: [] });
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
-  const navigate = useNavigate();
+const statesList = [
+  "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River",
+  "Delta","Ebonyi","Edo","Ekiti","Enugu","FCT - Abuja","Gombe","Imo","Jigawa","Kaduna",
+  "Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun",
+  "Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"
+];
 
-  const API_BASE = "https://grow-0nfm.onrender.com";
+const Signup = () => {
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    state: "",
+    otp: "",
+  });
+  const [otpSent, setOtpSent] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
-    if (!token || !storedUser) {
-      navigate("/login");
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSendOtp = async () => {
+    if (!form.email) {
+      setError("Please enter your email to receive OTP.");
+      return;
+    }
+    try {
+      await API.post("/send-otp", { email: form.email });
+      setOtpSent(true);
+      setCountdown(60); // 60-second OTP countdown
+      setError("");
+      setSuccess("OTP sent! Check your email.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (form.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (!form.otp) {
+      setError("Please enter the OTP sent to your email.");
       return;
     }
 
-    setUser(storedUser);
-
-    const fetchCoins = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/coins/${storedUser.email}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          setCoins(data);
-        } else {
-          setErr(data.message || "Failed to fetch coin data");
-        }
-      } catch (error) {
-        console.error("Error fetching coins:", error);
-        setErr("Network error. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCoins();
-  }, [navigate]);
-
-  if (loading) {
-    return <div className="loading">Loading profile...</div>;
-  }
-
-  if (err) {
-    return <div className="error-message">{err}</div>;
-  }
+    try {
+      const response = await API.post("/signup", form);
+      setSuccess(response.data.message || "Account created successfully!");
+      setForm({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        state: "",
+        otp: "",
+      });
+      setOtpSent(false);
+      setCountdown(0);
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed.");
+    }
+  };
 
   return (
-    <div className="profile-page">
-      <h1>Profile</h1>
-      <div className="profile-details">
-        <p><strong>Name:</strong> {user?.name}</p>
-        <p><strong>Email:</strong> {user?.email}</p>
-        <p><strong>Coin Balance:</strong> {coins.balance} coins</p>
-      </div>
-
-      <h2>Transaction History</h2>
-      {coins.transactions.length === 0 ? (
-        <p>No transactions found.</p>
-      ) : (
-        <ul className="transactions-list">
-          {coins.transactions.map((tx, index) => (
-            <li key={index}>
-              <span>{tx.transactionType.toUpperCase()} - {tx.amount} coins</span>
-              <small>{tx.description}</small>
-              <small>{new Date(tx.timestamp).toLocaleString()}</small>
-            </li>
+    <div className="signup-container">
+      <h2 className="signup-title">Create Account</h2>
+      {error && <div className="signup-error">{error}</div>}
+      {success && <div className="signup-success">{success}</div>}
+      <form className="signup-form" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="fullName"
+          placeholder="Full Name"
+          value={form.fullName}
+          onChange={handleChange}
+          required
+        />
+        <select
+          name="state"
+          value={form.state}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select your state</option>
+          {statesList.map((state) => (
+            <option key={state} value={state}>{state}</option>
           ))}
-        </ul>
-      )}
+        </select>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <div className="password-group">
+          <input
+            type="password"
+            name="password"
+            placeholder="Password (min 8 chars)"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {otpSent && (
+          <div className="otp-group">
+            <input
+              type="text"
+              name="otp"
+              placeholder="Enter OTP"
+              value={form.otp}
+              onChange={handleChange}
+              required
+            />
+            <span className="otp-countdown">{countdown > 0 ? `${countdown}s` : ""}</span>
+          </div>
+        )}
+        {!otpSent && (
+          <button type="button" className="otp-button" onClick={handleSendOtp}>
+            Send OTP
+          </button>
+        )}
+        <button type="submit" className="signup-submit">
+          Sign Up
+        </button>
+      </form>
     </div>
   );
-}
+};
+
+export default Signup;
