@@ -6,6 +6,7 @@ const Referral = () => {
   const [referralCode, setReferralCode] = useState("");
   const [referrals, setReferrals] = useState([]);
   const [investmentTier, setInvestmentTier] = useState("");
+  const [withdrawalEligibility, setWithdrawalEligibility] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const backendURL = "https://grow-0nfm.onrender.com";
@@ -16,6 +17,7 @@ const Referral = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
+        // Fetch profile data
         const res = await API.get("/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -23,6 +25,13 @@ const Referral = () => {
         setReferralCode(res.data.referralCode || "");
         setReferrals(res.data.referrals || []);
         setInvestmentTier(res.data.investmentTier || "");
+
+        // Fetch withdrawal eligibility
+        const eligibilityRes = await API.get("/api/coins/eligibility", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setWithdrawalEligibility(eligibilityRes.data);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -84,6 +93,23 @@ const Referral = () => {
           <h2 className="font-bold mb-2">Referral Rules</h2>
           <p>{renderRules()}</p>
         </div>
+
+        {/* Withdrawal Eligibility */}
+        {withdrawalEligibility && (
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded">
+            <h2 className="font-bold mb-2">Withdrawal Status</h2>
+            {withdrawalEligibility.canWithdraw ? (
+              <p className="text-green-600 font-semibold">
+                ✅ You are eligible to withdraw now.
+              </p>
+            ) : (
+              <p className="text-red-600">
+                ❌ You need {withdrawalEligibility.remainingReferrals} more referral(s)
+                before you can withdraw.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Referral Stats */}
         <div className="mb-6">
