@@ -1,166 +1,166 @@
+// src/pages/Signup.jsx
 import React, { useState, useEffect } from "react";
-import API from "../axios";
+import { API } from "../axios"; // centralized axios instance
+import "./Signup.css"; // keep your original styling
 
-const states = [
-  "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue",
-  "Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT Abuja",
-  "Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara",
-  "Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers",
-  "Sokoto","Taraba","Yobe","Zamfara"
+const statesList = [
+  "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River",
+  "Delta","Ebonyi","Edo","Ekiti","Enugu","FCT - Abuja","Gombe","Imo","Jigawa","Kaduna",
+  "Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun",
+  "Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"
 ];
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
     state: "",
-    otp: ""
+    otp: "",
   });
   const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [timer, setTimer] = useState(0);
+  const [countdown, setCountdown] = useState(0);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    let interval;
-    if (timer > 0) {
-      interval = setInterval(() => setTimer(t => t - 1), 1000);
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     }
-    return () => clearInterval(interval);
-  }, [timer]);
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
-  const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const sendOtp = async () => {
-    if (!formData.email) return setError("Email is required");
-    try {
-      await API.post("/auth/send-otp", { email: formData.email });
-      setOtpSent(true);
-      setTimer(60);
-      setMessage("OTP sent! Check your email.");
-      setError("");
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to send OTP");
-    }
-  };
-
-  const verifyOtp = async () => {
-    if (timer === 0) {
-      setError("OTP expired! Please resend.");
+  const handleSendOtp = async () => {
+    if (!form.email) {
+      setError("Please enter your email to receive OTP.");
       return;
     }
     try {
-      await API.post("/auth/verify-otp", {
-        email: formData.email,
-        otp: formData.otp
-      });
-      setOtpVerified(true);
-      setMessage("OTP verified! You can now complete signup.");
+      await API.post("/send-otp", { email: form.email });
+      setOtpSent(true);
+      setCountdown(60); // 60-second OTP countdown
       setError("");
+      setSuccess("OTP sent! Check your email.");
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP");
+      setError(err.response?.data?.message || "Failed to send OTP.");
     }
   };
 
-  const register = async () => {
-    if (!formData.fullName || !formData.email || !formData.state || !formData.password || !formData.confirmPassword) {
-      return setError("All fields are required");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (form.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
     }
-    if (formData.password.length < 8) {
-      return setError("Password must be at least 8 characters");
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
     }
-    if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match");
+    if (!form.otp) {
+      setError("Please enter the OTP sent to your email.");
+      return;
     }
+
     try {
-      await API.post("/auth/register", {
-        name: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        state: formData.state
+      const response = await API.post("/signup", form);
+      setSuccess(response.data.message || "Account created successfully!");
+      setForm({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        state: "",
+        otp: "",
       });
-      setMessage("Registration successful!");
-      setError("");
+      setOtpSent(false);
+      setCountdown(0);
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      setError(err.response?.data?.message || "Signup failed.");
     }
   };
 
   return (
-    <div>
-      <h1>Signup</h1>
-
-      {!otpSent && (
-        <div>
-          <input
-            type="text"
-            name="fullName"
-            placeholder="Full Name"
-            value={formData.fullName}
-            onChange={handleChange}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+    <div className="signup-container">
+      <h2 className="signup-title">Create Account</h2>
+      {error && <div className="signup-error">{error}</div>}
+      {success && <div className="signup-success">{success}</div>}
+      <form className="signup-form" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="fullName"
+          placeholder="Full Name"
+          value={form.fullName}
+          onChange={handleChange}
+          required
+        />
+        <select
+          name="state"
+          value={form.state}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select your state</option>
+          {statesList.map((state) => (
+            <option key={state} value={state}>{state}</option>
+          ))}
+        </select>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <div className="password-group">
           <input
             type="password"
             name="password"
-            placeholder="Password"
-            value={formData.password}
+            placeholder="Password (min 8 chars)"
+            value={form.password}
             onChange={handleChange}
+            required
           />
           <input
             type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
-            value={formData.confirmPassword}
+            value={form.confirmPassword}
             onChange={handleChange}
+            required
           />
-          <select name="state" value={formData.state} onChange={handleChange}>
-            <option value="">Select State</option>
-            {states.map(state => <option key={state} value={state}>{state}</option>)}
-          </select>
-          <button onClick={sendOtp}>Send OTP</button>
         </div>
-      )}
-
-      {otpSent && !otpVerified && (
-        <div>
-          <input
-            type="text"
-            name="otp"
-            placeholder="Enter OTP"
-            value={formData.otp}
-            onChange={handleChange}
-          />
-          <button onClick={verifyOtp} disabled={timer === 0}>Verify OTP</button>
-          <div>
-            {timer > 0 ? (
-              <span>OTP expires in {timer}s</span>
-            ) : (
-              <button onClick={sendOtp}>Resend OTP</button>
-            )}
+        {otpSent && (
+          <div className="otp-group">
+            <input
+              type="text"
+              name="otp"
+              placeholder="Enter OTP"
+              value={form.otp}
+              onChange={handleChange}
+              required
+            />
+            <span className="otp-countdown">{countdown > 0 ? `${countdown}s` : ""}</span>
           </div>
-        </div>
-      )}
-
-      {otpVerified && (
-        <div>
-          <button onClick={register}>Complete Signup</button>
-        </div>
-      )}
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
+        )}
+        {!otpSent && (
+          <button type="button" className="otp-button" onClick={handleSendOtp}>
+            Send OTP
+          </button>
+        )}
+        <button type="submit" className="signup-submit">
+          Sign Up
+        </button>
+      </form>
     </div>
   );
 };
