@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import API from "../axios"; // Import centralized Axios instance
+import API from "../axios"; // central axios instance
 import "./Login.css";
 
 export default function Login() {
@@ -35,12 +35,10 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login error:", error);
-      if (error.response?.data?.message) {
-        setErr(error.response.data.message);
+      if (error.response) {
+        setErr(error.response.data.message || "Invalid credentials");
       } else {
         setErr("Network error. Please check your connection and try again.");
       }
@@ -68,7 +66,11 @@ export default function Login() {
       </div>
 
       <div className="top-logo">
-        <img src="/logo.png" alt="GrowRichInvestments" className="top-logo-img" />
+        <img
+          src="/logo.png"
+          alt="GrowRichInvestments"
+          className="top-logo-img"
+        />
         <div className="logo-sweep" />
       </div>
 
