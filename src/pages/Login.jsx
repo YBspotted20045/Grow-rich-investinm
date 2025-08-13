@@ -1,6 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import API from "../axios"; // Import centralized Axios instance
 import "./Login.css";
 
 export default function Login() {
@@ -9,9 +10,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
-
-  // Get API URL from environment or use default
-  const API_BASE = process.env.REACT_APP_API_URL || 'https://your-render-backend.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,29 +29,21 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password })
-      });
+      const { data } = await API.post("/api/login", { email, password });
 
-      const data = await response.json();
+      // Save token and user data
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-      if (response.ok) {
-        // Save token and user data
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        // Redirect to dashboard
-        navigate('/dashboard');
-      } else {
-        setErr(data.message || 'Invalid credentials');
-      }
+      // Redirect to dashboard
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Login error:', error);
-      setErr('Network error. Please check your connection and try again.');
+      console.error("Login error:", error);
+      if (error.response?.data?.message) {
+        setErr(error.response.data.message);
+      } else {
+        setErr("Network error. Please check your connection and try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -64,12 +54,16 @@ export default function Login() {
       <div className="lux-waves" />
       <div className="lux-particles">
         {[...Array(25)].map((_, i) => (
-          <span key={i} className="particle" style={{
-            left: `${Math.random()*100}%`,
-            top: `${Math.random()*100}%`,
-            animationDuration: `${6 + Math.random()*8}s`,
-            opacity: 0.2 + Math.random()*0.6
-          }} />
+          <span
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDuration: `${6 + Math.random() * 8}s`,
+              opacity: 0.2 + Math.random() * 0.6,
+            }}
+          />
         ))}
       </div>
 
@@ -86,10 +80,10 @@ export default function Login() {
             alt="bg"
             className="mini-logo"
             style={{
-              left: `${Math.random()*100}%`,
-              top: `${Math.random()*100}%`,
-              animationDuration: `${8 + Math.random()*12}s`,
-              transform: `scale(${0.5 + Math.random()*0.9})`
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDuration: `${8 + Math.random() * 12}s`,
+              transform: `scale(${0.5 + Math.random() * 0.9})`,
             }}
           />
         ))}
@@ -99,16 +93,23 @@ export default function Login() {
         <form className="lux-form" onSubmit={handleSubmit}>
           <h2>Welcome back</h2>
 
-          {err && <div className="form-error" style={{
-            backgroundColor: "rgba(255, 0, 0, 0.15)",
-            color: "#ff4d4d",
-            border: "1px solid rgba(255,0,0,0.3)",
-            padding: "10px",
-            borderRadius: "8px",
-            marginBottom: "10px",
-            textAlign: "center",
-            fontWeight: "500"
-          }}>{err}</div>}
+          {err && (
+            <div
+              className="form-error"
+              style={{
+                backgroundColor: "rgba(255, 0, 0, 0.15)",
+                color: "#ff4d4d",
+                border: "1px solid rgba(255,0,0,0.3)",
+                padding: "10px",
+                borderRadius: "8px",
+                marginBottom: "10px",
+                textAlign: "center",
+                fontWeight: "500",
+              }}
+            >
+              {err}
+            </div>
+          )}
 
           <label>Email</label>
           <input
@@ -134,10 +135,13 @@ export default function Login() {
           </button>
 
           <p className="switch">
-            Don’t have an account? <Link to="/signup" className="link-gold">Sign up</Link>
+            Don’t have an account?{" "}
+            <Link to="/signup" className="link-gold">
+              Sign up
+            </Link>
           </p>
         </form>
       </div>
     </div>
   );
-          }
+}
