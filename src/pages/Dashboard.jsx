@@ -15,7 +15,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_BASE = process.env.REACT_APP_API_URL || 'https://your-render-url.onrender.com';
+  // ✅ Updated backend URL
+  const API_BASE = process.env.REACT_APP_API_URL || 'https://grow-0nfm.onrender.com';
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -45,8 +46,6 @@ const Dashboard = () => {
       if (balanceRes.ok) {
         const data = await balanceRes.json();
         setCoins(data.balance || 0);
-        
-        // Extract investment data from user or wallet
         setInvestmentTier(data.investmentTier || currentUser.investmentTier || null);
         setReferralCount(data.referralCount || currentUser.referralCount || 0);
         setFirstWithdrawalDone(data.firstWithdrawalDone || currentUser.firstWithdrawalDone || false);
@@ -122,4 +121,24 @@ const Dashboard = () => {
         <div className="card">
           <h3>🔗 Your Referral Code</h3>
           <p className="referral-code">{referralCode || 'Not available'}</p>
-          {referralCode &&
+        </div>
+
+        {/* Withdrawal Eligibility */}
+        <div className="card">
+          <h3>✅ Withdrawal Eligibility</h3>
+          {eligibility ? (
+            eligibility.eligible ? (
+              <p className="eligible">You are eligible to withdraw 🎉</p>
+            ) : (
+              <p className="not-eligible">Not eligible yet — {eligibility.reason}</p>
+            )
+          ) : (
+            <p>Loading eligibility...</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
