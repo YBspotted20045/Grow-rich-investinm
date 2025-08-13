@@ -1,9 +1,39 @@
 // src/pages/Home.jsx
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const { data } = await axios.get(
+          'https://grow-0nfm.onrender.com/api/users/profile',
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        setUser(data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <div style={{ 
       padding: "2rem", 
@@ -13,19 +43,18 @@ const Home = () => {
       fontFamily: "Arial, sans-serif",
       lineHeight: "1.6"
     }}>
-      <h1 style={{ 
-        color: "#28a745", 
-        marginBottom: "1rem" 
-      }}>
-        Welcome to GrowRich Investments
+      <h1 style={{ color: "#28a745", marginBottom: "1rem" }}>
+        {loading
+          ? "Loading..."
+          : user
+          ? `Welcome, ${user.name}!`
+          : "Welcome to GrowRich Investments"}
       </h1>
       
-      <p style={{ 
-        fontSize: "18px", 
-        color: "#333", 
-        marginBottom: "2rem" 
-      }}>
-        Thank you for joining our investment community! You're now logged in and ready to grow your wealth with Mimi Coins.
+      <p style={{ fontSize: "18px", color: "#333", marginBottom: "2rem" }}>
+        {user
+          ? `You're now logged in and ready to grow your wealth with Mimi Coins. Your investment tier: ${user.investmentTier || 'Not set yet'}.`
+          : "Thank you for joining our investment community!"}
       </p>
 
       <div style={{
@@ -35,17 +64,8 @@ const Home = () => {
         padding: "1.5rem",
         marginBottom: "2rem"
       }}>
-        <h2 style={{ 
-          color: "#333", 
-          marginTop: 0 
-        }}>
-          🚀 What's Next?
-        </h2>
-        <ul style={{ 
-          textAlign: "left", 
-          display: "inline-block", 
-          margin: "15px 0" 
-        }}>
+        <h2 style={{ color: "#333", marginTop: 0 }}>🚀 What's Next?</h2>
+        <ul style={{ textAlign: "left", display: "inline-block", margin: "15px 0" }}>
           <li>✅ Complete your investment payment</li>
           <li>📤 Upload your payment receipt</li>
           <li>👥 Invite others using your referral code</li>
