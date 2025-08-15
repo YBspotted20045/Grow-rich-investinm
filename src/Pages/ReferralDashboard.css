@@ -1,0 +1,49 @@
+/* ReferralDashboard.css */
+
+.dashboard-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  font-family: 'Arial', sans-serif;
+}
+
+.dashboard-container h2 {
+  text-align: center;
+  color: #2575fc;
+  margin-bottom: 25px;
+}
+
+.investment-info p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  margin-top: 30px;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th,
+table td {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+table th {
+  background-color: #2575fc;
+  color: #fff;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
