@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API from "./axios"; // Centralized Axios instance
+import API from "../style/axios";// Centralized Axios instance
 import "./Signup.css"; // New CSS file for styling
 
 const states = [
