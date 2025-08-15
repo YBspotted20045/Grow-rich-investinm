@@ -156,5 +156,10 @@ const Signup = () => {
     </div>
   );
 };
-
+<p>
+  Already have an account?{" "}
+  <a href="/login" className="link">
+    Login here
+  </a>
+</p>
 export default Signup;
