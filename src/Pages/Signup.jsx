@@ -1,165 +1,137 @@
-// src/pages/Signup.jsx
 import React, { useState } from "react";
-import "./Signup.css";
+import API from "../axios"; // centralized Axios instance
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    age: "",
-    state: "",
-    referralCode: "",
-  });
-
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [age, setAge] = useState("");
+  const [state, setState] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState("");
 
-  const states = [
-    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi",
-    "Bayelsa", "Benue", "Borno", "Cross River", "Delta",
-    "Ebonyi", "Edo", "Ekiti", "Enugu", "Gombe", "Imo",
-    "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi",
-    "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo",
-    "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba",
-    "Yobe", "Zamfara", "FCT Abuja"
+  const statesList = [
+    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa",
+    "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti",
+    "Enugu", "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina",
+    "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo",
+    "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
   ];
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    setErrors("");
-
-    // Validations
-    if (formData.fullName.trim() === "") {
-      setErrors("Full Name is required.");
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
       return;
     }
-    if (!formData.email.includes("@")) {
-      setErrors("Valid Email is required.");
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters!");
       return;
     }
-    if (formData.password.length < 8) {
-      setErrors("Password must be at least 8 characters.");
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setErrors("Passwords do not match.");
-      return;
-    }
-    if (Number(formData.age) < 18) {
-      setErrors("You must be at least 18 years old.");
-      return;
-    }
-    if (!formData.state) {
-      setErrors("Please select your state.");
+    if (Number(age) < 18) {
+      alert("You must be at least 18 years old!");
       return;
     }
 
-    // If all validations pass
     setSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      alert("Registration successful!");
-      setSubmitting(false);
-      setFormData({
-        fullName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        age: "",
-        state: "",
-        referralCode: "",
+    try {
+      const response = await API.post("/auth/signup", {
+        fullName,
+        email,
+        password,
+        age,
+        state,
+        referralCode
       });
-    }, 1500);
+      console.log("Signup successful:", response.data);
+      // redirect to login or show success
+    } catch (error) {
+      console.error("Signup failed:", error.response?.data || error.message);
+      // show error to user
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="signup-container">
-      <h2>Sign Up</h2>
-      {errors && <p className="error">{errors}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSignup}>
+        <h2>Sign Up</h2>
         <input
           type="text"
-          name="fullName"
           placeholder="Full Name"
-          value={formData.fullName}
-          onChange={handleChange}
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
           disabled={submitting}
           required
         />
         <input
           type="email"
-          name="email"
           placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={submitting}
+          required
+        />
+        {/* OTP can be added later */}
+        <input
+          type="password"
+          placeholder="Password (min 8 chars)"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           disabled={submitting}
           required
         />
         <input
           type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          disabled={submitting}
-          required
-        />
-        <input
-          type="password"
-          name="confirmPassword"
           placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           disabled={submitting}
           required
         />
         <input
           type="number"
-          name="age"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
+          placeholder="Age (min 18)"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
           disabled={submitting}
           required
         />
         <select
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
+          value={state}
+          onChange={(e) => setState(e.target.value)}
           disabled={submitting}
           required
         >
           <option value="">Select State</option>
-          {states.map((st) => (
-            <option key={st} value={st}>{st}</option>
+          {statesList.map((s) => (
+            <option key={s} value={s}>{s}</option>
           ))}
         </select>
         <input
           type="text"
-          name="referralCode"
           placeholder="Referral Code (optional)"
-          value={formData.referralCode}
-          onChange={handleChange}
+          value={referralCode}
+          onChange={(e) => setReferralCode(e.target.value)}
           disabled={submitting}
         />
         <button type="submit" disabled={submitting}>
-          {submitting ? "Submitting..." : "Sign Up"}
+          {submitting ? "Signing up..." : "Sign Up"}
         </button>
+
+        {/* Link to Login page */}
+        <p>
+          Already have an account?{" "}
+          <a href="/login" className="link">
+            Login here
+          </a>
+        </p>
       </form>
     </div>
   );
 };
-<p>
-  Already have an account?{" "}
-  <a href="/login" className="link">
-    Login here
-  </a>
-</p>
+
 export default Signup;
