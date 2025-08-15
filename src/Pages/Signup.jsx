@@ -1,133 +1,167 @@
+// src/pages/Signup.jsx
 import React, { useState } from "react";
-import API from "../axios"; // centralized Axios instance
+import { Link } from "react-router-dom";
+import "./Signup.css"; // Your existing CSS
+import logo from "../assets/logo.png"; // Your logo
 
 const Signup = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [age, setAge] = useState("");
-  const [state, setState] = useState("");
-  const [referralCode, setReferralCode] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    age: "",
+    state: "",
+    referralCode: "",
+  });
+
   const [submitting, setSubmitting] = useState(false);
 
-  const statesList = [
-    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa",
-    "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti",
-    "Enugu", "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina",
-    "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo",
-    "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
-  ];
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const handleSignup = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters!");
-      return;
-    }
-    if (Number(age) < 18) {
-      alert("You must be at least 18 years old!");
-      return;
-    }
-
     setSubmitting(true);
 
-    try {
-      const response = await API.post("/auth/signup", {
-        fullName,
-        email,
-        password,
-        age,
-        state,
-        referralCode
-      });
-      console.log("Signup successful:", response.data);
-      // redirect to login or show success
-    } catch (error) {
-      console.error("Signup failed:", error.response?.data || error.message);
-      // show error to user
-    } finally {
+    if (formData.password.length < 8) {
+      alert("Password must be at least 8 characters");
       setSubmitting(false);
+      return;
     }
+
+    if (parseInt(formData.age) < 18) {
+      alert("You must be at least 18 years old");
+      setSubmitting(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      setSubmitting(false);
+      return;
+    }
+
+    // TODO: API call for signup
+    console.log("Signup data:", formData);
+    setSubmitting(false);
   };
 
   return (
     <div className="signup-container">
-      <form onSubmit={handleSignup}>
+      <img
+        src={logo}
+        alt="Logo"
+        className="animated-logo"
+        style={{ animation: "spin 5s linear infinite" }}
+      />
+      <form className="signup-form" onSubmit={handleSubmit}>
         <h2>Sign Up</h2>
         <input
           type="text"
+          name="fullName"
           placeholder="Full Name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          value={formData.fullName}
+          onChange={handleChange}
           disabled={submitting}
           required
         />
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={submitting}
-          required
-        />
-        {/* OTP can be added later */}
-        <input
-          type="password"
-          placeholder="Password (min 8 chars)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
           disabled={submitting}
           required
         />
         <input
           type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          disabled={submitting}
+          required
+        />
+        <input
+          type="password"
+          name="confirmPassword"
           placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          value={formData.confirmPassword}
+          onChange={handleChange}
           disabled={submitting}
           required
         />
         <input
           type="number"
-          placeholder="Age (min 18)"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
+          name="age"
+          placeholder="Age"
+          value={formData.age}
+          onChange={handleChange}
           disabled={submitting}
           required
         />
         <select
-          value={state}
-          onChange={(e) => setState(e.target.value)}
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
           disabled={submitting}
           required
         >
-          <option value="">Select State</option>
-          {statesList.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
+          <option value="">Select Your State</option>
+          <option value="Abia">Abia</option>
+          <option value="Adamawa">Adamawa</option>
+          <option value="Akwa Ibom">Akwa Ibom</option>
+          <option value="Anambra">Anambra</option>
+          <option value="Bauchi">Bauchi</option>
+          <option value="Bayelsa">Bayelsa</option>
+          <option value="Benue">Benue</option>
+          <option value="Borno">Borno</option>
+          <option value="Cross River">Cross River</option>
+          <option value="Delta">Delta</option>
+          <option value="Ebonyi">Ebonyi</option>
+          <option value="Edo">Edo</option>
+          <option value="Ekiti">Ekiti</option>
+          <option value="Enugu">Enugu</option>
+          <option value="FCT">FCT</option>
+          <option value="Gombe">Gombe</option>
+          <option value="Imo">Imo</option>
+          <option value="Jigawa">Jigawa</option>
+          <option value="Kaduna">Kaduna</option>
+          <option value="Kano">Kano</option>
+          <option value="Katsina">Katsina</option>
+          <option value="Kebbi">Kebbi</option>
+          <option value="Kogi">Kogi</option>
+          <option value="Kwara">Kwara</option>
+          <option value="Lagos">Lagos</option>
+          <option value="Nasarawa">Nasarawa</option>
+          <option value="Niger">Niger</option>
+          <option value="Ogun">Ogun</option>
+          <option value="Ondo">Ondo</option>
+          <option value="Osun">Osun</option>
+          <option value="Oyo">Oyo</option>
+          <option value="Plateau">Plateau</option>
+          <option value="Rivers">Rivers</option>
+          <option value="Sokoto">Sokoto</option>
+          <option value="Taraba">Taraba</option>
+          <option value="Yobe">Yobe</option>
+          <option value="Zamfara">Zamfara</option>
         </select>
         <input
           type="text"
-          placeholder="Referral Code (optional)"
-          value={referralCode}
-          onChange={(e) => setReferralCode(e.target.value)}
+          name="referralCode"
+          placeholder="Referral Code"
+          value={formData.referralCode}
+          onChange={handleChange}
           disabled={submitting}
         />
         <button type="submit" disabled={submitting}>
-          {submitting ? "Signing up..." : "Sign Up"}
+          {submitting ? "Submitting..." : "Sign Up"}
         </button>
-
-        {/* Link to Login page */}
         <p>
-          Already have an account?{" "}
-          <a href="/login" className="link">
-            Login here
-          </a>
+          Already have an account? <Link to="/login">Login here</Link>
         </p>
       </form>
     </div>
