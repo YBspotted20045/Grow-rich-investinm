@@ -1,6 +1,6 @@
 // src/pages/Referral.jsx
 import React, { useState, useEffect } from "react";
-import API from "../axios";
+import API from "../style/axios";
 
 const Referral = () => {
   const [referralCode, setReferralCode] = useState("");
