@@ -1,175 +1,145 @@
-// src/pages/Signup.jsx
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import API from "../axios"; // central axios instance
-import "./Login.css"; // use same styles as login
+import React, { useState, useEffect } from "react";
+import API from "./axios"; // Centralized Axios instance
+import "./Signup.css"; // New CSS file for styling
 
-export default function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-  const navigate = useNavigate();
+const states = [
+  "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa",
+  "Benue","Borno","Cross River","Delta","Ebonyi","Edo","Ekiti",
+  "Enugu","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi",
+  "Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun",
+  "Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara","FCT"
+];
+
+const Signup = () => {
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    state: "",
+    password: "",
+    confirmPassword: "",
+    otp: ""
+  });
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    let timer;
+    if (otpTimer > 0) {
+      timer = setTimeout(() => setOtpTimer(otpTimer - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [otpTimer]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const sendOtp = async () => {
+    if (!form.email) return setMessage("Enter your email to receive OTP");
+    try {
+      await API.post("/send-otp", { email: form.email });
+      setOtpSent(true);
+      setOtpTimer(120);
+      setMessage("OTP sent! Check your email.");
+    } catch (err) {
+      setMessage("Error sending OTP. Try again.");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr("");
-    setLoading(true);
 
-    // Validation
-    if (name.trim().length < 3) {
-      setErr("Name must be at least 3 characters.");
-      setLoading(false);
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setErr("Please enter a valid email.");
-      setLoading(false);
-      return;
-    }
-    if (password.length < 6) {
-      setErr("Password must be at least 6 characters.");
-      setLoading(false);
-      return;
-    }
-    if (password !== confirmPassword) {
-      setErr("Passwords do not match.");
-      setLoading(false);
-      return;
-    }
+    if (form.password.length < 8 || form.confirmPassword.length < 8)
+      return setMessage("Password must be at least 8 characters");
+
+    if (form.password !== form.confirmPassword)
+      return setMessage("Passwords do not match");
+
+    if (!otpSent || otpTimer <= 0)
+      return setMessage("Please verify your OTP first");
 
     try {
-      await API.post("/api/signup", { name, email, password });
-      navigate("/login");
-    } catch (error) {
-      if (error.response) {
-        setErr(error.response.data.message || "Signup failed");
-      } else {
-        setErr("Network error. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+      const res = await API.post("/signup", form);
+      setMessage(res.data.message || "Registration successful!");
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="lux-login-page">
-      <div className="lux-waves" />
-      <div className="lux-particles">
-        {[...Array(25)].map((_, i) => (
-          <span
-            key={i}
-            className="particle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDuration: `${6 + Math.random() * 8}s`,
-              opacity: 0.2 + Math.random() * 0.6,
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="top-logo">
-        <img
-          src="/logo.png"
-          alt="GrowRichInvestments"
-          className="top-logo-img"
-        />
-        <div className="logo-sweep" />
-      </div>
-
-      <div className="moving-logos">
-        {[...Array(30)].map((_, i) => (
-          <img
-            key={i}
-            src="/logo.png"
-            alt="bg"
-            className="mini-logo"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDuration: `${8 + Math.random() * 12}s`,
-              transform: `scale(${0.5 + Math.random() * 0.9})`,
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="form-wrap">
-        <form className="lux-form" onSubmit={handleSubmit}>
-          <h2>Create your account</h2>
-
-          {err && (
-            <div
-              className="form-error"
-              style={{
-                backgroundColor: "rgba(255, 0, 0, 0.15)",
-                color: "#ff4d4d",
-                border: "1px solid rgba(255,0,0,0.3)",
-                padding: "10px",
-                borderRadius: "8px",
-                marginBottom: "10px",
-                textAlign: "center",
-                fontWeight: "500",
-              }}
-            >
-              {err}
-            </div>
-          )}
-
-          <label>Full Name</label>
+    <div className="signup-container">
+      <div className="signup-card">
+        <h2>Create Account</h2>
+        {message && <p className="signup-message">{message}</p>}
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={loading}
+            name="fullName"
+            placeholder="Full Name"
+            value={form.fullName}
+            onChange={handleChange}
             required
           />
-
-          <label>Email</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
             required
           />
-
-          <label>Password</label>
+          <select
+            name="state"
+            value={form.state}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select State</option>
+            {states.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-            minLength={6}
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
             required
           />
-
-          <label>Confirm Password</label>
           <input
             type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            disabled={loading}
-            minLength={6}
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
             required
           />
-
-          <button className="lux-btn" type="submit" disabled={loading}>
-            {loading ? <span className="spinner" /> : "Sign Up"}
-          </button>
-
-          <p className="switch">
-            Already have an account?{" "}
-            <Link to="/login" className="link-gold">
-              Login
-            </Link>
-          </p>
+          <div className="otp-section">
+            <button
+              type="button"
+              onClick={sendOtp}
+              disabled={otpTimer > 0}
+              className="otp-btn"
+            >
+              {otpTimer > 0 ? `Resend OTP in ${otpTimer}s` : "Send OTP"}
+            </button>
+            <input
+              type="text"
+              name="otp"
+              placeholder="Enter OTP"
+              value={form.otp}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit" className="signup-btn">Register</button>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default Signup;
