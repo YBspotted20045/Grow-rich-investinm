@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import API from "../axios"; // central axios instance
+import API from "../style/axios"; // central axios instance
 import "./Login.css";
 
 export default function Login() {
