@@ -1,9 +1,9 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import Signup from './Pages/Signup';
+import Login from './Pages/Login';
+import Dashboard from './Pages/Dashboard';
 import Logo from './components/Logo'; // animated logo component
 
 const App = () => {
