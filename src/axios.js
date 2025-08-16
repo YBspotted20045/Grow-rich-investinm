@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://your-backend-url.com/api", // <-- Replace with your Render backend URL
+  baseURL: "https://grow-0nfm.onrender.com", // <-- Replace with your Render backend URL
   headers: {
     "Content-Type": "application/json",
   },
