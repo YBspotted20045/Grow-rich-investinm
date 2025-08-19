@@ -4,8 +4,10 @@ import "./Login.css";
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
+
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,14 +15,24 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
+
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
     console.log("Login submitted:", formData);
-    // TODO: connect this with your backend API
+    // send to backend here
   };
 
   return (
     <div className="login-container">
       <img src="logo.png" alt="GrowRich Investments" className="logo" />
       <h2>Welcome back</h2>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -40,6 +52,7 @@ export default function Login() {
         />
         <button type="submit">Login</button>
       </form>
+
       <p className="link">
         Don’t have an account? <a href="/signup">Sign up</a>
       </p>
