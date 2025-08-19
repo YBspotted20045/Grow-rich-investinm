@@ -3,20 +3,22 @@ import "./Signup.css";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    fullName: "",
+    fullname: "",
     email: "",
     password: "",
     confirmPassword: "",
+    state: "",
     referralCode: "",
-    state: ""
   });
 
+  const [error, setError] = useState("");
+
   const states = [
-    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
-    "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo",
-    "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
-    "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
-    "Sokoto", "Taraba", "Yobe", "Zamfara"
+    "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
+    "Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT - Abuja","Gombe",
+    "Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos",
+    "Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto",
+    "Taraba","Yobe","Zamfara"
   ];
 
   const handleChange = (e) => {
@@ -25,34 +27,39 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
 
     if (formData.password.length < 8) {
-      alert("Password must be at least 8 characters long.");
+      setError("Password must be at least 8 characters long.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match.");
       return;
     }
 
     console.log("Signup submitted:", formData);
-    // TODO: connect this with your backend API
+    // send to backend here
   };
 
   return (
     <div className="signup-container">
       <img src="logo.png" alt="GrowRich Investments" className="logo" />
       <h2>Create Account</h2>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="fullName"
+          name="fullname"
           placeholder="Full Name"
-          value={formData.fullName}
+          value={formData.fullname}
           onChange={handleChange}
           required
         />
+
         <input
           type="email"
           name="email"
@@ -61,31 +68,25 @@ export default function Signup() {
           onChange={handleChange}
           required
         />
+
         <input
           type="password"
           name="password"
           placeholder="Password (min 8 characters)"
           value={formData.password}
           onChange={handleChange}
-          minLength={8}
           required
         />
+
         <input
           type="password"
           name="confirmPassword"
           placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          minLength={8}
           required
         />
-        <input
-          type="text"
-          name="referralCode"
-          placeholder="Referral Code (Optional)"
-          value={formData.referralCode}
-          onChange={handleChange}
-        />
+
         <select
           name="state"
           value={formData.state}
@@ -93,15 +94,25 @@ export default function Signup() {
           required
         >
           <option value="">Select State</option>
-          {states.map((state, index) => (
-            <option key={index} value={state}>{state}</option>
+          {states.map((s) => (
+            <option key={s} value={s}>{s}</option>
           ))}
         </select>
+
+        <input
+          type="text"
+          name="referralCode"
+          placeholder="Referral Code (Optional)"
+          value={formData.referralCode}
+          onChange={handleChange}
+        />
+
         <button type="submit">Sign Up</button>
       </form>
+
       <p className="link">
         Already have an account? <a href="/login">Login</a>
       </p>
     </div>
   );
-          }
+}
