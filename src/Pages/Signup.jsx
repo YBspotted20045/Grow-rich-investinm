@@ -1,77 +1,146 @@
 import React, { useState } from "react";
-import "./Signup.css";
-import logo from "../assets/logo.png"; // adjust if your logo is elsewhere
+import { Link } from "react-router-dom";
+import "./SignUp.css";
 
-const Signup = () => {
+export default function SignUp() {
   const [formData, setFormData] = useState({
-    fullname: "",
+    fullName: "",
+    state: "",
+    age: "",
     email: "",
     password: "",
-    state: "",
+    confirmPassword: "",
+    referralCode: ""
   });
 
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setError("");
+    console.log("Form submitted:", formData);
+    // ✅ Here you will later connect API request for signup
+  };
+
   return (
-    <div className="signup-page">
-      {/* Logo at the top */}
-      <div className="logo-container">
-        <img src={logo} alt="GrowRich Logo" className="logo" />
-      </div>
+    <div className="signup-container">
+      <img src="/logo.png" alt="GrowRich Investments" className="logo" />
+      <h2>Create Account</h2>
 
-      {/* Signup form box */}
-      <div className="signup-container">
-        <h2>Sign Up</h2>
-        <form>
-          <input type="text" placeholder="Full Name" name="fullname" required />
-          <input type="email" placeholder="Email" name="email" required />
-          <input type="password" placeholder="Password" name="password" required />
+      {error && <p className="error">{error}</p>}
 
-          {/* Full Nigeria States + FCT */}
-          <select name="state" required>
-            <option value="">Select Your State</option>
-            <option value="Abia">Abia</option>
-            <option value="Adamawa">Adamawa</option>
-            <option value="Akwa Ibom">Akwa Ibom</option>
-            <option value="Anambra">Anambra</option>
-            <option value="Bauchi">Bauchi</option>
-            <option value="Bayelsa">Bayelsa</option>
-            <option value="Benue">Benue</option>
-            <option value="Borno">Borno</option>
-            <option value="Cross River">Cross River</option>
-            <option value="Delta">Delta</option>
-            <option value="Ebonyi">Ebonyi</option>
-            <option value="Edo">Edo</option>
-            <option value="Ekiti">Ekiti</option>
-            <option value="Enugu">Enugu</option>
-            <option value="FCT">FCT (Abuja)</option>
-            <option value="Gombe">Gombe</option>
-            <option value="Imo">Imo</option>
-            <option value="Jigawa">Jigawa</option>
-            <option value="Kaduna">Kaduna</option>
-            <option value="Kano">Kano</option>
-            <option value="Katsina">Katsina</option>
-            <option value="Kebbi">Kebbi</option>
-            <option value="Kogi">Kogi</option>
-            <option value="Kwara">Kwara</option>
-            <option value="Lagos">Lagos</option>
-            <option value="Nasarawa">Nasarawa</option>
-            <option value="Niger">Niger</option>
-            <option value="Ogun">Ogun</option>
-            <option value="Ondo">Ondo</option>
-            <option value="Osun">Osun</option>
-            <option value="Oyo">Oyo</option>
-            <option value="Plateau">Plateau</option>
-            <option value="Rivers">Rivers</option>
-            <option value="Sokoto">Sokoto</option>
-            <option value="Taraba">Taraba</option>
-            <option value="Yobe">Yobe</option>
-            <option value="Zamfara">Zamfara</option>
-          </select>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="fullName"
+          placeholder="Full name"
+          value={formData.fullName}
+          onChange={handleChange}
+          required
+        />
 
-          <button type="submit">Register</button>
-        </form>
-      </div>
+        <select
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select state</option>
+          {/* ✅ already complete list of 36 states + FCT */}
+          <option value="Abia - Umuahia">Abia - Umuahia</option>
+          <option value="Adamawa - Yola">Adamawa - Yola</option>
+          <option value="Akwa Ibom - Uyo">Akwa Ibom - Uyo</option>
+          <option value="Anambra - Awka">Anambra - Awka</option>
+          <option value="Bauchi - Bauchi">Bauchi - Bauchi</option>
+          <option value="Bayelsa - Yenagoa">Bayelsa - Yenagoa</option>
+          <option value="Benue - Makurdi">Benue - Makurdi</option>
+          <option value="Borno - Maiduguri">Borno - Maiduguri</option>
+          <option value="Cross River - Calabar">Cross River - Calabar</option>
+          <option value="Delta - Asaba">Delta - Asaba</option>
+          <option value="Ebonyi - Abakaliki">Ebonyi - Abakaliki</option>
+          <option value="Edo - Benin City">Edo - Benin City</option>
+          <option value="Ekiti - Ado-Ekiti">Ekiti - Ado-Ekiti</option>
+          <option value="Enugu - Enugu">Enugu - Enugu</option>
+          <option value="Gombe - Gombe">Gombe - Gombe</option>
+          <option value="Imo - Owerri">Imo - Owerri</option>
+          <option value="Jigawa - Dutse">Jigawa - Dutse</option>
+          <option value="Kaduna - Kaduna">Kaduna - Kaduna</option>
+          <option value="Kano - Kano">Kano - Kano</option>
+          <option value="Katsina - Katsina">Katsina - Katsina</option>
+          <option value="Kebbi - Birnin Kebbi">Kebbi - Birnin Kebbi</option>
+          <option value="Kogi - Lokoja">Kogi - Lokoja</option>
+          <option value="Kwara - Ilorin">Kwara - Ilorin</option>
+          <option value="Lagos - Ikeja">Lagos - Ikeja</option>
+          <option value="Nasarawa - Lafia">Nasarawa - Lafia</option>
+          <option value="Niger - Minna">Niger - Minna</option>
+          <option value="Ogun - Abeokuta">Ogun - Abeokuta</option>
+          <option value="Ondo - Akure">Ondo - Akure</option>
+          <option value="Osun - Osogbo">Osun - Osogbo</option>
+          <option value="Oyo - Ibadan">Oyo - Ibadan</option>
+          <option value="Plateau - Jos">Plateau - Jos</option>
+          <option value="Rivers - Port Harcourt">Rivers - Port Harcourt</option>
+          <option value="Sokoto - Sokoto">Sokoto - Sokoto</option>
+          <option value="Taraba - Jalingo">Taraba - Jalingo</option>
+          <option value="Yobe - Damaturu">Yobe - Damaturu</option>
+          <option value="Zamfara - Gusau">Zamfara - Gusau</option>
+          <option value="FCT - Abuja">FCT - Abuja</option>
+        </select>
+
+        <input
+          type="number"
+          name="age"
+          placeholder="Age"
+          value={formData.age}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="text"
+          name="referralCode"
+          placeholder="Referral Code (Optional)"
+          value={formData.referralCode}
+          onChange={handleChange}
+        />
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <p className="link">
+        Already have an account? <Link to="/login">Login</Link>
+      </p>
     </div>
   );
-};
-
-export default Signup;
+}
