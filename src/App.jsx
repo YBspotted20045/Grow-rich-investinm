@@ -3,8 +3,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Importing pages (not components)
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
+import Signup from "./Pages/Signup";
+import Login from "./Pages/Login";
 
 function App() {
   return (
