@@ -1,61 +1,55 @@
 import React, { useState } from "react";
+import API from "../axios"; // your axios instance
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-export default function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long.");
-      return;
+    setLoading(true);
+    try {
+      const res = await API.post("/auth/login", { email, password });
+      localStorage.setItem("token", res.data.token);
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
     }
-
-    console.log("Login submitted:", formData);
-    // send to backend here
+    setLoading(false);
   };
 
   return (
     <div className="login-container">
-      <img src="logo.png" alt="GrowRich Investments" className="logo" />
-      <h2>Welcome back</h2>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <form onSubmit={handleSubmit}>
+      <img src="/assets/logo.png" alt="Logo" className="logo" />
+      <h2>Sign In</h2>
+      <form onSubmit={handleLogin}>
         <input
           type="email"
-          name="email"
           placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
         <input
           type="password"
-          name="password"
           placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Signing In..." : "Sign In"}
+        </button>
       </form>
-
-      <p className="link">
-        Don’t have an account? <a href="/signup">Sign up</a>
-      </p>
+      <div className="link">
+        <a href="/signup">Don’t have an account? Sign Up</a>
+      </div>
     </div>
   );
 }
+
+export default Login;
