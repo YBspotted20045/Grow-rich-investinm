@@ -1,19 +1,23 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./SignUp.css";
+import "./Signup.css";
 
-export default function SignUp() {
+export default function Signup() {
   const [formData, setFormData] = useState({
     fullName: "",
-    state: "",
-    age: "",
     email: "",
     password: "",
     confirmPassword: "",
-    referralCode: ""
+    referralCode: "",
+    state: ""
   });
 
-  const [error, setError] = useState("");
+  const states = [
+    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+    "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo",
+    "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
+    "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
+    "Sokoto", "Taraba", "Yobe", "Zamfara"
+  ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,84 +25,31 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+
+    if (formData.password.length < 8) {
+      alert("Password must be at least 8 characters long.");
       return;
     }
-    setError("");
-    console.log("Form submitted:", formData);
-    // ✅ Here you will later connect API request for signup
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    console.log("Signup submitted:", formData);
+    // TODO: connect this with your backend API
   };
 
   return (
     <div className="signup-container">
-      <img src="/logo.png" alt="GrowRich Investments" className="logo" />
+      <img src="logo.png" alt="GrowRich Investments" className="logo" />
       <h2>Create Account</h2>
-
-      {error && <p className="error">{error}</p>}
-
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="fullName"
-          placeholder="Full name"
+          placeholder="Full Name"
           value={formData.fullName}
-          onChange={handleChange}
-          required
-        />
-
-        <select
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select state</option>
-          {/* ✅ already complete list of 36 states + FCT */}
-          <option value="Abia - Umuahia">Abia - Umuahia</option>
-          <option value="Adamawa - Yola">Adamawa - Yola</option>
-          <option value="Akwa Ibom - Uyo">Akwa Ibom - Uyo</option>
-          <option value="Anambra - Awka">Anambra - Awka</option>
-          <option value="Bauchi - Bauchi">Bauchi - Bauchi</option>
-          <option value="Bayelsa - Yenagoa">Bayelsa - Yenagoa</option>
-          <option value="Benue - Makurdi">Benue - Makurdi</option>
-          <option value="Borno - Maiduguri">Borno - Maiduguri</option>
-          <option value="Cross River - Calabar">Cross River - Calabar</option>
-          <option value="Delta - Asaba">Delta - Asaba</option>
-          <option value="Ebonyi - Abakaliki">Ebonyi - Abakaliki</option>
-          <option value="Edo - Benin City">Edo - Benin City</option>
-          <option value="Ekiti - Ado-Ekiti">Ekiti - Ado-Ekiti</option>
-          <option value="Enugu - Enugu">Enugu - Enugu</option>
-          <option value="Gombe - Gombe">Gombe - Gombe</option>
-          <option value="Imo - Owerri">Imo - Owerri</option>
-          <option value="Jigawa - Dutse">Jigawa - Dutse</option>
-          <option value="Kaduna - Kaduna">Kaduna - Kaduna</option>
-          <option value="Kano - Kano">Kano - Kano</option>
-          <option value="Katsina - Katsina">Katsina - Katsina</option>
-          <option value="Kebbi - Birnin Kebbi">Kebbi - Birnin Kebbi</option>
-          <option value="Kogi - Lokoja">Kogi - Lokoja</option>
-          <option value="Kwara - Ilorin">Kwara - Ilorin</option>
-          <option value="Lagos - Ikeja">Lagos - Ikeja</option>
-          <option value="Nasarawa - Lafia">Nasarawa - Lafia</option>
-          <option value="Niger - Minna">Niger - Minna</option>
-          <option value="Ogun - Abeokuta">Ogun - Abeokuta</option>
-          <option value="Ondo - Akure">Ondo - Akure</option>
-          <option value="Osun - Osogbo">Osun - Osogbo</option>
-          <option value="Oyo - Ibadan">Oyo - Ibadan</option>
-          <option value="Plateau - Jos">Plateau - Jos</option>
-          <option value="Rivers - Port Harcourt">Rivers - Port Harcourt</option>
-          <option value="Sokoto - Sokoto">Sokoto - Sokoto</option>
-          <option value="Taraba - Jalingo">Taraba - Jalingo</option>
-          <option value="Yobe - Damaturu">Yobe - Damaturu</option>
-          <option value="Zamfara - Gusau">Zamfara - Gusau</option>
-          <option value="FCT - Abuja">FCT - Abuja</option>
-        </select>
-
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={formData.age}
           onChange={handleChange}
           required
         />
@@ -113,9 +64,10 @@ export default function SignUp() {
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="Password (min 8 characters)"
           value={formData.password}
           onChange={handleChange}
+          minLength={8}
           required
         />
         <input
@@ -124,9 +76,9 @@ export default function SignUp() {
           placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
+          minLength={8}
           required
         />
-
         <input
           type="text"
           name="referralCode"
@@ -134,13 +86,22 @@ export default function SignUp() {
           value={formData.referralCode}
           onChange={handleChange}
         />
-
+        <select
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select State</option>
+          {states.map((state, index) => (
+            <option key={index} value={state}>{state}</option>
+          ))}
+        </select>
         <button type="submit">Sign Up</button>
       </form>
-
       <p className="link">
-        Already have an account? <Link to="/login">Login</Link>
+        Already have an account? <a href="/login">Login</a>
       </p>
     </div>
   );
-}
+          }
