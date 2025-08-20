@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../axios"; // centralized axios instance
+import API from "../axios"; // <-- centralized axios instance
 import "./Signup.css";
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -15,7 +17,6 @@ export default function Signup() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const states = [
     "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -46,21 +47,19 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const response = await API.post("/auth/signup", {
-        fullname: formData.fullname,
-        email: formData.email,
-        password: formData.password,
-        state: formData.state,
-        referralCode: formData.referralCode,
-      });
+      const res = await API.post("/auth/signup", formData);
 
-      // ✅ Save token and redirect
-      localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+      if (res.data.success) {
+        // save token in localStorage
+        localStorage.setItem("token", res.data.token);
+
+        // redirect to dashboard
+        navigate("/dashboard");
+      } else {
+        setError(res.data.message || "Signup failed. Try again.");
+      }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Signup failed. Please try again."
-      );
+      setError("Signup failed. Please check your details.");
     }
 
     setLoading(false);
