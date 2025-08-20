@@ -12,6 +12,7 @@ export default function Signup() {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const states = [
     "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -25,7 +26,7 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -39,8 +40,19 @@ export default function Signup() {
       return;
     }
 
-    console.log("Signup submitted:", formData);
-    // send to backend here
+    setLoading(true);
+
+    try {
+      // TODO: send to backend
+      console.log("Signup submitted:", formData);
+
+      // simulate request
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    } catch (err) {
+      setError("Signup failed. Try again.");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -58,6 +70,7 @@ export default function Signup() {
           value={formData.fullname}
           onChange={handleChange}
           required
+          disabled={loading}
         />
 
         <input
@@ -67,6 +80,7 @@ export default function Signup() {
           value={formData.email}
           onChange={handleChange}
           required
+          disabled={loading}
         />
 
         <input
@@ -76,6 +90,7 @@ export default function Signup() {
           value={formData.password}
           onChange={handleChange}
           required
+          disabled={loading}
         />
 
         <input
@@ -85,6 +100,7 @@ export default function Signup() {
           value={formData.confirmPassword}
           onChange={handleChange}
           required
+          disabled={loading}
         />
 
         <select
@@ -92,6 +108,7 @@ export default function Signup() {
           value={formData.state}
           onChange={handleChange}
           required
+          disabled={loading}
         >
           <option value="">Select State</option>
           {states.map((s) => (
@@ -105,9 +122,12 @@ export default function Signup() {
           placeholder="Referral Code (Optional)"
           value={formData.referralCode}
           onChange={handleChange}
+          disabled={loading}
         />
 
-        <button type="submit">Sign Up</button>
+        <button type="submit" disabled={loading}>
+          {loading ? <span className="spinner"></span> : "Sign Up"}
+        </button>
       </form>
 
       <p className="link">
