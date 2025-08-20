@@ -1,4 +1,18 @@
 /* Full page background */
+/* Fix background for login page */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  background-attachment: fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 html, body {
   margin: 0;
   padding: 0;
