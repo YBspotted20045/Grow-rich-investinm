@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../axios"; // centralized axios instance
 import "./Signup.css";
 
 export default function Signup() {
@@ -13,6 +15,7 @@ export default function Signup() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const states = [
     "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -43,13 +46,21 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      // TODO: send to backend
-      console.log("Signup submitted:", formData);
+      const response = await API.post("/auth/signup", {
+        fullname: formData.fullname,
+        email: formData.email,
+        password: formData.password,
+        state: formData.state,
+        referralCode: formData.referralCode,
+      });
 
-      // simulate request
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // ✅ Save token and redirect
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
     } catch (err) {
-      setError("Signup failed. Try again.");
+      setError(
+        err.response?.data?.message || "Signup failed. Please try again."
+      );
     }
 
     setLoading(false);
@@ -57,7 +68,7 @@ export default function Signup() {
 
   return (
     <div className="signup-container">
-      <img src="logo.png" alt="GrowRich Investments" className="logo" />
+      <img src="/assets/logo.png" alt="GrowRich Investments" className="logo" />
       <h2>Create Account</h2>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
