@@ -32,17 +32,23 @@ function Login() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
+          disabled={loading} // disable while loading
+          required
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
+          disabled={loading} // disable while loading
+          required
         />
         <button type="submit" disabled={loading}>
-          {loading ? "Signing In..." : "Sign In"}
+          {loading ? (
+            <span className="spinner"></span> // spinner animation
+          ) : (
+            "Sign In"
+          )}
         </button>
       </form>
       <div className="link">
