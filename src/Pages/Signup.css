@@ -11,6 +11,12 @@ html, body {
   align-items: center;
   justify-content: center;
 }
+.signup-container input:disabled,
+.signup-container select:disabled,
+.signup-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 .spinner {
   display: inline-block;
   width: 18px;
