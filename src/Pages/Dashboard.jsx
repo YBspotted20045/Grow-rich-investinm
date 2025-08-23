@@ -1,35 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import API from "../axios"; // axios instance
 import "./Dashboard.css";
 
-const Dashboard = ({ userData }) => {
+const Dashboard = () => {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await API.get("/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserData(res.data);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   if (!userData) {
     return <p>Loading...</p>;
   }
 
-  const { fullName, email, investment, investmentDate } = userData;
+  const { username, email, investmentAmount, createdAt } = userData;
 
-  // Calculate expected earnings after 10 days
+  // Calculate expected earnings after 14 days
   let earnings = 0;
-  if (investment && investmentDate) {
-    const investDate = new Date(investmentDate);
+  if (investmentAmount && createdAt) {
+    const investDate = new Date(createdAt);
     const today = new Date();
-    const diffDays = Math.floor(
-      (today - investDate) / (1000 * 60 * 60 * 24)
-    );
+    const diffDays = Math.floor((today - investDate) / (1000 * 60 * 60 * 24));
 
-    if (diffDays >= 10) {
-      earnings = investment * 2;
+    if (diffDays >= 14) {
+      earnings = investmentAmount * 2;
     }
   }
 
   return (
     <div className="dashboard-container">
-      <h2>Welcome, {fullName}</h2>
+      <h2>Welcome, {username}</h2>
       <div className="dashboard-info">
         <p><strong>Email:</strong> {email}</p>
-        <p><strong>Investment:</strong> ₦{investment || 0}</p>
-        <p><strong>Investment Date:</strong> {investmentDate ? new Date(investmentDate).toLocaleDateString() : "N/A"}</p>
-        <p><strong>Expected Earnings (after 10 days):</strong> ₦{earnings}</p>
+        <p><strong>Investment:</strong> ₦{investmentAmount || 0}</p>
+        <p><strong>Investment Date:</strong> {createdAt ? new Date(createdAt).toLocaleDateString() : "N/A"}</p>
+        <p><strong>Expected Earnings (after 14 days):</strong> ₦{earnings}</p>
       </div>
     </div>
   );
