@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../axios"; // axios instance
+import API from "../axios";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -36,6 +36,7 @@ const Dashboard = () => {
     referredBy,
     paymentConfirmed,
     createdAt,
+    referrals = [],
   } = userData;
 
   // Calculate expected earnings after 14 days
@@ -44,7 +45,6 @@ const Dashboard = () => {
     const investDate = new Date(createdAt);
     const today = new Date();
     const diffDays = Math.floor((today - investDate) / (1000 * 60 * 60 * 24));
-
     if (diffDays >= 14) {
       earnings = investmentAmount * 2;
     }
@@ -65,6 +65,23 @@ const Dashboard = () => {
           <strong>Payment Status:</strong>{" "}
           {paymentConfirmed ? "✅ Confirmed" : "⏳ Pending"}
         </p>
+      </div>
+
+      {/* Referrals Section */}
+      <div className="referrals-section">
+        <h3>Your Referrals</h3>
+        {referrals.length === 0 ? (
+          <p>No referrals yet.</p>
+        ) : (
+          <ul>
+            {referrals.map((ref) => (
+              <li key={ref._id}>
+                {ref.username} – {ref.email} (Joined:{" "}
+                {new Date(ref.createdAt).toLocaleDateString()})
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
