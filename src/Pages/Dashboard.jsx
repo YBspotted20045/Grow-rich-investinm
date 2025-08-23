@@ -27,7 +27,16 @@ const Dashboard = () => {
     return <p>Loading...</p>;
   }
 
-  const { username, email, investmentAmount, createdAt } = userData;
+  const {
+    username,
+    email,
+    state,
+    investmentAmount,
+    referralCode,
+    referredBy,
+    paymentConfirmed,
+    createdAt,
+  } = userData;
 
   // Calculate expected earnings after 14 days
   let earnings = 0;
@@ -46,9 +55,16 @@ const Dashboard = () => {
       <h2>Welcome, {username}</h2>
       <div className="dashboard-info">
         <p><strong>Email:</strong> {email}</p>
+        <p><strong>State:</strong> {state || "Not provided"}</p>
         <p><strong>Investment:</strong> ₦{investmentAmount || 0}</p>
         <p><strong>Investment Date:</strong> {createdAt ? new Date(createdAt).toLocaleDateString() : "N/A"}</p>
         <p><strong>Expected Earnings (after 14 days):</strong> ₦{earnings}</p>
+        <p><strong>Referral Code:</strong> {referralCode}</p>
+        <p><strong>Referred By:</strong> {referredBy || "None"}</p>
+        <p>
+          <strong>Payment Status:</strong>{" "}
+          {paymentConfirmed ? "✅ Confirmed" : "⏳ Pending"}
+        </p>
       </div>
     </div>
   );
