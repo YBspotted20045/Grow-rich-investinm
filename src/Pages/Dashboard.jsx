@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../axios";
+import API from "../axios"; // axios instance
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -24,22 +24,12 @@ const Dashboard = () => {
   }, []);
 
   if (!userData) {
-    return <p>Loading...</p>;
+    return <p className="loading">Loading Dashboard...</p>;
   }
 
-  const {
-    username,
-    email,
-    state,
-    investmentAmount,
-    referralCode,
-    referredBy,
-    paymentConfirmed,
-    createdAt,
-    referrals = [],
-  } = userData;
+  const { username, email, investmentAmount, createdAt, referralCode, referredBy, referrals } = userData;
 
-  // Calculate expected earnings after 14 days
+  // Earnings after 14 days
   let earnings = 0;
   if (investmentAmount && createdAt) {
     const investDate = new Date(createdAt);
@@ -51,37 +41,47 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
-      <h2>Welcome, {username}</h2>
-      <div className="dashboard-info">
-        <p><strong>Email:</strong> {email}</p>
-        <p><strong>State:</strong> {state || "Not provided"}</p>
-        <p><strong>Investment:</strong> ₦{investmentAmount || 0}</p>
-        <p><strong>Investment Date:</strong> {createdAt ? new Date(createdAt).toLocaleDateString() : "N/A"}</p>
-        <p><strong>Expected Earnings (after 14 days):</strong> ₦{earnings}</p>
-        <p><strong>Referral Code:</strong> {referralCode}</p>
-        <p><strong>Referred By:</strong> {referredBy || "None"}</p>
-        <p>
-          <strong>Payment Status:</strong>{" "}
-          {paymentConfirmed ? "✅ Confirmed" : "⏳ Pending"}
-        </p>
-      </div>
+    <div className="dashboard">
+      <h2 className="dashboard-title">Welcome, {username} 🎉</h2>
 
-      {/* Referrals Section */}
-      <div className="referrals-section">
-        <h3>Your Referrals</h3>
-        {referrals.length === 0 ? (
-          <p>No referrals yet.</p>
-        ) : (
-          <ul>
-            {referrals.map((ref) => (
-              <li key={ref._id}>
-                {ref.username} – {ref.email} (Joined:{" "}
-                {new Date(ref.createdAt).toLocaleDateString()})
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="dashboard-grid">
+        {/* Profile */}
+        <div className="card">
+          <h3>👤 Profile</h3>
+          <p><strong>Email:</strong> {email}</p>
+          <p><strong>Referral Code:</strong> {referralCode}</p>
+          <p><strong>Referred By:</strong> {referredBy || "None"}</p>
+        </div>
+
+        {/* Investment */}
+        <div className="card">
+          <h3>💰 Investment</h3>
+          <p><strong>Amount:</strong> ₦{investmentAmount || 0}</p>
+          <p><strong>Investment Date:</strong> {createdAt ? new Date(createdAt).toLocaleDateString() : "N/A"}</p>
+          <p><strong>Expected Earnings:</strong> ₦{earnings}</p>
+          <p>
+            <strong>Status:</strong>{" "}
+            {investmentAmount ? (
+              <span className="status success">Active</span>
+            ) : (
+              <span className="status pending">No Investment</span>
+            )}
+          </p>
+        </div>
+
+        {/* Referrals */}
+        <div className="card">
+          <h3>🤝 Referrals</h3>
+          {referrals && referrals.length > 0 ? (
+            <ul>
+              {referrals.map((r, index) => (
+                <li key={index}>{r.email} - <span className="status success">Joined</span></li>
+              ))}
+            </ul>
+          ) : (
+            <p>No referrals yet.</p>
+          )}
+        </div>
       </div>
     </div>
   );
