@@ -1,90 +1,83 @@
 import React, { useEffect, useState } from "react";
-import API from "../axios"; // axios instance
+import API from "../axios";
 import "./Dashboard.css";
 
-const Dashboard = () => {
-  const [userData, setUserData] = useState(null);
+function Dashboard() {
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const res = await API.get("/auth/me", {
+        const res = await API.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUserData(res.data);
+        setUser(res.data);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        console.error("Error fetching user:", err);
       }
     };
-
-    fetchUserData();
+    fetchUser();
   }, []);
 
-  if (!userData) {
-    return <p className="loading">Loading Dashboard...</p>;
-  }
-
-  const { username, email, investmentAmount, createdAt, referralCode, referredBy, referrals } = userData;
-
-  // Earnings after 14 days
-  let earnings = 0;
-  if (investmentAmount && createdAt) {
-    const investDate = new Date(createdAt);
-    const today = new Date();
-    const diffDays = Math.floor((today - investDate) / (1000 * 60 * 60 * 24));
-    if (diffDays >= 14) {
-      earnings = investmentAmount * 2;
-    }
-  }
+  if (!user) return <p>Loading Dashboard...</p>;
 
   return (
-    <div className="dashboard">
-      <h2 className="dashboard-title">Welcome, {username} 🎉</h2>
-
-      <div className="dashboard-grid">
-        {/* Profile */}
-        <div className="card">
-          <h3>👤 Profile</h3>
-          <p><strong>Email:</strong> {email}</p>
-          <p><strong>Referral Code:</strong> {referralCode}</p>
-          <p><strong>Referred By:</strong> {referredBy || "None"}</p>
-        </div>
-
-        {/* Investment */}
-        <div className="card">
-          <h3>💰 Investment</h3>
-          <p><strong>Amount:</strong> ₦{investmentAmount || 0}</p>
-          <p><strong>Investment Date:</strong> {createdAt ? new Date(createdAt).toLocaleDateString() : "N/A"}</p>
-          <p><strong>Expected Earnings:</strong> ₦{earnings}</p>
-          <p>
-            <strong>Status:</strong>{" "}
-            {investmentAmount ? (
-              <span className="status success">Active</span>
-            ) : (
-              <span className="status pending">No Investment</span>
-            )}
-          </p>
-        </div>
-
-        {/* Referrals */}
-        <div className="card">
-          <h3>🤝 Referrals</h3>
-          {referrals && referrals.length > 0 ? (
-            <ul>
-              {referrals.map((r, index) => (
-                <li key={index}>{r.email} - <span className="status success">Joined</span></li>
-              ))}
-            </ul>
-          ) : (
-            <p>No referrals yet.</p>
-          )}
-        </div>
-      </div>
+    <div className="dashboard-container">
+      <h2>Welcome, {user.fullName}</h2>
+      <table className="dashboard-table">
+        <tbody>
+          <tr>
+            <th>Email</th>
+            <td>{user.email}</td>
+          </tr>
+          <tr>
+            <th>State</th>
+            <td>{user.state}</td>
+          </tr>
+          <tr>
+            <th>Investment</th>
+            <td>{user.investment || "NO Investment"}</td>
+          </tr>
+          <tr>
+            <th>Investment Date</th>
+            <td>{user.investmentDate || "—"}</td>
+          </tr>
+          <tr>
+            <th>Expected Earnings (14 days)</th>
+            <td>{user.expectedEarnings || "—"}</td>
+          </tr>
+          <tr>
+            <th>Referral Code</th>
+            <td>{user.referralCode}</td>
+          </tr>
+          <tr>
+            <th>Referred By</th>
+            <td>{user.referredBy || "None"}</td>
+          </tr>
+          <tr>
+            <th>Payment Status</th>
+            <td>{user.paymentStatus || "Pending"}</td>
+          </tr>
+          <tr>
+            <th>Referrals</th>
+            <td>
+              {user.referrals && user.referrals.length > 0
+                ? user.referrals.join(", ")
+                : "No referrals yet."}
+            </td>
+          </tr>
+          <tr>
+            <th>⚡ Actions</th>
+            <td>
+              <button className="dashboard-btn reinvest">Reinvest</button>
+              <button className="dashboard-btn withdraw">Withdraw</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
-};
+}
 
 export default Dashboard;
