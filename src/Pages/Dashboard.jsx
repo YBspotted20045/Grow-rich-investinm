@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../axios";
-import "./Dashboard.css";
 
-function Dashboard() {
+export default function Dashboard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -20,64 +19,78 @@ function Dashboard() {
     fetchUser();
   }, []);
 
-  if (!user) return <p>Loading Dashboard...</p>;
-
   return (
-    <div className="dashboard-container">
-      <h2>Welcome, {user.fullName}</h2>
-      <table className="dashboard-table">
-        <tbody>
-          <tr>
-            <th>Email</th>
-            <td>{user.email}</td>
-          </tr>
-          <tr>
-            <th>State</th>
-            <td>{user.state}</td>
-          </tr>
-          <tr>
-            <th>Investment</th>
-            <td>{user.investment || "NO Investment"}</td>
-          </tr>
-          <tr>
-            <th>Investment Date</th>
-            <td>{user.investmentDate || "—"}</td>
-          </tr>
-          <tr>
-            <th>Expected Earnings (14 days)</th>
-            <td>{user.expectedEarnings || "—"}</td>
-          </tr>
-          <tr>
-            <th>Referral Code</th>
-            <td>{user.referralCode}</td>
-          </tr>
-          <tr>
-            <th>Referred By</th>
-            <td>{user.referredBy || "None"}</td>
-          </tr>
-          <tr>
-            <th>Payment Status</th>
-            <td>{user.paymentStatus || "Pending"}</td>
-          </tr>
-          <tr>
-            <th>Referrals</th>
-            <td>
-              {user.referrals && user.referrals.length > 0
-                ? user.referrals.join(", ")
-                : "No referrals yet."}
-            </td>
-          </tr>
-          <tr>
-            <th>⚡ Actions</th>
-            <td>
-              <button className="dashboard-btn reinvest">Reinvest</button>
-              <button className="dashboard-btn withdraw">Withdraw</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div style={{ padding: "30px", maxWidth: "900px", margin: "auto" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#ff6b6b" }}>
+        User Dashboard
+      </h2>
+
+      <div style={{
+        background: "linear-gradient(135deg, #ff9a9e, #fad0c4)",
+        borderRadius: "15px",
+        padding: "20px",
+        boxShadow: "0 6px 18px rgba(0,0,0,0.2)"
+      }}>
+        <table style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          fontSize: "15px",
+          backgroundColor: "#fff",
+          borderRadius: "10px",
+          overflow: "hidden"
+        }}>
+          <tbody>
+            <tr>
+              <td style={cellStyle}>Welcome</td>
+              <td style={cellStyle}>{user ? user.username : "Loading..."}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Email</td>
+              <td style={cellStyle}>{user ? user.email : "Loading..."}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>State</td>
+              <td style={cellStyle}>{user ? user.state : "Loading..."}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Investment</td>
+              <td style={cellStyle}>{user?.investment || "NO Investment"}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Investment Date</td>
+              <td style={cellStyle}>{user?.investmentDate || "—"}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Expected Earnings</td>
+              <td style={cellStyle}>{user?.expectedEarnings || "—"}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Referral Code</td>
+              <td style={cellStyle}>{user?.referralCode || "—"}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Referred By</td>
+              <td style={cellStyle}>{user?.referredBy || "None"}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Payment Status</td>
+              <td style={cellStyle}>{user?.paymentStatus || "Pending"}</td>
+            </tr>
+            <tr>
+              <td style={cellStyle}>Your Referrals</td>
+              <td style={cellStyle}>
+                {user?.referrals?.length > 0 ? user.referrals.join(", ") : "No referrals yet"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
-export default Dashboard;
+const cellStyle = {
+  padding: "12px 15px",
+  borderBottom: "1px solid #ddd",
+  textAlign: "left"
+};
