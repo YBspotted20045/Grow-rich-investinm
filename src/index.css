@@ -1,115 +1,87 @@
-/* src/index.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@600;800&display=swap');
+/* index.css - Global Theme */
 
-:root{
-  --bg:#0c0f14;
-  --card:#12161d;
-  --muted:#8a93a6;
-  --text:#e9edf5;
-  --brand:#ffc107;       /* gold */
-  --accent:#6ee7ff;      /* neon sky */
-  --danger:#ff6b6b;
-  --success:#22c55e;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-*{ box-sizing:border-box; }
-html,body,#root{ height:100%; }
-body{
-  margin:0;
-  background: radial-gradient(1200px 800px at 80% -10%, #17202c 0%, #0c0f14 40%, #0c0f14 100%);
-  color:var(--text);
-  font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+/* Body */
+body {
+  background: #121212; /* Dark mode */
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-a{ color:inherit; text-decoration:none; }
-button{ font-family:inherit; }
-
-.container{
-  width:100%;
-  max-width:1100px;
-  margin:0 auto;
-  padding:16px;
+/* Links */
+a {
+  color: #d4af37;
+  text-decoration: none;
+  transition: 0.3s;
+}
+a:hover {
+  text-decoration: underline;
 }
 
-.card{
-  background:linear-gradient(180deg, #141a23 0%, #0f141b 100%);
-  border:1px solid #1c2330;
-  border-radius:18px;
-  box-shadow: var(--shadow);
-  padding:16px;
+/* Buttons */
+button {
+  background: #d4af37;
+  border: none;
+  color: #121212;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+button:hover {
+  background: #b38e2c;
 }
 
-h1.hero{
-  font-family:Manrope, Inter, sans-serif;
-  font-weight:800;
-  font-size: clamp(26px, 3.5vw, 42px);
-  letter-spacing:.5px;
-  margin:0 0 8px;
+/* Form Fields */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #1e1e1e;
+  color: #fff;
+  font-size: 14px;
+}
+input:focus, select:focus {
+  outline: none;
+  border: 1px solid #d4af37;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
 }
 
-.sub{
-  color:var(--muted);
-  font-size:14px;
+/* Cards */
+.card {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-4px);
 }
 
-.btn{
-  background:linear-gradient(135deg, var(--brand), #ffd95a);
-  border:none;
-  color:#1a1a1a;
-  padding:12px 18px;
-  border-radius:12px;
-  font-weight:700;
-  cursor:pointer;
-  transition: transform .12s ease;
-}
-.btn:active{ transform: translateY(1px); }
-.btn-outline{
-  background:transparent;
-  border:1px solid #2b3445;
-  color:var(--text);
+/* Headings */
+h1, h2, h3 {
+  color: #d4af37;
+  margin-bottom: 10px;
 }
 
-.input{
-  width:100%;
-  background:#0e1218;
-  border:1px solid #1f2735;
-  color:var(--text);
-  border-radius:12px;
-  padding:12px 14px;
-  outline:none;
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out forwards;
 }
-.input:focus{ border-color:#324058; }
-
-.row{ display:flex; gap:12px; flex-wrap:wrap; }
-.col{ flex:1 1 280px; }
-
-/* Bottom nav (the “bar” connecting pages) */
-.bottom-nav{
-  position:fixed; left:50%; transform:translateX(-50%);
-  bottom:14px;
-  width:min(94%, 960px);
-  background:#0f141b;
-  border:1px solid #1f2735;
-  border-radius:20px;
-  display:flex; justify-content:space-between; align-items:center;
-  padding:8px;
-  box-shadow: var(--shadow);
-  z-index:50;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.bottom-item{
-  flex:1;
-  display:flex; align-items:center; justify-content:center;
-  gap:8px; padding:10px 6px; border-radius:14px;
-  color:var(--muted); font-weight:600; font-size:13px;
-}
-.bottom-item.active{
-  background:#151b25; color:#fff; border:1px solid #253044;
-}
-
-/* Nice subtle float-in */
-@keyframes float {
-  0%{ transform: translateY(10px); opacity:.0; }
-  100%{ transform: translateY(0); opacity:1; }
-}
-.fade-in{ animation: float .45s ease both; }
