@@ -1,88 +1,114 @@
-.dashboard-container {
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  padding: 30px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 800px;
-  margin: 20px auto;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-  animation: fadeInUp 0.8s ease-in-out;
+/* Dashboard.css - Styles for Dashboard Page */
+
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background: #0d0d0d;
+  color: #f5f5f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.dashboard-container h2 {
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 15px;
+  border-right: 2px solid #d4af37;
+  box-shadow: 3px 0 6px rgba(0,0,0,0.6);
+}
+
+.sidebar h2 {
+  color: #d4af37;
+  margin-bottom: 25px;
   text-align: center;
-  margin-bottom: 20px;
-  color: #ff6b6b;
-  font-size: 24px;
-  font-weight: bold;
 }
 
-.dashboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
 }
 
-.dashboard-table th,
-.dashboard-table td {
-  padding: 14px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-  font-size: 15px;
+.sidebar ul li {
+  margin: 12px 0;
 }
 
-.dashboard-table th {
-  background: #f9f9f9;
-  color: #333;
-  width: 40%;
-}
-
-.dashboard-table td {
-  color: #555;
-}
-
-/* Dashboard buttons */
-.dashboard-btn {
-  padding: 10px 18px;
-  border: none;
+.sidebar ul li a {
+  text-decoration: none;
+  color: #f5f5f5;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 15px;
+  display: block;
   border-radius: 8px;
-  background: #00c6ff;
-  color: #fff;
-  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: #d4af37;
+  color: #0d0d0d;
   font-weight: bold;
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.topbar h3 {
+  color: #d4af37;
+  font-size: 20px;
+}
+
+.topbar button {
+  background: #d4af37;
+  color: #0d0d0d;
+  font-weight: bold;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s;
-  margin-right: 10px;
+  transition: background 0.3s ease;
 }
 
-.dashboard-btn:hover {
-  background: #0096c7;
-  transform: translateY(-2px);
+.topbar button:hover {
+  background: #c19d2b;
 }
 
-/* Specific accents */
-.dashboard-btn.reinvest {
-  background: #00c6ff;
+/* Content Area */
+.content {
+  flex: 1;
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+  overflow-y: auto;
 }
 
-.dashboard-btn.withdraw {
-  background: #ff6b6b;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.dashboard-btn.withdraw:hover {
-  background: #e63946;
-}
-
-/* Animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.content, .sidebar, .topbar {
+  animation: fadeIn 0.8s ease-in-out;
 }
