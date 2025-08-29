@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { Menu, X, Sun, Moon } from "lucide-react"; // icons
 import API from "../axios";
 
 export default function Dashboard() {
@@ -15,6 +16,21 @@ export default function Dashboard() {
     balance: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("theme") === "dark"
+  );
+
+  // Apply dark mode to <html>
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,92 +67,92 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <p className="text-gray-600 text-lg">Loading dashboard...</p>
+      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+        <p className="text-gray-600 dark:text-gray-300 text-lg">
+          Loading dashboard...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
       <motion.aside
         initial={{ x: -250 }}
-        animate={{ x: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-64 bg-gradient-to-b from-yellow-600 to-yellow-800 text-white p-6 flex flex-col"
+        animate={{ x: sidebarOpen ? 0 : -250 }}
+        transition={{ duration: 0.4 }}
+        className={`fixed md:static top-0 left-0 h-full w-64 
+          bg-gradient-to-b from-yellow-600 to-yellow-800 dark:from-gray-800 dark:to-gray-900 
+          text-white p-6 flex flex-col z-40 ${sidebarOpen ? "shadow-2xl" : ""}`}
       >
-        <h2 className="text-2xl font-bold mb-8">GrowRich</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold">GrowRich</h2>
+          <button className="md:hidden" onClick={() => setSidebarOpen(false)}>
+            <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+
         <nav className="flex flex-col gap-4">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `hover:text-yellow-300 ${
-                isActive ? "font-bold text-yellow-300" : ""
-              }`
-            }
-          >
-            Dashboard
-          </NavLink>
-          <NavLink
-            to="/investments"
-            className={({ isActive }) =>
-              `hover:text-yellow-300 ${
-                isActive ? "font-bold text-yellow-300" : ""
-              }`
-            }
-          >
-            Investments
-          </NavLink>
-          <NavLink
-            to="/referrals"
-            className={({ isActive }) =>
-              `hover:text-yellow-300 ${
-                isActive ? "font-bold text-yellow-300" : ""
-              }`
-            }
-          >
-            Referrals
-          </NavLink>
-          <NavLink
-            to="/withdrawals"
-            className={({ isActive }) =>
-              `hover:text-yellow-300 ${
-                isActive ? "font-bold text-yellow-300" : ""
-              }`
-            }
-          >
-            Withdrawals
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `hover:text-yellow-300 ${
-                isActive ? "font-bold text-yellow-300" : ""
-              }`
-            }
-          >
-            Profile
-          </NavLink>
+          {[
+            { path: "/dashboard", label: "Dashboard" },
+            { path: "/investments", label: "Investments" },
+            { path: "/referrals", label: "Referrals" },
+            { path: "/withdrawals", label: "Withdrawals" },
+            { path: "/profile", label: "Profile" },
+          ].map((link, i) => (
+            <NavLink
+              key={i}
+              to={link.path}
+              className={({ isActive }) =>
+                `hover:text-yellow-300 ${
+                  isActive ? "font-bold text-yellow-300" : ""
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </nav>
       </motion.aside>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col">
         {/* Top bar */}
-        <header className="bg-white shadow p-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-700">
-            Welcome, {user?.fullname || "User"}
-          </h1>
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              navigate("/login");
-            }}
-            className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700"
-          >
-            Logout
-          </button>
+        <header className="bg-white dark:bg-gray-800 shadow p-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button className="md:hidden" onClick={() => setSidebarOpen(true)}>
+              <Menu className="w-6 h-6 text-yellow-700 dark:text-yellow-300" />
+            </button>
+            <h1 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
+              Welcome, {user?.fullname || "User"}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Dark mode toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700"
+            >
+              {darkMode ? (
+                <Sun className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-gray-600" />
+              )}
+            </button>
+
+            {/* Logout */}
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                navigate("/login");
+              }}
+              className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700"
+            >
+              Logout
+            </button>
+          </div>
         </header>
 
         {/* Stats cards */}
@@ -152,10 +168,10 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.2 }}
-              className="bg-white shadow-md rounded-2xl p-6 text-center"
+              className="bg-white dark:bg-gray-800 shadow-md rounded-2xl p-6 text-center"
             >
-              <h3 className="text-gray-500">{item.title}</h3>
-              <p className="text-2xl font-bold text-yellow-700">
+              <h3 className="text-gray-500 dark:text-gray-400">{item.title}</h3>
+              <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">
                 {formatCurrency(item.value)}
               </p>
             </motion.div>
@@ -164,8 +180,8 @@ export default function Dashboard() {
 
         {/* Chart section */}
         <div className="p-6">
-          <div className="bg-white shadow-md rounded-2xl p-6 h-96">
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">
+          <div className="bg-white dark:bg-gray-800 shadow-md rounded-2xl p-6 h-96">
+            <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">
               Investment Overview
             </h2>
             {hasData ? (
@@ -187,7 +203,7 @@ export default function Dashboard() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-center text-gray-500 mt-20">
+              <p className="text-center text-gray-500 dark:text-gray-400 mt-20">
                 No data to display
               </p>
             )}
@@ -196,4 +212,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+        }
