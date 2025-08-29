@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import API from "../axios";
@@ -14,6 +14,7 @@ export default function Dashboard() {
     referrals: 0,
     balance: 0,
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +25,8 @@ export default function Dashboard() {
       } catch (err) {
         console.error(err);
         navigate("/login");
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -38,6 +41,22 @@ export default function Dashboard() {
     { name: "Balance", value: stats.balance },
   ];
 
+  const hasData = chartData.some((item) => item.value > 0);
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(value);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <p className="text-gray-600 text-lg">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
@@ -49,11 +68,56 @@ export default function Dashboard() {
       >
         <h2 className="text-2xl font-bold mb-8">GrowRich</h2>
         <nav className="flex flex-col gap-4">
-          <Link to="/dashboard" className="hover:text-yellow-300">Dashboard</Link>
-          <Link to="/investments" className="hover:text-yellow-300">Investments</Link>
-          <Link to="/referrals" className="hover:text-yellow-300">Referrals</Link>
-          <Link to="/withdrawals" className="hover:text-yellow-300">Withdrawals</Link>
-          <Link to="/profile" className="hover:text-yellow-300">Profile</Link>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `hover:text-yellow-300 ${
+                isActive ? "font-bold text-yellow-300" : ""
+              }`
+            }
+          >
+            Dashboard
+          </NavLink>
+          <NavLink
+            to="/investments"
+            className={({ isActive }) =>
+              `hover:text-yellow-300 ${
+                isActive ? "font-bold text-yellow-300" : ""
+              }`
+            }
+          >
+            Investments
+          </NavLink>
+          <NavLink
+            to="/referrals"
+            className={({ isActive }) =>
+              `hover:text-yellow-300 ${
+                isActive ? "font-bold text-yellow-300" : ""
+              }`
+            }
+          >
+            Referrals
+          </NavLink>
+          <NavLink
+            to="/withdrawals"
+            className={({ isActive }) =>
+              `hover:text-yellow-300 ${
+                isActive ? "font-bold text-yellow-300" : ""
+              }`
+            }
+          >
+            Withdrawals
+          </NavLink>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `hover:text-yellow-300 ${
+                isActive ? "font-bold text-yellow-300" : ""
+              }`
+            }
+          >
+            Profile
+          </NavLink>
         </nav>
       </motion.aside>
 
@@ -91,7 +155,9 @@ export default function Dashboard() {
               className="bg-white shadow-md rounded-2xl p-6 text-center"
             >
               <h3 className="text-gray-500">{item.title}</h3>
-              <p className="text-2xl font-bold text-yellow-700">{item.value}</p>
+              <p className="text-2xl font-bold text-yellow-700">
+                {formatCurrency(item.value)}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -99,24 +165,32 @@ export default function Dashboard() {
         {/* Chart section */}
         <div className="p-6">
           <div className="bg-white shadow-md rounded-2xl p-6 h-96">
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">Investment Overview</h2>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={120}
-                  dataKey="value"
-                  label
-                >
-                  {chartData.map((_, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <h2 className="text-lg font-semibold mb-4 text-gray-700">
+              Investment Overview
+            </h2>
+            {hasData ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={120}
+                    dataKey="value"
+                    label
+                  >
+                    {chartData.map((_, index) => (
+                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-gray-500 mt-20">
+                No data to display
+              </p>
+            )}
           </div>
         </div>
       </div>
