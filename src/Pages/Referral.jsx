@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./ReferralDashboard.css";
+import "./Referral.css";
 
 const ReferralDashboard = () => {
   // Sample user and referral data
