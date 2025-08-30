@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import API from "../axios";
 import { useNavigate } from "react-router-dom";
-import Investments from "./Investments";
+import InvestmentsForm from "./InvestmentsForm.jsx";
 import Referrals from "./Referrals";
 import Withdrawal from "./Withdrawal";
 
