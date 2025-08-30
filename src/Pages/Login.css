@@ -1,53 +1,40 @@
-/* Login.css - Styles for Login Page */
-
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+  height: 100vh;
+  background: #0d0d0d;
 }
 
-.login-card {
+.login-form {
   background: #1a1a1a;
-  padding: 40px 30px;
-  border-radius: 14px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-  width: 350px;
-  animation: fadeIn 0.8s ease-in-out;
-}
-
-.login-card h2 {
-  color: #d4af37;
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 26px;
-}
-
-.login-card form {
+  padding: 2rem;
+  border-radius: 12px;
+  width: 320px;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-.login-card input {
-  margin: 10px 0;
-}
-
-.login-card button {
-  margin-top: 15px;
-  font-size: 16px;
-}
-
-.login-links {
-  margin-top: 15px;
+.login-form h2 {
   text-align: center;
-  font-size: 14px;
+  margin-bottom: 1rem;
+  color: #d4af37;
 }
 
-.login-links a {
-  color: #d4af37;
-  font-weight: bold;
+.login-form input {
+  padding: 0.8rem;
+  border-radius: 6px;
+  border: none;
+  outline: none;
 }
-.login-links a:hover {
-  text-decoration: underline;
+
+.login-form button {
+  background-color: #d4af37;
+  color: #0d0d0d;
+  padding: 0.8rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
 }
