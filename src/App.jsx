@@ -3,19 +3,19 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import BottomNav from "./components/BottomNav";
 
-// PAGES (I’ll send the rest next)
+// PAGES
 import Landing from "./Pages/Landing.jsx";
-import Login from "./Pages/Login";
-import Signup from "./Pages/Signup";
-import Dashboard from "./Pages/Dashboard";
+import Login from "./Pages/Login.jsx";
+import Signup from "./Pages/Signup.jsx";
+import Dashboard from "./Pages/Dashboard.jsx";
 import InvestmentForm from "./Pages/InvestmentForm.jsx";
 import ReferralDashboard from "./Pages/ReferralDashboard";
 
-// These will arrive in the next message:
-const Deposit = React.lazy(() => import("./Pages/Deposit"));      // new
-const Withdraw = React.lazy(() => import("./Pages/Withdraw"));    // new
-const Account = React.lazy(() => import("./Pages/Account"));      // new
-const Vendors = React.lazy(() => import("./Pages/Vendors"));      // new
+// Lazy-loaded pages
+const Deposit = React.lazy(() => import("./Pages/Deposit"));
+const Withdrawal = React.lazy(() => import("./Pages/Withdrawal")); // ✅ fixed
+const Account = React.lazy(() => import("./Pages/Account"));
+const Vendors = React.lazy(() => import("./Pages/Vendors"));
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("gr_token");
@@ -39,6 +39,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+
           <Route
             path="/invest"
             element={
@@ -47,6 +48,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+
           <Route
             path="/referrals"
             element={
@@ -55,6 +57,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+
           <Route
             path="/deposit"
             element={
@@ -65,16 +68,18 @@ export default function App() {
               </RequireAuth>
             }
           />
+
           <Route
-            path="/withdraw"
+            path="/withdrawal" // ✅ changed path to match component name
             element={
               <RequireAuth>
                 <React.Suspense fallback={<div className="sub">Loading…</div>}>
-                  <Withdraw />
+                  <Withdrawal /> {/* ✅ fixed */}
                 </React.Suspense>
               </RequireAuth>
             }
           />
+
           <Route
             path="/account"
             element={
@@ -85,6 +90,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+
           <Route
             path="/vendors"
             element={
@@ -96,11 +102,12 @@ export default function App() {
             }
           />
 
+          {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
 
-      {/* the “bar” that connects everything */}
+      {/* bottom navigation bar */}
       <BottomNav />
     </BrowserRouter>
   );
