@@ -4,7 +4,7 @@ import API from "../axios";
 import { useNavigate } from "react-router-dom";
 import InvestmentsForm from "./InvestmentForm.jsx";
 import ReferralDashboard from "./ReferralDashboard.jsx";
-import Withdrawal from "./Withdrawal";
+import Withdrawal from "./Withdrawal.jsx";
 
 function Dashboard() {
   const navigate = useNavigate();
