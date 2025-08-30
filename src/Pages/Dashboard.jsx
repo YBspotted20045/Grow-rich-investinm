@@ -3,7 +3,7 @@ import "./Dashboard.css";
 import API from "../axios";
 import { useNavigate } from "react-router-dom";
 import InvestmentsForm from "./InvestmentForm.jsx";
-import Referrals from "./Referrals";
+import ReferralDashboard from "./ReferralDashboard.jsx";
 import Withdrawal from "./Withdrawal";
 
 function Dashboard() {
