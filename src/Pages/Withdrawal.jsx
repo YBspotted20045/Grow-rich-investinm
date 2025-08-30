@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../axios";
 import "./Dashboard.css";
-import "./Withdraw.css";
+import "./Withdrawal.css";
 
 export default function Withdraw() {
   const navigate = useNavigate();
