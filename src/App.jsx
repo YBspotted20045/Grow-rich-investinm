@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import BottomNav from "./components/BottomNav";
 
 // PAGES (I’ll send the rest next)
-import Landing from "./pages/Landing.jsx";
+import Landing from "./Pages/Landing.jsx";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Dashboard from "./Pages/Dashboard";
