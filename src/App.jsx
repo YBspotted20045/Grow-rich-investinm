@@ -8,7 +8,7 @@ import Landing from "./Pages/Landing.jsx";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Dashboard from "./Pages/Dashboard";
-import InvestmentForm from "./Pages/InvestmentForm";
+import InvestmentForm from "./Pages/InvestmentForm.jsx";
 import ReferralDashboard from "./Pages/ReferralDashboard";
 
 // These will arrive in the next message:
