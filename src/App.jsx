@@ -12,25 +12,26 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Default Route - goes to Signup if no token, Dashboard if logged in */}
+        {/* Default Route */}
         <Route
           path="/"
-          element={token ? <Navigate to="/dashboard" /> : <Signup />}
+          element={token ? <Navigate to="/dashboard" replace /> : <Navigate to="/signup" replace />}
         />
 
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        
         <Route
           path="/dashboard"
-          element={token ? <Dashboard /> : <Navigate to="/login" />}
+          element={token ? <Dashboard /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/referrals"
-          element={token ? <ReferralDashboard /> : <Navigate to="/login" />}
+          element={token ? <ReferralDashboard /> : <Navigate to="/login" replace />}
         />
 
-        {/* Fallback - anything else goes to Signup */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Fallback - redirect to signup */}
+        <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
     </Router>
   );
