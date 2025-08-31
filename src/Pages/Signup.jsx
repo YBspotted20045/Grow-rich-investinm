@@ -14,6 +14,7 @@ function Signup() {
     confirmPassword: "",
     age: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -37,12 +38,15 @@ function Signup() {
       return;
     }
 
+    setLoading(true); // disable form while submitting
+
     try {
       await API.post("/auth/signup", form);
       alert("Signup successful! Please login.");
-      navigate("/login"); // ✅ Redirect after signup
+      navigate("/login");
     } catch (error) {
       alert("Error signing up. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -58,9 +62,16 @@ function Signup() {
           value={form.fullName}
           onChange={handleChange}
           required
+          disabled={loading}
         />
 
-        <select name="state" value={form.state} onChange={handleChange} required>
+        <select
+          name="state"
+          value={form.state}
+          onChange={handleChange}
+          required
+          disabled={loading}
+        >
           <option value="">Select State</option>
           {[
             "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -80,6 +91,7 @@ function Signup() {
           value={form.email}
           onChange={handleChange}
           required
+          disabled={loading}
         />
         <input
           type="password"
@@ -88,6 +100,7 @@ function Signup() {
           value={form.password}
           onChange={handleChange}
           required
+          disabled={loading}
         />
         <input
           type="password"
@@ -96,6 +109,7 @@ function Signup() {
           value={form.confirmPassword}
           onChange={handleChange}
           required
+          disabled={loading}
         />
         <input
           type="number"
@@ -104,9 +118,12 @@ function Signup() {
           value={form.age}
           onChange={handleChange}
           required
+          disabled={loading}
         />
 
-        <button type="submit">Sign Up</button>
+        <button type="submit" disabled={loading}>
+          {loading ? <div className="spinner"></div> : "Sign Up"}
+        </button>
       </form>
     </div>
   );
