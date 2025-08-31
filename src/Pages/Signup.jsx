@@ -1,6 +1,5 @@
-// src/Pages/Signup.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Signup.css";
 import API from "../axios";
 
@@ -38,14 +37,14 @@ function Signup() {
       return;
     }
 
-    setLoading(true); // disable form while submitting
-
+    setLoading(true);
     try {
       await API.post("/auth/signup", form);
       alert("Signup successful! Please login.");
       navigate("/login");
     } catch (error) {
       alert("Error signing up. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -124,6 +123,11 @@ function Signup() {
         <button type="submit" disabled={loading}>
           {loading ? <div className="spinner"></div> : "Sign Up"}
         </button>
+
+        {/* 🔹 Link to Login */}
+        <p>
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
       </form>
     </div>
   );
