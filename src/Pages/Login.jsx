@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,6 +14,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await API.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
@@ -20,6 +22,7 @@ function Login() {
       navigate("/dashboard");
     } catch (error) {
       alert("Invalid credentials");
+      setLoading(false);
     }
   };
 
@@ -34,6 +37,7 @@ function Login() {
           value={form.email}
           onChange={handleChange}
           required
+          disabled={loading}
         />
         <input
           type="password"
@@ -42,8 +46,15 @@ function Login() {
           value={form.password}
           onChange={handleChange}
           required
+          disabled={loading}
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? (
+            <div className="spinner"></div>
+          ) : (
+            "Login"
+          )}
+        </button>
       </form>
     </div>
   );
