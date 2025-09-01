@@ -16,17 +16,24 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
+
     setLoading(true);
     setMessage({ type: "", text: "" });
 
     try {
       const res = await API.post("/auth/login", form);
+
+      // Save token + user
       localStorage.setItem("gr_token", res.data.token);
+      localStorage.setItem("gr_user", JSON.stringify(res.data.user));
+
       setMessage({ type: "success", text: "Login successful! Redirecting..." });
-      setTimeout(() => navigate("/dashboard"), 1500);
+
+      // ✅ Navigate immediately (no redirect loop)
+      navigate("/dashboard");
     } catch (error) {
+      console.error("Login failed:", error);
       setMessage({ type: "error", text: "Invalid email or password." });
     } finally {
       setLoading(false);
@@ -42,14 +49,30 @@ function Login() {
           <div className={`message ${message.type}`}>{message.text}</div>
         )}
 
-        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required disabled={loading} />
-        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required disabled={loading} />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+          disabled={loading}
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          disabled={loading}
+        />
 
         <button type="submit" disabled={loading}>
           {loading ? "Logging In..." : "Login"}
         </button>
 
-        {/* Switch link */}
         <p className="switch-link">
           Don’t have an account? <Link to="/signup">Sign up here</Link>
         </p>
