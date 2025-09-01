@@ -16,7 +16,7 @@ function Dashboard() {
       navigate("/login");
       return;
     }
-
+    
     const fetchUser = async () => {
       try {
         const res = await API.get("/user/profile", {
