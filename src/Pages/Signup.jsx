@@ -1,8 +1,8 @@
 // src/Pages/Signup.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Signup.css";
-import API from "../axios"; // keep this, no need for .js
+import API from "../axios";
 
 function Signup() {
   const navigate = useNavigate();
@@ -88,6 +88,11 @@ function Signup() {
         <button type="submit" disabled={loading}>
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
+
+        {/* Switch link */}
+        <p className="switch-link">
+          Already have an account? <Link to="/login">Login here</Link>
+        </p>
       </form>
     </div>
   );
