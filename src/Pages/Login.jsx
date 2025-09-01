@@ -1,33 +1,37 @@
 // src/Pages/Login.jsx
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import "./Login.css";
+import { useNavigate } from "react-router-dom";
 import API from "../axios";
 
 function Login() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (loading) return;
     setLoading(true);
-    setMessage({ type: "", text: "" });
+    setError("");
+    setSuccess("");
 
     try {
-      const res = await API.post("/auth/login", form);
+      const res = await API.post("/auth/login", { email, password });
+
+      // save token
       localStorage.setItem("gr_token", res.data.token);
-      setMessage({ type: "success", text: "Login successful! Redirecting..." });
-      setTimeout(() => navigate("/dashboard"), 1500);
-    } catch (error) {
-      setMessage({ type: "error", text: "Invalid email or password." });
+
+      // show success message
+      setSuccess("Login successful ✅");
+
+      // redirect after short delay
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed ❌");
     } finally {
       setLoading(false);
     }
@@ -35,24 +39,29 @@ function Login() {
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+      <h2>Login</h2>
 
-        {message.text && (
-          <div className={`message ${message.type}`}>{message.text}</div>
-        )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {success && <p style={{ color: "green" }}>{success}</p>}
 
-        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required disabled={loading} />
-        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required disabled={loading} />
-
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
+        />
         <button type="submit" disabled={loading}>
-          {loading ? "Logging In..." : "Login"}
+          {loading ? "Logging in..." : "Login"}
         </button>
-
-        {/* Switch link */}
-        <p className="switch-link">
-          Don’t have an account? <Link to="/signup">Sign up here</Link>
-        </p>
       </form>
     </div>
   );
