@@ -79,3 +79,17 @@ button {
   background: #f8d7da;
   color: #721c24;
 }
+.switch-link {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.switch-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.switch-link a:hover {
+  text-decoration: underline;
+}
