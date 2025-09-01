@@ -24,17 +24,32 @@ function Login() {
     try {
       const res = await API.post("/auth/login", form);
 
-      // Save token + user
-      localStorage.setItem("gr_token", res.data.token);
-      localStorage.setItem("gr_user", JSON.stringify(res.data.user));
+      console.log("Login response:", res.data); // 👈 check backend response
+
+      // Pick token from whichever key the backend provides
+      const token = res.data.token || res.data.jwt || res.data.accessToken;
+      const user = res.data.user || res.data.data || null;
+
+      if (!token) {
+        throw new Error("No token received from server");
+      }
+
+      // Save to localStorage
+      localStorage.setItem("gr_token", token);
+      if (user) {
+        localStorage.setItem("gr_user", JSON.stringify(user));
+      }
 
       setMessage({ type: "success", text: "Login successful! Redirecting..." });
 
-      // ✅ Navigate immediately (no redirect loop)
-      navigate("/dashboard");
+      // ✅ Navigate immediately
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error("Login failed:", error);
-      setMessage({ type: "error", text: "Invalid email or password." });
+      setMessage({
+        type: "error",
+        text: error.response?.data?.message || "Invalid email or password.",
+      });
     } finally {
       setLoading(false);
     }
