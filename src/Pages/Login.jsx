@@ -1,10 +1,10 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Signup from "./Pages/Signup";
-import Login from "./Pages/Login";
-import Dashboard from "./Pages/Dashboard";
-import ReferralDashboard from "./Pages/ReferralDashboard";
+import Signup from "./Pages/Signup.jsx";
+import Login from "./Pages/Login.jsx";
+import Dashboard from "./Pages/Dashboard.jsx";
+import ReferralDashboard from "./Pages/ReferralDashboard.jsx";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("gr_token"));
