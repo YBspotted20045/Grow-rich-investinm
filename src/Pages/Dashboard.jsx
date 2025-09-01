@@ -1,3 +1,4 @@
+ // src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import API from "../axios";
@@ -19,11 +20,9 @@ function Dashboard() {
 
     const fetchUser = async () => {
       try {
-        // ✅ corrected endpoint
-        const res = await API.get("/auth/me");
-        setUser(res.data.user || res.data); // depends on backend response
+        const res = await API.get("/auth/me"); // ✅ correct endpoint
+        setUser(res.data);
       } catch (err) {
-        console.error("Fetch user failed:", err.response?.data || err.message);
         localStorage.removeItem("gr_token");
         navigate("/login");
       }
