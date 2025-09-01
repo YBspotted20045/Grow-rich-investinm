@@ -11,7 +11,7 @@ function Dashboard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("gr_token"); // ✅ match with Login.jsx
     if (!token) {
       navigate("/login");
       return;
@@ -24,7 +24,7 @@ function Dashboard() {
         });
         setUser(res.data);
       } catch (err) {
-        localStorage.removeItem("token");
+        localStorage.removeItem("gr_token"); // ✅ match key
         navigate("/login");
       }
     };
@@ -38,8 +38,8 @@ function Dashboard() {
     <div className="dashboard">
       <h1>Welcome, {user.fullName}</h1>
       <div className="dashboard-section">
-        <Investments user={user} />
-        <Referrals user={user} />
+        <InvestmentsForm user={user} />
+        <ReferralDashboard user={user} />
         <Withdrawal user={user} />
       </div>
     </div>
