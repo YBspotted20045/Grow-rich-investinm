@@ -1,6 +1,6 @@
 // src/Pages/Login.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 import API from "../axios";
 
@@ -48,6 +48,11 @@ function Login() {
         <button type="submit" disabled={loading}>
           {loading ? "Logging In..." : "Login"}
         </button>
+
+        {/* Switch link */}
+        <p className="switch-link">
+          Don’t have an account? <Link to="/signup">Sign up here</Link>
+        </p>
       </form>
     </div>
   );
