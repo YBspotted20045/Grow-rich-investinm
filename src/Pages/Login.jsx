@@ -1,52 +1,61 @@
-// src/App.jsx
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Signup from "./Pages/Signup.jsx";
-import Login from "./Pages/Login.jsx";
-import Dashboard from "./Pages/Dashboard.jsx";
-import ReferralDashboard from "./Pages/ReferralDashboard.jsx";
+// src/Pages/Login.jsx
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "./Login.css";
+import API from "../axios";
 
-function App() {
-  const [token, setToken] = useState(localStorage.getItem("gr_token"));
-  const location = useLocation();
+function Login() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  // Whenever localStorage changes, update token state
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(localStorage.getItem("gr_token"));
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (loading) return;
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const res = await API.post("/auth/login", form);
+      localStorage.setItem("gr_token", res.data.token);
+      setMessage({ type: "success", text: "Login successful! Redirecting..." });
+      setTimeout(() => navigate("/dashboard"), 1500);
+    } catch (error) {
+      setMessage({ type: "error", text: "Invalid email or password." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Routes>
-      {/* Default Route */}
-      <Route
-        path="/"
-        element={
-          token ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
-        }
-      />
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
 
-      {/* Public Routes */}
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/login" element={<Login />} />
+        {message.text && (
+          <div className={`message ${message.type}`}>{message.text}</div>
+        )}
 
-      {/* Protected Routes */}
-      <Route
-        path="/dashboard"
-        element={token ? <Dashboard /> : <Navigate to="/login" replace />}
-      />
-      <Route
-        path="/referrals"
-        element={token ? <ReferralDashboard /> : <Navigate to="/login" replace />}
-      />
+        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required disabled={loading} />
+        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required disabled={loading} />
 
-      {/* Catch-all route */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging In..." : "Login"}
+        </button>
+
+        {/* Switch link */}
+        <p className="switch-link">
+          Don’t have an account? <Link to="/signup">Sign up here</Link>
+        </p>
+      </form>
+    </div>
   );
 }
 
-export default App;
+export default Login;
