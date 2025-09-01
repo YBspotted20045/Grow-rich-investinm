@@ -1,7 +1,8 @@
+// src/Pages/Signup.jsx
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Signup.css";
-import API from "../axios";
+import API from "../axios"; // keep this, no need for .js
 
 function Signup() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Signup() {
     age: "",
   });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,28 +24,34 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (loading) return;
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
     if (form.password.length < 8) {
-      alert("Password must be at least 8 characters long.");
+      setMessage({ type: "error", text: "Password must be at least 8 characters long." });
+      setLoading(false);
       return;
     }
 
     if (parseInt(form.age) < 18) {
-      alert("You must be at least 18 years old.");
+      setMessage({ type: "error", text: "You must be at least 18 years old." });
+      setLoading(false);
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match.");
+      setMessage({ type: "error", text: "Passwords do not match." });
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
     try {
       await API.post("/auth/signup", form);
-      alert("Signup successful! Please login.");
-      navigate("/login");
+      setMessage({ type: "success", text: "Signup successful! Redirecting to login..." });
+      setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
-      alert("Error signing up. Please try again.");
+      setMessage({ type: "error", text: "Error signing up. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -54,26 +62,15 @@ function Signup() {
       <form className="signup-form" onSubmit={handleSubmit}>
         <h2>Create Account</h2>
 
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          value={form.fullName}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
+        {message.text && (
+          <div className={`message ${message.type}`}>{message.text}</div>
+        )}
 
-        <select
-          name="state"
-          value={form.state}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        >
+        <input type="text" name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} required disabled={loading} />
+
+        <select name="state" value={form.state} onChange={handleChange} required disabled={loading}>
           <option value="">Select State</option>
-          {[
-            "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
+          {["Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
             "Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT - Abuja","Gombe",
             "Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos",
             "Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto",
@@ -83,51 +80,14 @@ function Signup() {
           ))}
         </select>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={form.age}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
+        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required disabled={loading} />
+        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required disabled={loading} />
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" value={form.confirmPassword} onChange={handleChange} required disabled={loading} />
+        <input type="number" name="age" placeholder="Age" value={form.age} onChange={handleChange} required disabled={loading} />
 
         <button type="submit" disabled={loading}>
-          {loading ? <div className="spinner"></div> : "Sign Up"}
+          {loading ? "Signing Up..." : "Sign Up"}
         </button>
-
-        {/* 🔹 Link to Login */}
-        <p>
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
       </form>
     </div>
   );
