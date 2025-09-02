@@ -1,75 +1,35 @@
-// src/Pages/Layout.jsx
-import React, { useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import "./Layout.css"; // still fine for extra styling if you want
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
-export default function Layout() {
-  const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
+const Layout = () => {
   return (
-    <div className="flex h-screen">
-      {/* sidebar */}
-      <aside
-        className={`${
-          open ? "block" : "hidden"
-        } md:block w-64 bg-[#FFD700] text-black p-6 fixed md:relative z-20`}
-      >
-        <h2 className="text-2xl font-bold mb-8">GrowRich</h2>
-        <nav className="space-y-4">
-          <Link to="/dashboard" className="block font-medium hover:text-white">
-            Dashboard
-          </Link>
-          <Link to="/invest" className="block font-medium hover:text-white">
-            Invest
-          </Link>
-          <Link to="/deposit" className="block font-medium hover:text-white">
-            Deposit
-          </Link>
-          <Link to="/withdrawal" className="block font-medium hover:text-white">
-            Withdrawal
-          </Link>
-          <Link to="/account" className="block font-medium hover:text-white">
-            Account
-          </Link>
-          <Link to="/vendors" className="block font-medium hover:text-white">
-            Vendors
-          </Link>
-          <Link to="/referrals" className="block font-medium hover:text-white">
-            Referrals
-          </Link>
-        </nav>
-        <button
-          onClick={handleLogout}
-          className="mt-8 bg-black text-[#FFD700] px-4 py-2 rounded-lg hover:bg-gray-800"
-        >
-          Logout
-        </button>
-      </aside>
+    <div className="flex h-screen bg-black text-white">
+      {/* Sidebar */}
+      <Sidebar />
 
-      {/* main content area */}
-      <div className="flex-1 flex flex-col ml-0 md:ml-64">
-        {/* topbar */}
-        <header className="bg-white shadow px-4 py-3 flex items-center md:hidden">
-          <button
-            className="text-2xl mr-4"
-            onClick={() => setOpen(!open)}
-          >
-            ☰
-          </button>
-          <h2 className="font-bold text-lg">GrowRich</h2>
+      {/* Main content */}
+      <div className="flex flex-col flex-1">
+        {/* Topbar */}
+        <header className="h-16 bg-gradient-to-r from-yellow-700 via-yellow-600 to-yellow-500 text-black flex items-center justify-between px-6 shadow-lg">
+          <h1 className="text-xl font-bold tracking-wide">GrowRich Investments</h1>
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium">Welcome, User</span>
+            <img
+              src="https://ui-avatars.com/api/?name=User&background=FFD700&color=000"
+              alt="profile"
+              className="w-10 h-10 rounded-full border-2 border-yellow-500"
+            />
+          </div>
         </header>
 
-        {/* page content */}
-        <main className="p-6 overflow-y-auto flex-1 bg-gray-50">
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-black via-gray-900 to-black">
           <Outlet />
         </main>
       </div>
     </div>
   );
-}
+};
+
+export default Layout;
