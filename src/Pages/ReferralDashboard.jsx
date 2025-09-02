@@ -1,73 +1,54 @@
-import React, { useState, useEffect } from "react";
-import "./ReferralDashboard.css";
+import React, { useEffect, useState } from "react";
+import API from "../axios";
 
-const ReferralDashboard = () => {
-  // Sample user and referral data
-  const [userData, setUserData] = useState({
-    fullName: "John Doe",
-    email: "johndoe@example.com",
-    investment: 10000, // initial investment
-    investmentDate: new Date("2025-08-05"), // example date
-    referralCode: "REF123",
-    referrals: [
-      { name: "Jane Smith", email: "jane@example.com", amount: 5000 },
-      { name: "Bob Johnson", email: "bob@example.com", amount: 10000 },
-    ],
-  });
-
-  const [maturedAmount, setMaturedAmount] = useState(0);
-  const [daysLeft, setDaysLeft] = useState(0);
+const Referrals = () => {
+  const [referrals, setReferrals] = useState([]);
 
   useEffect(() => {
-    const now = new Date();
-    const investmentDate = new Date(userData.investmentDate);
-    const diffTime = now - investmentDate;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const remaining = 10 - diffDays;
-    setDaysLeft(remaining > 0 ? remaining : 0);
-    setMaturedAmount(diffDays >= 10 ? userData.investment * 2 : 0);
-  }, [userData]);
+    const fetchReferrals = async () => {
+      try {
+        const res = await API.get("/referrals");
+        setReferrals(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchReferrals();
+  }, []);
 
   return (
-    <div className="dashboard-container">
-      <h2>Welcome, {userData.fullName}</h2>
-      <div className="investment-info">
-        <p>Email: {userData.email}</p>
-        <p>Investment Amount: ₦{userData.investment}</p>
-        <p>
-          Maturity Status:{" "}
-          {maturedAmount > 0
-            ? `Matured! ₦${maturedAmount}`
-            : `Pending, ${daysLeft} day(s) left`}
-        </p>
-        <p>Your Referral Code: {userData.referralCode}</p>
-      </div>
-
-      <h3>Your Referrals</h3>
-      {userData.referrals.length === 0 ? (
-        <p>You have no referrals yet.</p>
-      ) : (
-        <table>
-          <thead>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold text-gold mb-6">Your Referrals</h2>
+      <div className="overflow-x-auto">
+        <table className="w-full border border-gray-200 rounded-2xl overflow-hidden">
+          <thead className="bg-gold text-white">
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Investment</th>
+              <th className="px-4 py-2 text-left">Name</th>
+              <th className="px-4 py-2 text-left">Email</th>
+              <th className="px-4 py-2 text-left">Investment</th>
             </tr>
           </thead>
           <tbody>
-            {userData.referrals.map((ref, index) => (
-              <tr key={index}>
-                <td>{ref.name}</td>
-                <td>{ref.email}</td>
-                <td>₦{ref.amount}</td>
+            {referrals.length === 0 ? (
+              <tr>
+                <td colSpan="3" className="text-center py-4 text-gray-500">
+                  No referrals yet
+                </td>
               </tr>
-            ))}
+            ) : (
+              referrals.map((ref, index) => (
+                <tr key={index} className="border-t">
+                  <td className="px-4 py-2">{ref.name}</td>
+                  <td className="px-4 py-2">{ref.email}</td>
+                  <td className="px-4 py-2">₦{ref.investment}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-      )}
+      </div>
     </div>
   );
 };
 
-export default ReferralDashboard;
+export default Referrals;
