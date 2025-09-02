@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import BottomNav from "./components/BottomNav.jsx";
 
 // PAGES (explicit .jsx paths)
@@ -26,7 +26,7 @@ function RequireAuth({ children }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <>
       <div className="container" style={{ paddingBottom: 80 }}>
         <Routes>
           {/* Default route: if logged in -> dashboard, otherwise -> signup */}
@@ -104,6 +104,6 @@ export default function App() {
 
       {/* bottom navigation bar (keeps the same) */}
       <BottomNav />
-    </BrowserRouter>
+    </>
   );
-      }
+}
