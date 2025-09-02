@@ -1,179 +1,164 @@
-import { useEffect, useState } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+// src/Pages/Deposit.jsx
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../axios";
-import "./Dashboard.css";
-import "./Deposit.css";
+import "./Deposit.css"; // create this file (CSS provided after JS)
 
 export default function Deposit() {
   const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const [user, setUser] = useState(null);
-  const [vendors, setVendors] = useState([]);
-  const [form, setForm] = useState({
-    vendorId: "",
-    amount: "",
-    reference: "",
-    receipt: null,
-  });
+  const savedAmount = sessionStorage.getItem("deposit_amount") || "";
+  const savedVendor = sessionStorage.getItem("selected_vendor");
+  const [amount, setAmount] = useState(savedAmount);
+  const [vendor, setVendor] = useState(savedVendor ? JSON.parse(savedVendor) : null);
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState("");
+  const [msg, setMsg] = useState(null);
 
-  // If user came from InvestmentForm, prefill amount & reference
+  const user = JSON.parse(localStorage.getItem("gr_user") || "null");
+
   useEffect(() => {
-    const amt = params.get("amount");
-    const ref = params.get("ref");
-    setForm((f) => ({
-      ...f,
-      amount: amt || f.amount,
-      reference: ref || f.reference,
-    }));
-  }, [params]);
+    // refresh local state from sessionStorage if user comes back from Vendors
+    const v = sessionStorage.getItem("selected_vendor");
+    if (v) setVendor(JSON.parse(v));
+    const a = sessionStorage.getItem("deposit_amount");
+    if (a) setAmount(a);
+  }, []);
 
-  // Fetch user + vendors
-  useEffect(() => {
-    (async () => {
-      try {
-        const me = await API.get("/auth/me");
-        setUser(me.data.user);
-      } catch {
-        navigate("/login");
-        return;
-      }
-      try {
-        const res = await API.get("/payment/vendors"); // expected backend route
-        setVendors(res.data.vendors || []);
-      } catch {
-        // fallback empty
-        setVendors([]);
-      }
-    })();
-  }, [navigate]);
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "receipt") {
-      setForm((f) => ({ ...f, receipt: files[0] || null }));
-    } else {
-      setForm((f) => ({ ...f, [name]: value }));
-    }
-  };
-
-  const submitDeposit = async (e) => {
-    e.preventDefault();
-    if (!form.vendorId || !form.amount || !form.reference || !form.receipt) {
-      setToast("Please fill all fields and attach your receipt.");
+  const gotoVendors = () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      setMsg({ type: "error", text: "Choose an amount first." });
       return;
     }
-    try {
-      setLoading(true);
-      const fd = new FormData();
-      fd.append("vendorId", form.vendorId);
-      fd.append("amount", form.amount);
-      fd.append("reference", form.reference);
-      fd.append("receipt", form.receipt);
+    sessionStorage.setItem("deposit_amount", amount);
+    navigate("/vendors");
+  };
 
-      const res = await API.post("/deposits", fd, {
+  const handleFile = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const submitReceipt = async (e) => {
+    e.preventDefault();
+    if (!vendor) {
+      setMsg({ type: "error", text: "No vendor selected — choose a vendor first." });
+      return;
+    }
+    if (!file) {
+      setMsg({ type: "error", text: "Please attach the payment receipt file." });
+      return;
+    }
+
+    setLoading(true);
+    setMsg(null);
+    try {
+      const fd = new FormData();
+      fd.append("amount", amount);
+      fd.append("vendor", vendor.name || vendor.title || "");
+      fd.append("vendorWhatsapp", vendor.whatsapp || "");
+      fd.append("receipt", file);
+
+      // backend expects token via header (axios interceptors handle gr_token)
+      await API.post("/deposits", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setToast(res.data?.message || "Deposit submitted. Awaiting approval.");
-      setForm({ vendorId: "", amount: "", reference: "", receipt: null });
-      setTimeout(() => navigate("/dashboard"), 1200);
+
+      setMsg({ type: "success", text: "Receipt uploaded — pending admin approval." });
+      // cleanup stored selection
+      sessionStorage.removeItem("selected_vendor");
+      sessionStorage.removeItem("deposit_amount");
+      setTimeout(() => navigate("/dashboard"), 1400);
     } catch (err) {
-      setToast(err.response?.data?.message || "Unable to submit deposit.");
+      console.error("Upload error:", err);
+      setMsg({
+        type: "error",
+        text: err?.response?.data?.message || "Upload failed — try again.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="page-shell">
-      <aside className="sidebar">
-        <h2>GrowRich</h2>
-        <ul>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/investments">Investments</Link></li>
-          <li><Link to="/referrals">Referrals</Link></li>
-          <li><Link to="/withdrawals">Withdrawals</Link></li>
-          <li><Link to="/account">Bank Account</Link></li>
-          <li><Link to="/deposit" className="active">Deposit</Link></li>
-        </ul>
-        <button
-          className="gold-btn mt-4"
-          onClick={() => { localStorage.removeItem("token"); navigate("/login"); }}
-        >
-          Logout
-        </button>
-      </aside>
+    <div className="deposit-page">
+      <div className="deposit-card">
+        <h2>Make a Deposit</h2>
 
-      <main className="main">
-        <div className="topbar">
-          <h3>Upload Deposit Receipt</h3>
-          <div className="muted">User: {user?.fullname || "—"}</div>
+        {msg && <div className={`notice ${msg.type}`}>{msg.text}</div>}
+
+        <label>Choose amount</label>
+        <div className="amount-row">
+          <select value={amount} onChange={(e) => setAmount(e.target.value)}>
+            <option value="">Select a preset</option>
+            <option value="5000">₦5,000</option>
+            <option value="10000">₦10,000</option>
+            <option value="15000">₦15,000</option>
+            <option value="20000">₦20,000</option>
+          </select>
+
+          <input
+            type="number"
+            placeholder="Or enter custom amount"
+            min="0"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
         </div>
 
-        <div className="content">
-          <form className="deposit-card" onSubmit={submitDeposit}>
-            <div className="field">
-              <label>Choose Vendor</label>
-              <select
-                name="vendorId"
-                value={form.vendorId}
-                onChange={handleChange}
-                required
+        <div className="small-row">
+          <button className="btn" onClick={gotoVendors}>
+            Choose Vendor (WhatsApp)
+          </button>
+          <Link to="/vendors" className="link-plain">Or browse vendors</Link>
+        </div>
+
+        <hr />
+
+        <h3>Selected vendor</h3>
+        {vendor ? (
+          <div className="vendor-block">
+            <div className="vendor-name">{vendor.name || vendor.title}</div>
+            <div className="vendor-whatsapp">WhatsApp: {vendor.whatsapp}</div>
+            <div className="vendor-actions">
+              <button
+                className="btn outline"
+                onClick={() => {
+                  // re-open WhatsApp if they want to pay again
+                  const phone = (vendor.whatsapp || "").replace(/\D/g, "");
+                  const message = `Hello ${vendor.name || ""}, I want to pay ₦${amount} for GrowRich deposit. My email: ${user?.email || ""}`;
+                  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+                }}
               >
-                <option value="">Select vendor</option>
-                {vendors.map((v) => (
-                  <option key={v._id} value={v._id}>
-                    {v.name} • {v.bankName} • {v.accountNumber}
-                  </option>
-                ))}
-              </select>
-              <small className="hint">
-                Vendors are payment channels only. Upload your receipt here to confirm.
-              </small>
+                Open WhatsApp
+              </button>
+              <button
+                className="btn danger"
+                onClick={() => {
+                  sessionStorage.removeItem("selected_vendor");
+                  setVendor(null);
+                }}
+              >
+                Clear
+              </button>
             </div>
+          </div>
+        ) : (
+          <p className="muted">No vendor selected yet — click "Choose Vendor" to pick one via WhatsApp.</p>
+        )}
 
-            <div className="two-col">
-              <div className="field">
-                <label>Amount (NGN)</label>
-                <input
-                  type="number"
-                  name="amount"
-                  min="1000"
-                  step="500"
-                  placeholder="e.g. 20,000"
-                  value={form.amount}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+        <hr />
 
-              <div className="field">
-                <label>Payment Reference</label>
-                <input
-                  type="text"
-                  name="reference"
-                  placeholder="Bank transfer reference"
-                  value={form.reference}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+        <h3>Upload receipt</h3>
+        <form className="upload-form" onSubmit={submitReceipt}>
+          <input type="file" accept="image/*,application/pdf" onChange={handleFile} />
+          <small className="muted">Attach the payment receipt (photo or PDF).</small>
 
-            <div className="field">
-              <label>Receipt (image/PDF)</label>
-              <input type="file" accept="image/*,.pdf" name="receipt" onChange={handleChange} />
-            </div>
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? "Uploading…" : "Upload Receipt"}
+          </button>
+        </form>
 
-            <button className="gold-btn" disabled={loading}>
-              {loading ? "Submitting..." : "Submit Deposit"}
-            </button>
-
-            {toast && <div className="toast">{toast}</div>}
-          </form>
-        </div>
-      </main>
+        <p className="muted">After upload the admin will confirm the payment and credit your account.</p>
+      </div>
     </div>
   );
-        }
+}
