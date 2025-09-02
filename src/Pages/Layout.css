@@ -1,0 +1,59 @@
+/* src/Pages/Layout.css */
+.layout {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.topbar {
+  background: #0d6efd;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.sidebar {
+  position: fixed;
+  top: 50px;
+  left: -220px;
+  width: 200px;
+  height: 100%;
+  background: #222;
+  color: white;
+  padding-top: 20px;
+  transition: left 0.3s ease;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar nav a {
+  color: white;
+  padding: 12px 20px;
+  text-decoration: none;
+}
+
+.sidebar nav a:hover {
+  background: #444;
+}
+
+.content {
+  margin-top: 50px;
+  padding: 20px;
+}
