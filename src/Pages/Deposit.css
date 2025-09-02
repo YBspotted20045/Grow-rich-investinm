@@ -1,37 +1,40 @@
+/* Deposit.css - simple gold-on-dark styling */
+.deposit-page {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
 .deposit-card {
-  max-width: 760px;
-  margin: 0 auto;
-  background: #111;
-  border: 1px solid #d4af37;
-  border-radius: 14px;
-  padding: 22px;
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
-}
-
-.field { margin-bottom: 16px; }
-.field label { display:block; color:#d4af37; margin-bottom:6px; font-weight:600; }
-.field input, .field select {
   width: 100%;
-  padding: 12px 14px;
+  max-width: 720px;
+  background: #0f0f0f;
+  color: #f2f2f2;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+  border: 1px solid rgba(212,175,55,0.06);
+}
+.deposit-card h2 { color: #d4af37; margin-bottom: 10px; }
+.amount-row { display:flex; gap:10px; margin-bottom:12px; align-items:center; }
+.amount-row select, .amount-row input { flex:1; padding:10px 12px; border-radius:8px; border: none; background:#121212; color:#fff; }
+.btn {
+  background: #d4af37;
+  color: #0b0b0b;
+  padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #333;
-  background: #0b0b0b;
-  color: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  margin-top:8px;
 }
-
-.two-col { display:grid; gap:14px; grid-template-columns: 1fr 1fr; }
-@media (max-width:700px){ .two-col { grid-template-columns: 1fr; } }
-
-.hint { color:#aaa; font-size:12px; display:block; margin-top:6px; }
-.toast {
-  margin-top: 14px;
-  background: #1a1a1a;
-  border-left: 4px solid #d4af37;
-  padding: 10px 12px;
-  border-radius: 8px;
-}
-.gold-btn {
-  background:#d4af37; color:#0d0d0d; border:none; padding:10px 16px;
-  border-radius:10px; font-weight:700; cursor:pointer;
-}
-.gold-btn:disabled { opacity: .7; cursor:not-allowed; }
+.btn.outline { background: transparent; border: 1px solid #d4af37; color:#d4af37; }
+.btn.danger { background:#cc9b2a; color:#0b0b0b; margin-left:8px; }
+.small-row { display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+.notice { margin-bottom:10px; padding:10px; border-radius:8px; }
+.notice.success { background: #213214; color: #bff0af; border: 1px solid #2a7a2d; }
+.notice.error { background: #3b1a1a; color: #ffbdbd; border: 1px solid #7a2b2b; }
+.vendor-block { background:#121212; padding:12px; border-radius:8px; margin-bottom:12px; }
+.vendor-name { font-weight:700; color:#fff; }
+.vendor-whatsapp { color:#ddd; margin-top:4px; font-size:0.95rem; }
+.upload-form input[type="file"] { margin-bottom:8px; }
+.muted { color:#bdbdbd; margin-top:8px; }
+.link-plain { color:#d4af37; text-decoration:underline; margin-left:8px; }
