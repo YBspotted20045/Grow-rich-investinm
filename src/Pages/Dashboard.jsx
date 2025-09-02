@@ -1,48 +1,43 @@
- // src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
-import "./Dashboard.css";
 import API from "../axios";
-import { useNavigate } from "react-router-dom";
-import InvestmentsForm from "./InvestmentForm.jsx";
-import ReferralDashboard from "./ReferralDashboard.jsx";
-import Withdrawal from "./Withdrawal.jsx";
 
-function Dashboard() {
-  const navigate = useNavigate();
+const Dashboard = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("gr_token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     const fetchUser = async () => {
       try {
-        const res = await API.get("/auth/me"); // ✅ correct endpoint
+        const res = await API.get("/auth/me");
         setUser(res.data);
       } catch (err) {
-        localStorage.removeItem("gr_token");
-        navigate("/login");
+        console.error(err);
       }
     };
-
     fetchUser();
-  }, [navigate]);
+  }, []);
 
-  if (!user) return <div className="dashboard">Loading...</div>;
+  if (!user) return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
-    <div className="dashboard">
-      <h1>Welcome, {user.fullName}</h1>
-      <div className="dashboard-section">
-        <InvestmentsForm user={user} />
-        <ReferralDashboard user={user} />
-        <Withdrawal user={user} />
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-gold mb-6">
+        Welcome, {user.name}
+      </h1>
+
+      <div className="bg-white shadow rounded-2xl p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">Your Investment</h2>
+        <p className="text-gray-600">
+          <strong>Amount:</strong> ₦{user.investmentAmount || 0}
+        </p>
+        <p className="text-gray-600">
+          <strong>Return:</strong> ₦{user.expectedReturn || 0}
+        </p>
+        <p className="text-gray-600">
+          <strong>Maturity Date:</strong> {user.maturityDate || "N/A"}
+        </p>
       </div>
     </div>
   );
-}
+};
 
 export default Dashboard;
