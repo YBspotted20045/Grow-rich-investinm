@@ -1,35 +1,22 @@
-.vendors-grid {
-  display:grid;
-  gap:16px;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-}
-@media (max-width:1100px){ .vendors-grid { grid-template-columns: repeat(2,1fr); } }
-@media (max-width:720px){ .vendors-grid { grid-template-columns: 1fr; } }
-
-.vendor-card {
+/* Vendors.css - simple list */
+.vendors-page { padding:20px; display:flex; justify-content:center; }
+.vendors-card {
+  width:100%;
+  max-width:720px;
   background:#0f0f0f;
-  border:1px solid #2a2a2a;
-  border-radius:14px;
-  padding:16px;
-  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  color:#f2f2f2;
+  border-radius:12px;
+  padding:20px;
+  border:1px solid rgba(212,175,55,0.06);
 }
-.head { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
-.avatar {
-  width:42px; height:42px; border-radius:999px; display:grid; place-items:center;
-  background:#2a220a; color:#d4af37; font-weight:800;
-}
-.title { color:#f2f2f2; font-weight:700; }
-.sub { color:#b7b7b7; font-size: 13px; }
-
-.wa-btn {
-  display:inline-block; margin:10px 0 8px;
-  padding:8px 12px; background:#1a1a1a; border:1px solid #333; border-radius:10px;
-  color:#f5f5f5; text-decoration:none;
-}
-.wa-btn:hover { border-color:#d4af37; }
-
-.gold-btn.outline {
-  display:inline-block; text-decoration:none; text-align:center;
-  background:transparent; border:1px solid #d4af37; color:#d4af37;
-  padding:10px 14px; border-radius:10px; font-weight:700;
-}
+.vendors-card h2 { color:#d4af37; margin-bottom:10px; }
+.vendors-list { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
+.vendor-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:8px; background:#121212; }
+.vendor-title { font-weight:700; color:#fff; }
+.vendor-sub { color:#bdbdbd; font-size:0.95rem; }
+.small-row { margin-top:12px; display:flex; justify-content:flex-end; gap:8px; }
+.notice { margin-bottom:10px; padding:10px; border-radius:8px; }
+.notice.error { background:#3b1a1a; color:#ffbdbd; }
+.muted { color:#bdbdbd; }
+.btn { background:#d4af37; color:#0b0b0b; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
+.btn.outline { background:transparent; border:1px solid #d4af37; color:#d4af37; }
