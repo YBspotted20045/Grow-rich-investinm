@@ -1,24 +1,21 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Sidebar.css";
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
-  return (
-    <div className={`sidebar ${isOpen ? "open" : ""}`}>
-      <button className="close-btn" onClick={toggleSidebar}>
-        ✖
-      </button>
-      <ul>
-        <li><a href="/dashboard">📊 Dashboard</a></li>
-        <li><a href="/invest">💸 Invest</a></li>
-        <li><a href="/deposit">💳 Deposit</a></li>
-        <li><a href="/withdrawal">🏧 Withdraw</a></li>
-        <li><a href="/account">👤 Account</a></li>
-        <li><a href="/referrals">🧑‍🤝‍🧑 Referrals</a></li>
-        <li><a href="/vendors">🏬 Vendors</a></li>
-        <li><a href="/logout">🚪 Logout</a></li>
-      </ul>
-    </div>
-  );
-};
+export default function Sidebar() {
+  const [open, setOpen] = useState(false);
 
-export default Sidebar;
+  return (
+    <aside className={`sidebar ${open ? "open" : ""}`}>
+      <button className="menu-btn" onClick={() => setOpen(!open)}>☰</button>
+      <nav>
+        <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+        <Link to="/deposit" onClick={() => setOpen(false)}>Deposit</Link>
+        <Link to="/withdrawal" onClick={() => setOpen(false)}>Withdrawal</Link>
+        <Link to="/account" onClick={() => setOpen(false)}>Account</Link>
+        <Link to="/vendors" onClick={() => setOpen(false)}>Vendors</Link>
+        <Link to="/referrals" onClick={() => setOpen(false)}>Referrals</Link>
+      </nav>
+    </aside>
+  );
+}
