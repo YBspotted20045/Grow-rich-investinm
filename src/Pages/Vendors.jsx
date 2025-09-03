@@ -1,94 +1,48 @@
-// src/Pages/Vendors.jsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../axios";
-import "./Vendors.css"; // create this file (CSS provided after JS)
+import React from "react";
+import { useLocation } from "react-router-dom";
+import "./Vendor.css"; // ✅ Import Vendor CSS
 
-export default function Vendors() {
-  const navigate = useNavigate();
-  const [vendors, setVendors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [msg, setMsg] = useState(null);
+const Vendor = () => {
+  const location = useLocation();
+  const { amount } = location.state || { amount: 0 };
 
-  const amount = sessionStorage.getItem("deposit_amount") || "";
-  const user = JSON.parse(localStorage.getItem("gr_user") || "null");
+  // Replace with your real vendor list
+  const vendors = [
+    { id: 1, name: "Vendor A", whatsapp: "2348012345678" },
+    { id: 2, name: "Vendor B", whatsapp: "2348098765432" },
+    { id: 3, name: "Vendor C", whatsapp: "2348076543210" },
+  ];
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await API.get("/vendors"); // expected backend route: GET /api/vendors
-        // backend might return { vendors: [...] } or array directly
-        const list = Array.isArray(res.data) ? res.data : res.data.vendors || [];
-        if (list.length === 0) throw new Error("No vendors from server");
-        setVendors(list);
-      } catch (err) {
-        console.warn("Could not fetch vendors from API, using fallback list.", err);
-        // fallback vendor list (use international phone numbers, e.g. Nigeria: 234...)
-        setVendors([
-          { _id: "v-opay", name: "Opay Vendor", whatsapp: "2348012345678" },
-          { _id: "v-palm", name: "PalmPay Vendor", whatsapp: "2347012345678" },
-          { _id: "v-bank", name: "Bank Transfer Vendor", whatsapp: "2348091234567" },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, []);
-
-  const pickVendor = (v) => {
-    if (!amount) {
-      setMsg({ type: "error", text: "Pick an amount on the Deposit page first." });
-      setTimeout(() => setMsg(null), 2500);
-      navigate("/deposit");
-      return;
-    }
-    // store selection and open WhatsApp
-    sessionStorage.setItem("selected_vendor", JSON.stringify(v));
-
-    const safePhone = (v.whatsapp || "").replace(/\D/g, "");
-    const prefill = `Hello ${v.name || ""}, I want to pay ₦${amount} for a GrowRich deposit. My email: ${user?.email || ""}. Please confirm.`;
-    const url = `https://wa.me/${safePhone}?text=${encodeURIComponent(prefill)}`;
-
-    // open WhatsApp (mobile: will open app; desktop: WhatsApp Web)
-    window.open(url, "_blank");
-
-    // take them back to Deposit so they can upload the receipt
-    setTimeout(() => navigate("/deposit"), 700);
+  const sendToWhatsApp = (number) => {
+    const message = `Hello, I want to deposit ₦${amount} into GrowRich.`;
+    window.open(`https://wa.me/${number}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   return (
-    <div className="vendors-page">
-      <div className="vendors-card">
-        <h2>Choose a Vendor</h2>
-        {msg && <div className={`notice ${msg.type}`}>{msg.text}</div>}
+    <div className="vendor-container">
+      <h2 className="vendor-title">Select a Vendor</h2>
+      <p className="vendor-subtext">
+        Deposit Amount: <strong>₦{amount}</strong>
+      </p>
 
-        <p className="muted">Amount to pay: {amount ? `₦${amount}` : <span className="highlight">(choose amount on Deposit first)</span>}</p>
-
-        {loading ? (
-          <p className="muted">Loading vendors…</p>
-        ) : (
-          <div className="vendors-list">
-            {vendors.map((v) => (
-              <div className="vendor-item" key={v._id || v.name}>
-                <div className="vendor-info">
-                  <div className="vendor-title">{v.name || v.title}</div>
-                  <div className="vendor-sub">WhatsApp: {v.whatsapp}</div>
-                </div>
-                <div>
-                  <button className="btn" onClick={() => pickVendor(v)}>
-                    Contact & Choose
-                  </button>
-                </div>
-              </div>
-            ))}
+      <div className="vendor-grid">
+        {vendors.map((vendor) => (
+          <div className="vendor-card" key={vendor.id}>
+            <div className="vendor-info">
+              <h3 className="vendor-name">{vendor.name}</h3>
+              <p className="vendor-number">{vendor.whatsapp}</p>
+            </div>
+            <button
+              className="vendor-button"
+              onClick={() => sendToWhatsApp(vendor.whatsapp)}
+            >
+              Contact on WhatsApp
+            </button>
           </div>
-        )}
-
-        <div className="small-row">
-          <button className="btn outline" onClick={() => navigate("/deposit")}>Back to deposit</button>
-        </div>
+        ))}
       </div>
     </div>
   );
-}
+};
+
+export default Vendor;
