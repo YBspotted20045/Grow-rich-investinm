@@ -1,67 +1,75 @@
-// src/pages/Dashboard.jsx
-import { Card, CardContent } from "@/components/ui/card";
+ // src/Pages/Dashboard.jsx
+import React, { useEffect, useState } from "react";
+import API from "../axios";
+import "./Dashboard.css"; // optional custom styles
 
-export default function Dashboard() {
+const Dashboard = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await API.get("/auth/me");
+        setUser(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  if (!user) return <p className="text-center text-gray-500">Loading...</p>;
+
   return (
-    <div className="space-y-6">
-      {/* Top Cards */}
+    <div className="p-6 space-y-6">
+      {/* Welcome */}
+      <h1 className="text-2xl font-bold text-yellow-600">
+        Welcome, {user.name}
+      </h1>
+
+      {/* Stats section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-white rounded-2xl shadow-lg">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold">Total Balance</h2>
-            <p className="text-2xl font-bold mt-2">₦120,000</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-xl shadow p-6 border-t-4 border-yellow-600">
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">
+            Investment
+          </h2>
+          <p className="text-gray-600 text-sm">₦{user.investmentAmount || 0}</p>
+        </div>
 
-        <Card className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-white rounded-2xl shadow-lg">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold">Active Investments</h2>
-            <p className="text-2xl font-bold mt-2">₦60,000</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-xl shadow p-6 border-t-4 border-yellow-600">
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">Return</h2>
+          <p className="text-gray-600 text-sm">₦{user.expectedReturn || 0}</p>
+        </div>
 
-        <Card className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-white rounded-2xl shadow-lg">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold">Referral Earnings</h2>
-            <p className="text-2xl font-bold mt-2">₦15,000</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-xl shadow p-6 border-t-4 border-yellow-600">
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">
+            Maturity Date
+          </h2>
+          <p className="text-gray-600 text-sm">{user.maturityDate || "N/A"}</p>
+        </div>
       </div>
 
-      {/* Transactions Table */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Transactions</h2>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="p-3">Date</th>
-              <th className="p-3">Type</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b">
-              <td className="p-3">2025-08-25</td>
-              <td className="p-3">Deposit</td>
-              <td className="p-3">₦20,000</td>
-              <td className="p-3 text-green-600 font-medium">Approved</td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-3">2025-08-20</td>
-              <td className="p-3">Withdrawal</td>
-              <td className="p-3">₦10,000</td>
-              <td className="p-3 text-yellow-600 font-medium">Pending</td>
-            </tr>
-            <tr>
-              <td className="p-3">2025-08-15</td>
-              <td className="p-3">Investment</td>
-              <td className="p-3">₦30,000</td>
-              <td className="p-3 text-green-600 font-medium">Approved</td>
-            </tr>
-          </tbody>
-        </table>
+      {/* Referral Code */}
+      <div className="bg-white rounded-xl shadow p-6 border-l-4 border-yellow-600">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">
+          Your Referral Code
+        </h2>
+        <p className="text-yellow-700 font-mono text-lg">
+          {user.referralCode || "N/A"}
+        </p>
+      </div>
+
+      {/* Eligibility */}
+      <div className="bg-white rounded-xl shadow p-6 border-l-4 border-yellow-600">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">Withdrawal Eligibility</h2>
+        {user.isEligible ? (
+          <p className="text-green-600 font-medium">✅ Eligible</p>
+        ) : (
+          <p className="text-red-600 font-medium">❌ Not Eligible</p>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
