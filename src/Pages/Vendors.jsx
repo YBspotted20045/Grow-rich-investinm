@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import "./Vendor.css"; // ✅ Import Vendor CSS
+import "./Vendors.css"; // ✅ Import Vendor CSS
 
 const Vendor = () => {
   const location = useLocation();
