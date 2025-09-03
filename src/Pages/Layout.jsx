@@ -1,17 +1,36 @@
-// src/layouts/Layout.jsx
-import Sidebar from "../Pages/Sidebar.jsx";
-import { Outlet } from "react-router-dom";
+import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import "./Layout.css";
 
-export default function Layout() {
+const Layout = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="flex">
-      {/* Sidebar fixed on the left */}
-      <Sidebar />
+    <div className="layout">
+      {/* Header */}
+      <header className="header">
+        <button className="menu-btn" onClick={toggleSidebar}>
+          ☰
+        </button>
+        <h1 className="brand">GrowRich</h1>
+      </header>
 
-      {/* Main content */}
-      <div className="flex-1 bg-gray-100 min-h-screen p-6">
-        <Outlet />
-      </div>
+      {/* Sidebar */}
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+      {/* Main Content */}
+      <main className="content">{children}</main>
+
+      {/* Footer */}
+      <footer className="footer">
+        © {new Date().getFullYear()} GrowRich
+      </footer>
     </div>
   );
-}
+};
+
+export default Layout;
