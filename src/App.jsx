@@ -15,7 +15,7 @@ import Account from "./Pages/Account.jsx";
 import Vendors from "./Pages/Vendors.jsx";
 
 // LAYOUT (kept in components folder)
-import Layout from "./components/Layout.jsx";
+import Layout from "./Pages/Layout.jsx";
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("gr_token");
