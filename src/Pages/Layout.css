@@ -1,41 +1,84 @@
-.layout {
+/* Root container */
+.layout-root {
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
+  background-color: #f8f8f8;
+  font-family: Arial, sans-serif;
 }
 
-.header {
-  background: linear-gradient(90deg, #d4af37, #b8860b); /* luxury gold */
-  color: white;
-  padding: 15px;
+/* Topbar */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #1a1a1a;
+  color: #d4af37; /* luxury gold */
   display: flex;
   align-items: center;
+  padding: 0 16px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .menu-btn {
   font-size: 22px;
-  margin-right: 15px;
-  background: transparent;
+  background: none;
   border: none;
+  color: #d4af37;
   cursor: pointer;
-  color: white;
+  margin-right: 16px;
 }
 
 .brand {
-  font-size: 20px;
   font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
 }
 
-.content {
-  flex: 1;
-  padding: 20px;
-  background: #f9f9f9;
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: -240px;
+  width: 240px;
+  height: 100%;
+  background: #222;
+  color: #fff;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 900;
+  padding-top: 20px;
 }
 
-.footer {
-  text-align: center;
-  padding: 10px;
-  font-size: 14px;
-  background: #111;
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar nav a {
+  padding: 12px 20px;
   color: #d4af37;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar nav a:hover {
+  background: #333;
+  color: #fff;
+  border-left: 4px solid #d4af37;
+}
+
+/* Content area */
+.layout-content {
+  flex: 1;
+  margin-top: 60px; /* height of topbar */
+  padding: 20px;
+  width: 100%;
 }
