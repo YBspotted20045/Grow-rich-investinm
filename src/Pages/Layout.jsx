@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import "./Layout.css";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -23,12 +24,12 @@ const Layout = ({ children }) => {
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main Content */}
-      <main className="content">{children}</main>
+      <main className="content">
+        <Outlet /> {/* 🚀 This is where Dashboard, Invest, etc. will appear */}
+      </main>
 
       {/* Footer */}
-      <footer className="footer">
-        © {new Date().getFullYear()} GrowRich
-      </footer>
+      <footer className="footer">© {new Date().getFullYear()} GrowRich</footer>
     </div>
   );
 };
