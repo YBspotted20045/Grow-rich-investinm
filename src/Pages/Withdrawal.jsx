@@ -1,80 +1,99 @@
-import React, { useState, useEffect } from "react";
+// src/pages/Withdrawal.jsx
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
+import API from "../axios";
+import "./Dashboard.css";
 import "./Withdrawal.css";
 
-const Withdrawal = () => {
-  const [amount, setAmount] = useState("");
-  const [message, setMessage] = useState("");
-  const [eligible, setEligible] = useState(false);
-  const [eligibilityMsg, setEligibilityMsg] = useState("");
+export default function Withdrawal() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [eligibility, setEligibility] = useState({ eligible: false, reason: "" });
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
-    // Simulate backend check (replace with real API later)
-    const userData = {
-      matured: true, // from backend
-      referrals: 2,
-      reinvested: false,
-    };
+    (async () => {
+      try {
+        const me = await API.get("/auth/me");
+        setUser(me.data);
 
-    if (!userData.matured) {
-      setEligible(false);
-      setEligibilityMsg("⚠️ Your investment has not matured yet.");
-    } else if (!userData.reinvested && userData.referrals < 2) {
-      setEligible(false);
-      setEligibilityMsg("⚠️ You need at least 2 referrals to withdraw.");
-    } else if (userData.reinvested && userData.referrals < 1) {
-      setEligible(false);
-      setEligibilityMsg("⚠️ You need at least 1 referral to withdraw after reinvestment.");
-    } else {
-      setEligible(true);
-      setEligibilityMsg("✅ You are eligible to withdraw.");
-    }
-  }, []);
+        const res = await API.get("/withdrawals/eligibility");
+        setEligibility(res.data);
+      } catch (err) {
+        console.error(err);
+        navigate("/login");
+      }
+    })();
+  }, [navigate]);
 
-  const handleWithdraw = (e) => {
-    e.preventDefault();
-    if (!amount || parseFloat(amount) <= 0) {
-      setMessage("⚠️ Please enter a valid withdrawal amount.");
-      return;
+  const requestWithdrawal = async () => {
+    try {
+      setWithdrawing(true);
+      const res = await API.post("/withdrawals/request");
+      setToast(res.data?.message || "Withdrawal requested.");
+      const check = await API.get("/withdrawals/eligibility");
+      setEligibility(check.data);
+    } catch (err) {
+      setToast(err.response?.data?.message || "Unable to request withdrawal.");
+    } finally {
+      setWithdrawing(false);
     }
-    if (!eligible) {
-      setMessage("❌ You are not eligible to withdraw yet.");
-      return;
-    }
-
-    setMessage(`✅ Withdrawal request of ₦${amount} submitted.`);
-    setAmount("");
   };
 
+  if (!user) return <div className="loader">Loading...</div>;
+
   return (
-    <div className="withdraw-container">
-      <h2 className="withdraw-title">Withdraw Funds</h2>
+    <div className="page-shell">
+      <aside className="sidebar">
+        <h2>GrowRich</h2>
+        <ul>
+          <li><Link to="/dashboard"><FaHome /> Dashboard</Link></li>
+          <li><Link to="/investments"><FaWallet /> Investments</Link></li>
+          <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
+          <li><Link to="/withdrawals" className="active"><FaMoneyCheck /> Withdrawals</Link></li>
+          <li><Link to="/account"><FaUniversity /> Bank Account</Link></li>
+          <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
+        </ul>
+        <button
+          className="gold-btn mt-4"
+          onClick={() => { localStorage.removeItem("token"); navigate("/login"); }}
+        >
+          Logout
+        </button>
+      </aside>
 
-      {/* ✅ Eligibility Section */}
-      <div className={`eligibility-card ${eligible ? "eligible" : "not-eligible"}`}>
-        <p>{eligibilityMsg}</p>
-      </div>
+      <main className="main">
+        <div className="topbar">
+          <h3>Withdraw Funds</h3>
+          <div className="muted">User: {user?.fullname || "—"}</div>
+        </div>
 
-      <div className="withdraw-card">
-        <form onSubmit={handleWithdraw}>
-          <label className="withdraw-label">Withdrawal Amount</label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount (₦)"
-            className="withdraw-input"
-            disabled={!eligible}
-          />
+        <div className="content">
+          <div className="withdraw-card">
+            <h4>Withdrawal Eligibility</h4>
+            <p className={eligibility.eligible ? "text-success" : "text-danger"}>
+              {eligibility.reason || (eligibility.eligible ? "You are eligible to withdraw." : "Not eligible.")}
+            </p>
 
-          <button type="submit" className="withdraw-button" disabled={!eligible}>
-            Submit Withdrawal
-          </button>
-        </form>
+            <button
+              className="gold-btn"
+              disabled={!eligibility.eligible || withdrawing}
+              onClick={requestWithdrawal}
+            >
+              {withdrawing ? "Processing..." : "Request Withdrawal"}
+            </button>
 
-        {message && <p className="withdraw-message">{message}</p>}
-      </div>
+            {toast && (
+              <div className="toast">
+                {toast}
+                <button onClick={() => setToast("")}>Dismiss</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
-};
-
-export default Withdrawal;
+}
