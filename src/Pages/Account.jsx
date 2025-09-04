@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaBank, FaPlusCircle } from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 import "./Account.css";
@@ -57,17 +58,19 @@ export default function Account() {
     }
   };
 
+  if (!user) return <div className="loader">Loading...</div>;
+
   return (
     <div className="page-shell">
       <aside className="sidebar">
         <h2>GrowRich</h2>
         <ul>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/investments">Investments</Link></li>
-          <li><Link to="/referrals">Referrals</Link></li>
-          <li><Link to="/withdrawals">Withdrawals</Link></li>
-          <li><Link to="/account" className="active">Bank Account</Link></li>
-          <li><Link to="/deposit">Deposit</Link></li>
+          <li><Link to="/dashboard"><FaHome /> Dashboard</Link></li>
+          <li><Link to="/investments"><FaWallet /> Investments</Link></li>
+          <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
+          <li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
+          <li><Link to="/account" className="active"><FaBank /> Bank Account</Link></li>
+          <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
         </ul>
         <button
           className="gold-btn mt-4"
@@ -92,6 +95,7 @@ export default function Account() {
                 placeholder="e.g. Access Bank"
                 value={form.bankName}
                 onChange={handleChange}
+                aria-label="Bank Name"
               />
             </div>
             <div className="two-col">
@@ -102,6 +106,7 @@ export default function Account() {
                   placeholder="e.g. 0123456789"
                   value={form.accountNumber}
                   onChange={handleChange}
+                  aria-label="Account Number"
                 />
               </div>
               <div className="field">
@@ -111,16 +116,22 @@ export default function Account() {
                   placeholder="Your full name"
                   value={form.accountHolder}
                   onChange={handleChange}
+                  aria-label="Account Holder"
                 />
               </div>
             </div>
             <button className="gold-btn" disabled={saving}>
               {saving ? "Saving..." : "Save Details"}
             </button>
-            {toast && <div className="toast">{toast}</div>}
+            {toast && (
+              <div className="toast">
+                {toast}
+                <button onClick={() => setToast("")}>Dismiss</button>
+              </div>
+            )}
           </form>
         </div>
       </main>
     </div>
   );
-          }
+}
