@@ -1,49 +1,82 @@
-/* ReferralDashboard.css */
-
-.dashboard-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 30px;
-  background: #ffffff;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  border-radius: 15px;
-  font-family: 'Arial', sans-serif;
-}
-
-.dashboard-container h2 {
+.referral-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
   text-align: center;
-  color: #2575fc;
-  margin-bottom: 25px;
 }
 
-.investment-info p {
-  font-size: 16px;
+.referral-box h4 {
   margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: goldenrod;
 }
 
-h3 {
-  margin-top: 30px;
+.referral-code {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f7f7f7;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.2rem;
   color: #333;
 }
 
-table {
+.referral-code span {
+  margin-right: 10px;
+}
+
+.copy-btn {
+  background: goldenrod;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.copy-btn:hover {
+  background: #b8860b;
+}
+
+.copied-msg {
+  color: green;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.referral-table-wrapper h4 {
+  margin-bottom: 12px;
+  color: goldenrod;
+}
+
+.referral-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-table th,
-table td {
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  text-align: left;
+.referral-table th,
+.referral-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
 }
 
-table th {
-  background-color: #2575fc;
-  color: #fff;
+.referral-table th {
+  background: #f7f7f7;
+  font-weight: bold;
+  color: #444;
 }
 
-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+.referral-table tr:hover {
+  background: #fafafa;
 }
