@@ -1,99 +1,155 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 
-const Dashboard = () => {
+export default function Dashboard() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [investments, setInvestments] = useState([]);
   const [daysLeft, setDaysLeft] = useState(0);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    (async () => {
       try {
         const res = await API.get("/auth/me");
-        setUser(res.data);
+        const me = res.data.user;
+        setUser(me);
 
-        if (res.data.maturityDate && res.data.investmentDate) {
-          const start = new Date(res.data.investmentDate);
-          const end = new Date(res.data.maturityDate);
+        // Fetch investments
+        const inv = await API.get("/investments/my");
+        setInvestments(inv.data || []);
+
+        // Maturity countdown
+        if (me.investmentDate && me.maturityDate) {
+          const start = new Date(me.investmentDate);
+          const end = new Date(me.maturityDate);
           const now = new Date();
 
-          const total = (end - start) / (1000 * 60 * 60 * 24); // total days
-          if (total > 0) {
-            const remaining = Math.max(0, (end - now) / (1000 * 60 * 60 * 24));
-            const percent = Math.min(
-              100,
-              ((total - remaining) / total) * 100
-            );
+          const total = (end - start) / (1000 * 60 * 60 * 24);
+          const remaining = Math.max(0, (end - now) / (1000 * 60 * 60 * 24));
+          const percent = Math.min(100, ((total - remaining) / total) * 100);
 
-            setDaysLeft(Math.ceil(remaining));
-            setProgress(percent);
-          }
+          setDaysLeft(Math.ceil(remaining));
+          setProgress(percent);
         }
-      } catch (err) {
-        console.error("Error fetching user:", err);
+      } catch {
+        navigate("/login");
       }
-    };
-    fetchUser();
-  }, []);
+    })();
+  }, [navigate]);
 
-  if (!user) return <p className="loader">Loading dashboard...</p>;
+  if (!user) return <div className="loader">Loading...</div>;
 
   return (
-    <div className="dashboard-container">
-      {/* Welcome banner */}
-      <div className="welcome-banner">
-        Welcome, <span className="highlight">{user.name || "Investor"}</span>
-      </div>
+    <div className="page-shell">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2>GrowRich</h2>
+        <ul>
+          <li><Link to="/dashboard" className="active"><FaHome /> Dashboard</Link></li>
+          <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
+          <li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
+          <li><Link to="/account"><FaUniversity /> Bank Account</Link></li>
+          <li><Link to="/vendors"><FaWallet /> Vendors</Link></li>
+          <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
+        </ul>
+        <button
+          className="gold-btn mt-4"
+          onClick={() => { localStorage.removeItem("token"); navigate("/login"); }}
+        >
+          Logout
+        </button>
+      </aside>
 
-      <div className="dashboard-grid">
-        {/* Investment summary cards */}
-        <div className="dashboard-card">
-          <h2 className="dashboard-title">Your Investment</h2>
-          <p className="dashboard-value">
-            ₦{user.investmentAmount || 0}
-          </p>
-          <p className="dashboard-label">Active Investment</p>
+      {/* Main Content */}
+      <main className="main">
+        <div className="topbar">
+          <h3>Dashboard</h3>
+          <div className="muted">Welcome, {user.fullname}</div>
         </div>
 
-        <div className="dashboard-card">
-          <h2 className="dashboard-title">Expected Return</h2>
-          <p className="dashboard-value">
-            ₦{user.expectedReturn || 0}
-          </p>
-          <p className="dashboard-label">After maturity period</p>
-        </div>
+        <div className="content">
+          {/* Stats */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <h4>Active Investment</h4>
+              <p>₦{user.investmentAmount || 0}</p>
+            </div>
 
-        <div className="dashboard-card">
-          <h2 className="dashboard-title">Maturity Date</h2>
-          <p className="dashboard-value">
-            {user.maturityDate || "N/A"}
-          </p>
-          <p className="dashboard-label">
-            {daysLeft > 0
-              ? `${daysLeft} day(s) remaining`
-              : "Ready for withdrawal"}
-          </p>
+            <div className="stat-card">
+              <h4>Expected Return</h4>
+              <p>₦{user.expectedReturn || 0}</p>
+            </div>
 
-          {/* Progress bar */}
-          <div className="progress-bar">
-            <div
-              className="progress-bar-fill"
-              style={{ width: `${progress}%` }}
-            ></div>
+            <div className="stat-card">
+              <h4>Maturity</h4>
+              <p>
+                {user.maturityDate
+                  ? new Date(user.maturityDate).toLocaleDateString()
+                  : "N/A"}
+              </p>
+              <div className="progress-bar">
+                <div
+                  className="progress-bar-fill"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+              <small>
+                {daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}
+              </small>
+            </div>
+
+            <div className="stat-card">
+              <h4>Referral Code</h4>
+              <p>{user.referralCode || "N/A"}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Referred By</h4>
+              <p>{user.referredBy || "None"}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Status</h4>
+              <p className={user.eligibleForWithdrawal ? "status-ok" : "status-bad"}>
+                {user.eligibleForWithdrawal ? "Eligible" : "Not Eligible"}
+              </p>
+            </div>
+          </div>
+
+          {/* Investments Table */}
+          <div className="investments">
+            <h4>Your Investments</h4>
+            {investments.length === 0 ? (
+              <p className="muted">No active investments yet.</p>
+            ) : (
+              <table className="styled-table">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Maturity</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {investments.map((inv, idx) => (
+                    <tr key={idx}>
+                      <td>₦{inv.amount}</td>
+                      <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                      <td>{new Date(inv.maturityDate).toLocaleDateString()}</td>
+                      <td>{inv.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
-
-        <div className="dashboard-card">
-          <h2 className="dashboard-title">Referral Code</h2>
-          <p className="dashboard-value">
-            {user.referralCode || "N/A"}
-          </p>
-          <p className="dashboard-label">Share with friends to earn</p>
-        </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default Dashboard;
+}
