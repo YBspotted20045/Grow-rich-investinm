@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaBank, FaPlusCircle } from "react-icons/fa";
+import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 import "./Account.css";
@@ -27,12 +27,15 @@ export default function Account() {
       }
       try {
         const res = await API.get("/account/me");
-        if (res.data) setForm({
-          bankName: res.data.bankName || "",
-          accountNumber: res.data.accountNumber || "",
-          accountHolder: res.data.accountHolder || "",
-        });
-      } catch { /* ignore */ }
+        if (res.data)
+          setForm({
+            bankName: res.data.bankName || "",
+            accountNumber: res.data.accountNumber || "",
+            accountHolder: res.data.accountHolder || "",
+          });
+      } catch {
+        /* ignore */
+      }
     })();
   }, [navigate]);
 
@@ -65,16 +68,43 @@ export default function Account() {
       <aside className="sidebar">
         <h2>GrowRich</h2>
         <ul>
-          <li><Link to="/dashboard"><FaHome /> Dashboard</Link></li>
-          <li><Link to="/investments"><FaWallet /> Investments</Link></li>
-          <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
-          <li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
-          <li><Link to="/account" className="active"><FaBank /> Bank Account</Link></li>
-          <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
+          <li>
+            <Link to="/dashboard">
+              <FaHome /> Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link to="/investments">
+              <FaWallet /> Investments
+            </Link>
+          </li>
+          <li>
+            <Link to="/referrals">
+              <FaUsers /> Referrals
+            </Link>
+          </li>
+          <li>
+            <Link to="/withdrawals">
+              <FaMoneyCheck /> Withdrawals
+            </Link>
+          </li>
+          <li>
+            <Link to="/account" className="active">
+              <FaUniversity /> Bank Account
+            </Link>
+          </li>
+          <li>
+            <Link to="/deposit">
+              <FaPlusCircle /> Deposit
+            </Link>
+          </li>
         </ul>
         <button
           className="gold-btn mt-4"
-          onClick={() => { localStorage.removeItem("token"); navigate("/login"); }}
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          }}
         >
           Logout
         </button>
