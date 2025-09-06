@@ -49,7 +49,7 @@ export default function ReferralDashboard() {
         </ul>
         <button
           className="gold-btn mt-4"
-          onClick={() => { localStorage.removeItem("token"); navigate("/login"); }}
+          onClick={() => { localStorage.removeItem("gr_token"); navigate("/login"); }}
         >
           Logout
         </button>
