@@ -1,101 +1,159 @@
-// src/Pages/Login.jsx
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import "./Login.css";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
 import API from "../axios";
+import "./Dashboard.css";
 
-function Login() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
+export default function Dashboard() {
+const navigate = useNavigate();
+const [user, setUser] = useState(null);
+const [investments, setInvestments] = useState([]);
+const [daysLeft, setDaysLeft] = useState(0);
+const [progress, setProgress] = useState(0);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+useEffect(() => {
+(async () => {
+try {
+const res = await API.get("/auth/me");
+const me = res.data.user;
+setUser(me);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (loading) return;
+// Fetch investments  
+    const inv = await API.get("/investments/my");  
+    setInvestments(inv.data || []);  
 
-    setLoading(true);
-    setMessage({ type: "", text: "" });
+    // Maturity countdown  
+    if (me.investmentDate && me.maturityDate) {  
+      const start = new Date(me.investmentDate);  
+      const end = new Date(me.maturityDate);  
+      const now = new Date();  
 
-    try {
-      const res = await API.post("/auth/login", form);
+      const total = (end - start) / (1000 * 60 * 60 * 24);  
+      const remaining = Math.max(0, (end - now) / (1000 * 60 * 60 * 24));  
+      const percent = Math.min(100, ((total - remaining) / total) * 100);  
 
-      console.log("Login response:", res.data);
+      setDaysLeft(Math.ceil(remaining));  
+      setProgress(percent);  
+    }  
+  } catch {  
+    navigate("/login");  
+  }  
+})();
 
-      // Pick token from whichever key the backend provides
-      const token = res.data.token || res.data.jwt || res.data.accessToken;
-      const user = res.data.user || res.data.data || null;
+}, [navigate]);
 
-      if (!token) {
-        throw new Error("No token received from server");
-      }
+if (!user) return <div className="loader">Loading...</div>;
 
-      // 🟢 Debug on phone
-      alert("Token: " + token + "\nUser: " + JSON.stringify(user));
+return (
+<div className="page-shell">
+{/* Sidebar */}
+<aside className="sidebar">
+<h2>GrowRich</h2>
+<ul>
+<li><Link to="/dashboard" className="active"><FaHome /> Dashboard</Link></li>
+<li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
+<li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
+<li><Link to="/account"><FaUniversity /> Bank Account</Link></li>
+<li><Link to="/vendors"><FaWallet /> Vendors</Link></li>
+<li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
+</ul>
+<button
+className="gold-btn mt-4"
+onClick={() => { localStorage.removeItem("gr_token"); navigate("/login"); }}
+>
+Logout
+</button>
+</aside>
 
-      // Save to localStorage
-      localStorage.setItem("gr_token", token);
-      if (user) {
-        localStorage.setItem("gr_user", JSON.stringify(user));
-      }
+{/* Main Content */}  
+  <main className="main">  
+    <div className="topbar">  
+      <h3>Dashboard</h3>  
+      <div className="muted">Welcome, {user.fullname}</div>  
+    </div>  
 
-      setMessage({ type: "success", text: "Login successful! Redirecting..." });
+    <div className="content">  
+      {/* Stats */}  
+      <div className="stats-grid">  
+        <div className="stat-card">  
+          <h4>Active Investment</h4>  
+          <p>₦{user.investmentAmount || 0}</p>  
+        </div>  
 
-      navigate("/dashboard", { replace: true });
-    } catch (error) {
-      console.error("Login failed:", error);
-      setMessage({
-        type: "error",
-        text: error.response?.data?.message || "Invalid email or password.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+        <div className="stat-card">  
+          <h4>Expected Return</h4>  
+          <p>₦{user.expectedReturn || 0}</p>  
+        </div>  
 
-  return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+        <div className="stat-card">  
+          <h4>Maturity</h4>  
+          <p>  
+            {user.maturityDate  
+              ? new Date(user.maturityDate).toLocaleDateString()  
+              : "N/A"}  
+          </p>  
+          <div className="progress-bar">  
+            <div  
+              className="progress-bar-fill"  
+              style={{ width: `${progress}%` }}  
+            ></div>  
+          </div>  
+          <small>  
+            {daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}  
+          </small>  
+        </div>  
 
-        {message.text && (
-          <div className={`message ${message.type}`}>{message.text}</div>
-        )}
+        <div className="stat-card">  
+          <h4>Referral Code</h4>  
+          <p>{user.referralCode || "N/A"}</p>  
+        </div>  
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
+        <div className="stat-card">  
+          <h4>Referred By</h4>  
+          <p>{user.referredBy || "None"}</p>  
+        </div>  
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
+        <div className="stat-card">  
+          <h4>Status</h4>  
+          <p className={user.eligibleForWithdrawal ? "status-ok" : "status-bad"}>  
+            {user.eligibleForWithdrawal ? "Eligible" : "Not Eligible"}  
+          </p>  
+        </div>  
+      </div>  
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging In..." : "Login"}
-        </button>
+      {/* Investments Table */}  
+      <div className="investments">  
+        <h4>Your Investments</h4>  
+        {investments.length === 0 ? (  
+          <p className="muted">No active investments yet.</p>  
+        ) : (  
+          <table className="styled-table">  
+            <thead>  
+              <tr>  
+                <th>Amount</th>  
+                <th>Date</th>  
+                <th>Maturity</th>  
+                <th>Status</th>  
+              </tr>  
+            </thead>  
+            <tbody>  
+              {investments.map((inv, idx) => (  
+                <tr key={idx}>  
+                  <td>₦{inv.amount}</td>  
+                  <td>{new Date(inv.createdAt).toLocaleDateString()}</td>  
+                  <td>{new Date(inv.maturityDate).toLocaleDateString()}</td>  
+                  <td>{inv.status}</td>  
+                </tr>  
+              ))}  
+            </tbody>  
+          </table>  
+        )}  
+      </div>  
+    </div>  
+  </main>  
+</div>
 
-        <p className="switch-link">
-          Don’t have an account? <Link to="/signup">Sign up here</Link>
-        </p>
-      </form>
-    </div>
-  );
+);
 }
 
-export default Login;
+            
