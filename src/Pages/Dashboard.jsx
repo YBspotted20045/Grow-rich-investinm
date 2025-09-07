@@ -28,8 +28,9 @@ export default function Dashboard() {
       }
 
       try {
+        // ✅ Backend returns the user directly
         const res = await API.get("/auth/me");
-        const me = res.data.user || res.data; // fallback depending on backend
+        const me = res.data;
         setUser(me);
 
         // Fetch investments
@@ -51,7 +52,7 @@ export default function Dashboard() {
         }
       } catch (err) {
         console.error("Dashboard fetch error:", err.response?.data || err.message);
-        // ❌ Don’t auto logout here, just stay on page
+        // ❌ Don’t auto logout immediately
       }
     })();
   }, [navigate]);
@@ -110,7 +111,7 @@ export default function Dashboard() {
       <main className="main">
         <div className="topbar">
           <h3>Dashboard</h3>
-          <div className="muted">Welcome, {user.fullname}</div>
+          <div className="muted">Welcome, {user.username}</div>
         </div>
 
         <div className="content">
@@ -200,4 +201,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-}
+                        }
