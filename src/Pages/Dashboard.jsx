@@ -28,7 +28,7 @@ export default function Dashboard() {
       }
 
       try {
-        // ✅ Backend returns the user directly
+        // ✅ Backend returns user directly
         const res = await API.get("/auth/me");
         const me = res.data;
         setUser(me);
@@ -52,7 +52,7 @@ export default function Dashboard() {
         }
       } catch (err) {
         console.error("Dashboard fetch error:", err.response?.data || err.message);
-        // ❌ Don’t auto logout immediately
+        // ⚠️ Don’t auto logout on fetch error, only if token is missing
       }
     })();
   }, [navigate]);
@@ -201,4 +201,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-                        }
+                }
