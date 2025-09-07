@@ -1,6 +1,14 @@
+// src/Pages/Account.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
+import {
+  FaHome,
+  FaWallet,
+  FaUsers,
+  FaMoneyCheck,
+  FaUniversity,
+  FaPlusCircle,
+} from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 import "./Account.css";
@@ -19,20 +27,23 @@ export default function Account() {
   useEffect(() => {
     (async () => {
       try {
+        // ✅ backend returns user directly
         const me = await API.get("/auth/me");
-        setUser(me.data.user);
+        setUser(me.data);
       } catch {
         navigate("/login");
         return;
       }
+
       try {
         const res = await API.get("/account/me");
-        if (res.data)
+        if (res.data) {
           setForm({
             bankName: res.data.bankName || "",
             accountNumber: res.data.accountNumber || "",
             accountHolder: res.data.accountHolder || "",
           });
+        }
       } catch {
         /* ignore */
       }
@@ -74,13 +85,8 @@ export default function Account() {
             </Link>
           </li>
           <li>
-            <Link to="/investments">
-              <FaWallet /> Investments
-            </Link>
-          </li>
-          <li>
-            <Link to="/referrals">
-              <FaUsers /> Referrals
+            <Link to="/deposit">
+              <FaPlusCircle /> Deposit
             </Link>
           </li>
           <li>
@@ -94,15 +100,20 @@ export default function Account() {
             </Link>
           </li>
           <li>
-            <Link to="/deposit">
-              <FaPlusCircle /> Deposit
+            <Link to="/vendors">
+              <FaWallet /> Vendors
+            </Link>
+          </li>
+          <li>
+            <Link to="/referrals">
+              <FaUsers /> Referrals
             </Link>
           </li>
         </ul>
         <button
           className="gold-btn mt-4"
           onClick={() => {
-            localStorage.removeItem("token");
+            localStorage.removeItem("gr_token"); // ✅ corrected
             navigate("/login");
           }}
         >
@@ -113,7 +124,7 @@ export default function Account() {
       <main className="main">
         <div className="topbar">
           <h3>Bank Details</h3>
-          <div className="muted">User: {user?.fullname || "—"}</div>
+          <div className="muted">User: {user.username || "—"}</div>
         </div>
 
         <div className="content">
@@ -156,7 +167,9 @@ export default function Account() {
             {toast && (
               <div className="toast">
                 {toast}
-                <button onClick={() => setToast("")}>Dismiss</button>
+                <button type="button" onClick={() => setToast("")}>
+                  Dismiss
+                </button>
               </div>
             )}
           </form>
