@@ -24,7 +24,7 @@ function Login() {
     try {
       const res = await API.post("/auth/login", form);
 
-      console.log("Login response:", res.data); // 👈 check backend response
+      console.log("Login response:", res.data);
 
       // Pick token from whichever key the backend provides
       const token = res.data.token || res.data.jwt || res.data.accessToken;
@@ -34,6 +34,9 @@ function Login() {
         throw new Error("No token received from server");
       }
 
+      // 🟢 Debug on phone
+      alert("Token: " + token + "\nUser: " + JSON.stringify(user));
+
       // Save to localStorage
       localStorage.setItem("gr_token", token);
       if (user) {
@@ -42,7 +45,6 @@ function Login() {
 
       setMessage({ type: "success", text: "Login successful! Redirecting..." });
 
-      // ✅ Navigate immediately
       navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error("Login failed:", error);
