@@ -1,6 +1,14 @@
+// src/Pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
+import {
+  FaHome,
+  FaWallet,
+  FaUsers,
+  FaMoneyCheck,
+  FaUniversity,
+  FaPlusCircle,
+} from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 
@@ -13,9 +21,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
+      const token = localStorage.getItem("gr_token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       try {
         const res = await API.get("/auth/me");
-        const me = res.data.user;
+        const me = res.data.user || res.data; // fallback depending on backend
         setUser(me);
 
         // Fetch investments
@@ -35,8 +49,9 @@ export default function Dashboard() {
           setDaysLeft(Math.ceil(remaining));
           setProgress(percent);
         }
-      } catch {
-        navigate("/login");
+      } catch (err) {
+        console.error("Dashboard fetch error:", err.response?.data || err.message);
+        // ❌ Don’t auto logout here, just stay on page
       }
     })();
   }, [navigate]);
@@ -49,16 +64,43 @@ export default function Dashboard() {
       <aside className="sidebar">
         <h2>GrowRich</h2>
         <ul>
-          <li><Link to="/dashboard" className="active"><FaHome /> Dashboard</Link></li>
-          <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
-          <li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
-          <li><Link to="/account"><FaUniversity /> Bank Account</Link></li>
-          <li><Link to="/vendors"><FaWallet /> Vendors</Link></li>
-          <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
+          <li>
+            <Link to="/dashboard" className="active">
+              <FaHome /> Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link to="/deposit">
+              <FaPlusCircle /> Deposit
+            </Link>
+          </li>
+          <li>
+            <Link to="/withdrawals">
+              <FaMoneyCheck /> Withdrawals
+            </Link>
+          </li>
+          <li>
+            <Link to="/account">
+              <FaUniversity /> Bank Account
+            </Link>
+          </li>
+          <li>
+            <Link to="/vendors">
+              <FaWallet /> Vendors
+            </Link>
+          </li>
+          <li>
+            <Link to="/referrals">
+              <FaUsers /> Referrals
+            </Link>
+          </li>
         </ul>
         <button
           className="gold-btn mt-4"
-          onClick={() => { localStorage.removeItem("gr_token"); navigate("/login"); }}
+          onClick={() => {
+            localStorage.removeItem("gr_token");
+            navigate("/login");
+          }}
         >
           Logout
         </button>
@@ -98,7 +140,9 @@ export default function Dashboard() {
                 ></div>
               </div>
               <small>
-                {daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}
+                {daysLeft > 0
+                  ? `${daysLeft} day(s) left`
+                  : "Ready for withdrawal"}
               </small>
             </div>
 
@@ -114,7 +158,11 @@ export default function Dashboard() {
 
             <div className="stat-card">
               <h4>Status</h4>
-              <p className={user.eligibleForWithdrawal ? "status-ok" : "status-bad"}>
+              <p
+                className={
+                  user.eligibleForWithdrawal ? "status-ok" : "status-bad"
+                }
+              >
                 {user.eligibleForWithdrawal ? "Eligible" : "Not Eligible"}
               </p>
             </div>
