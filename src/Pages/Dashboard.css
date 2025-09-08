@@ -1,198 +1,97 @@
-/* Dashboard Layout */
-.page-shell {
-  display: flex;
-  min-height: 100vh;
-  background: #f9f9f9;
-  color: #333;
-  font-family: "Segoe UI", Tahoma, sans-serif;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 240px;
+.dashboard-shell {
+  padding: 1rem;
+  color: #fff;
   background: #111;
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.sidebar h2 {
-  color: goldenrod;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar ul li {
-  margin: 15px 0;
-}
-
-.sidebar ul li a {
-  color: #ddd;
-  text-decoration: none;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: color 0.3s ease;
-}
-
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-  color: goldenrod;
-  font-weight: 600;
-}
-
-.gold-btn {
-  background: goldenrod;
-  border: none;
-  padding: 12px 15px;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.gold-btn:hover {
-  background: #b8860b;
-  color: #fff;
-}
-
-/* Main Section */
-.main {
-  flex: 1;
-  padding: 20px;
+  min-height: 100vh;
 }
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 1.5rem;
 }
-
-.topbar h3 {
+.topbar h2 {
   font-size: 1.6rem;
-  font-weight: 600;
-  color: #222;
+  color: #f5c542; /* gold */
+}
+.muted {
+  color: #bbb;
+  font-size: 0.9rem;
 }
 
-.topbar .muted {
-  font-size: 0.95rem;
-  color: #777;
-}
-
-/* Stats Grid */
-.stats-grid {
+/* Cards */
+.cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
-
-.stat-card {
-  background: #fff;
+.card {
+  padding: 1rem;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   text-align: center;
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.card h3 {
+  margin: 0.5rem 0;
+}
+.card p {
+  font-size: 0.9rem;
+  color: #ddd;
+}
+.card.gold {
+  background: linear-gradient(135deg, #f5c542, #b8860b);
+  color: #111;
+}
+.card.dark {
+  background: #222;
+  border: 1px solid #333;
+}
+.card .icon {
+  font-size: 1.5rem;
 }
 
-.stat-card:hover {
-  transform: translateY(-3px);
+/* Recent Table */
+.recent-section {
+  margin-bottom: 2rem;
 }
-
-.stat-card h4 {
-  font-size: 1.1rem;
-  color: #444;
-  margin-bottom: 10px;
-}
-
-.stat-card p {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: goldenrod;
-}
-
-.stat-card small {
-  display: block;
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: #666;
-}
-
-.status-ok {
-  color: green;
-}
-
-.status-bad {
-  color: red;
-}
-
-/* Progress Bar */
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background: #eee;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: goldenrod;
-  transition: width 0.5s ease-in-out;
-}
-
-/* Investments Table */
-.investments {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.investments h4 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.styled-table {
+.recent-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+.recent-table th,
+.recent-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+.recent-table tr:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+.recent-table .approved {
+  color: #4caf50;
+}
+.recent-table .pending {
+  color: #f5c542;
+}
+.recent-table .rejected {
+  color: #e53935;
 }
 
-.styled-table th,
-.styled-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: center;
-  font-size: 0.95rem;
+/* Buttons */
+.gold-btn, .dark-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 0.8rem;
 }
-
-.styled-table th {
-  background: #f7f7f7;
-  color: #555;
-  font-weight: 600;
+.gold-btn {
+  background: #f5c542;
+  color: #111;
 }
-
-.styled-table tr:nth-child(even) {
-  background: #fafafa;
-}
-
-.styled-table tr:hover {
-  background: #f1f1f1;
+.dark-btn {
+  background: #222;
+  border: 1px solid #555;
+  color: #f5c542;
 }
