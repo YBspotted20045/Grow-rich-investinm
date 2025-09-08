@@ -1,159 +1,72 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaWallet, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
+// src/Pages/Login.jsx
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../axios";
-import "./Dashboard.css";
+import "./Login.css";
 
-export default function Dashboard() {
-const navigate = useNavigate();
-const [user, setUser] = useState(null);
-const [investments, setInvestments] = useState([]);
-const [daysLeft, setDaysLeft] = useState(0);
-const [progress, setProgress] = useState(0);
+export default function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-useEffect(() => {
-(async () => {
-try {
-const res = await API.get("/auth/me");
-const me = res.data.user;
-setUser(me);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-// Fetch investments  
-    const inv = await API.get("/investments/my");  
-    setInvestments(inv.data || []);  
+    try {
+      const res = await API.post("/auth/login", { email, password });
+      // ✅ save token
+      localStorage.setItem("gr_token", res.data.token);
 
-    // Maturity countdown  
-    if (me.investmentDate && me.maturityDate) {  
-      const start = new Date(me.investmentDate);  
-      const end = new Date(me.maturityDate);  
-      const now = new Date();  
+      // ✅ redirect
+      navigate("/dashboard");
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const total = (end - start) / (1000 * 60 * 60 * 24);  
-      const remaining = Math.max(0, (end - now) / (1000 * 60 * 60 * 24));  
-      const percent = Math.min(100, ((total - remaining) / total) * 100);  
+  return (
+    <div className="auth-container">
+      <form className="auth-card" onSubmit={handleSubmit}>
+        <h2 className="gold-text">GrowRich Login</h2>
 
-      setDaysLeft(Math.ceil(remaining));  
-      setProgress(percent);  
-    }  
-  } catch {  
-    navigate("/login");  
-  }  
-})();
+        {error && <p className="error">{error}</p>}
 
-}, [navigate]);
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="Enter email"
+          />
+        </div>
 
-if (!user) return <div className="loader">Loading...</div>;
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Enter password"
+          />
+        </div>
 
-return (
-<div className="page-shell">
-{/* Sidebar */}
-<aside className="sidebar">
-<h2>GrowRich</h2>
-<ul>
-<li><Link to="/dashboard" className="active"><FaHome /> Dashboard</Link></li>
-<li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
-<li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
-<li><Link to="/account"><FaUniversity /> Bank Account</Link></li>
-<li><Link to="/vendors"><FaWallet /> Vendors</Link></li>
-<li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
-</ul>
-<button
-className="gold-btn mt-4"
-onClick={() => { localStorage.removeItem("gr_token"); navigate("/login"); }}
->
-Logout
-</button>
-</aside>
-
-{/* Main Content */}  
-  <main className="main">  
-    <div className="topbar">  
-      <h3>Dashboard</h3>  
-      <div className="muted">Welcome, {user.fullname}</div>  
-    </div>  
-
-    <div className="content">  
-      {/* Stats */}  
-      <div className="stats-grid">  
-        <div className="stat-card">  
-          <h4>Active Investment</h4>  
-          <p>₦{user.investmentAmount || 0}</p>  
-        </div>  
-
-        <div className="stat-card">  
-          <h4>Expected Return</h4>  
-          <p>₦{user.expectedReturn || 0}</p>  
-        </div>  
-
-        <div className="stat-card">  
-          <h4>Maturity</h4>  
-          <p>  
-            {user.maturityDate  
-              ? new Date(user.maturityDate).toLocaleDateString()  
-              : "N/A"}  
-          </p>  
-          <div className="progress-bar">  
-            <div  
-              className="progress-bar-fill"  
-              style={{ width: `${progress}%` }}  
-            ></div>  
-          </div>  
-          <small>  
-            {daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}  
-          </small>  
-        </div>  
-
-        <div className="stat-card">  
-          <h4>Referral Code</h4>  
-          <p>{user.referralCode || "N/A"}</p>  
-        </div>  
-
-        <div className="stat-card">  
-          <h4>Referred By</h4>  
-          <p>{user.referredBy || "None"}</p>  
-        </div>  
-
-        <div className="stat-card">  
-          <h4>Status</h4>  
-          <p className={user.eligibleForWithdrawal ? "status-ok" : "status-bad"}>  
-            {user.eligibleForWithdrawal ? "Eligible" : "Not Eligible"}  
-          </p>  
-        </div>  
-      </div>  
-
-      {/* Investments Table */}  
-      <div className="investments">  
-        <h4>Your Investments</h4>  
-        {investments.length === 0 ? (  
-          <p className="muted">No active investments yet.</p>  
-        ) : (  
-          <table className="styled-table">  
-            <thead>  
-              <tr>  
-                <th>Amount</th>  
-                <th>Date</th>  
-                <th>Maturity</th>  
-                <th>Status</th>  
-              </tr>  
-            </thead>  
-            <tbody>  
-              {investments.map((inv, idx) => (  
-                <tr key={idx}>  
-                  <td>₦{inv.amount}</td>  
-                  <td>{new Date(inv.createdAt).toLocaleDateString()}</td>  
-                  <td>{new Date(inv.maturityDate).toLocaleDateString()}</td>  
-                  <td>{inv.status}</td>  
-                </tr>  
-              ))}  
-            </tbody>  
-          </table>  
-        )}  
-      </div>  
-    </div>  
-  </main>  
-</div>
-
-);
+        <button type="submit" className="gold-btn" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </div>
+  );
 }
-
-            
