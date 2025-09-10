@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../axios";
-import "./Auth.css"; // new CSS file for auth pages
+import "./Login.css"; // new CSS file for auth pages
 
 export default function Login() {
   const navigate = useNavigate();
