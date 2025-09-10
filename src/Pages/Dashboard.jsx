@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [investments, setInvestments] = useState([]);
   const [daysLeft, setDaysLeft] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState(""); // 👈 new state
 
   // Auto logout after 10 minutes inactivity
   useEffect(() => {
@@ -31,11 +32,10 @@ export default function Dashboard() {
       }, 10 * 60 * 1000); // 10 minutes
     };
 
-    // Listen for activity
     window.addEventListener("mousemove", resetTimer);
     window.addEventListener("keypress", resetTimer);
 
-    resetTimer(); // start timer immediately
+    resetTimer();
 
     return () => {
       clearTimeout(timer);
@@ -55,15 +55,17 @@ export default function Dashboard() {
         }
 
         const res = await API.get("/auth/me");
-        const me = res.data.user;
-        setUser(me);
+        console.log("User response:", res.data);
+        if (!res.data.user) throw new Error("No user found in response");
+        setUser(res.data.user);
 
         const inv = await API.get("/investments/my");
+        console.log("Investments response:", inv.data);
         setInvestments(inv.data || []);
 
-        if (me.investmentDate && me.maturityDate) {
-          const start = new Date(me.investmentDate);
-          const end = new Date(me.maturityDate);
+        if (res.data.user.investmentDate && res.data.user.maturityDate) {
+          const start = new Date(res.data.user.investmentDate);
+          const end = new Date(res.data.user.maturityDate);
           const now = new Date();
 
           const total = (end - start) / (1000 * 60 * 60 * 24);
@@ -74,17 +76,22 @@ export default function Dashboard() {
           setProgress(percent);
         }
       } catch (err) {
-        console.error("Auth check failed:", err?.response?.data || err.message);
-
-        // only logout if unauthorized (401)
-        if (err?.response?.status === 401) {
-          localStorage.removeItem("gr_token");
-          navigate("/login");
-        }
+        console.error("Dashboard error:", err.response || err.message);
+        setError(err.response?.data?.message || err.message || "Failed to load dashboard"); // 👈 show error
       }
     })();
   }, [navigate]);
 
+  // If error
+  if (error) {
+    return (
+      <div style={{ padding: 20, color: "red" }}>
+        ⚠️ Dashboard Error: {error}
+      </div>
+    );
+  }
+
+  // If loading
   if (!user) return <div className="loader">Loading...</div>;
 
   return (
@@ -229,4 +236,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-}
+      }
