@@ -70,3 +70,18 @@
   border-radius: 8px;
   text-align: center;
 }
+.auth-link {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-link .link-gold {
+  color: gold;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.auth-link .link-gold:hover {
+  text-decoration: underline;
+}
