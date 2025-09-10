@@ -1,8 +1,8 @@
 // src/Pages/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../axios";
-import "./Login.css"; // new CSS file for auth pages
+import "./Login.css"; // shared styling
 
 export default function Login() {
   const navigate = useNavigate();
@@ -62,6 +62,14 @@ export default function Login() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        {/* 🔗 Signup Link */}
+        <p className="auth-link">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="link-gold">
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   );
