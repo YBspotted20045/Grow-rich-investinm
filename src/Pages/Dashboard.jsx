@@ -1,107 +1,227 @@
-// src/pages/Dashboard.jsx
+ // src/Pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaWallet, FaUsers, FaMoneyCheck, FaHandHoldingUsd } from "react-icons/fa";
+import {
+  FaHome,
+  FaWallet,
+  FaUsers,
+  FaMoneyCheck,
+  FaUniversity,
+  FaPlusCircle,
+} from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({
-    balance: 0,
-    investments: 0,
-    referrals: 0,
-    withdrawals: 0,
-    recent: [],
-  });
+  const [investments, setInvestments] = useState([]);
+  const [daysLeft, setDaysLeft] = useState(0);
+  const [progress, setProgress] = useState(0);
 
+  // Auto logout after 10 minutes inactivity
+  useEffect(() => {
+    let timer;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        localStorage.removeItem("gr_token");
+        navigate("/login");
+      }, 10 * 60 * 1000); // 10 minutes
+    };
+
+    // Listen for activity
+    window.addEventListener("mousemove", resetTimer);
+    window.addEventListener("keypress", resetTimer);
+
+    resetTimer(); // start timer immediately
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("mousemove", resetTimer);
+      window.removeEventListener("keypress", resetTimer);
+    };
+  }, [navigate]);
+
+  // Fetch user + investments
   useEffect(() => {
     (async () => {
       try {
-        const me = await API.get("/auth/me");
-        setUser(me.data.user);
+        const token = localStorage.getItem("gr_token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
 
-        const res = await API.get("/dashboard"); // ✅ backend must provide stats
-        setStats(res.data);
+        const res = await API.get("/auth/me");
+        const me = res.data.user;
+        setUser(me);
+
+        const inv = await API.get("/investments/my");
+        setInvestments(inv.data || []);
+
+        if (me.investmentDate && me.maturityDate) {
+          const start = new Date(me.investmentDate);
+          const end = new Date(me.maturityDate);
+          const now = new Date();
+
+          const total = (end - start) / (1000 * 60 * 60 * 24);
+          const remaining = Math.max(0, (end - now) / (1000 * 60 * 60 * 24));
+          const percent = Math.min(100, ((total - remaining) / total) * 100);
+
+          setDaysLeft(Math.ceil(remaining));
+          setProgress(percent);
+        }
       } catch (err) {
-        console.error("Dashboard error:", err);
+        localStorage.removeItem("gr_token");
         navigate("/login");
-      } finally {
-        setLoading(false);
       }
     })();
   }, [navigate]);
 
-  if (loading) return <div className="loader">Loading...</div>;
+  if (!user) return <div className="loader">Loading...</div>;
 
   return (
-    <div className="dashboard-shell">
-      {/* Topbar */}
-      <div className="topbar">
-        <h2>Welcome back, {user?.fullname || "Investor"}</h2>
-        <p className="muted">Manage your investments and track your growth.</p>
-      </div>
+    <div className="page-shell">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2>GrowRich</h2>
+        <ul>
+          <li>
+            <Link to="/dashboard" className="active">
+              <FaHome /> Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link to="/deposit">
+              <FaPlusCircle /> Deposit
+            </Link>
+          </li>
+          <li>
+            <Link to="/withdrawals">
+              <FaMoneyCheck /> Withdrawals
+            </Link>
+          </li>
+          <li>
+            <Link to="/account">
+              <FaUniversity /> Bank Account
+            </Link>
+          </li>
+          <li>
+            <Link to="/vendors">
+              <FaWallet /> Vendors
+            </Link>
+          </li>
+          <li>
+            <Link to="/referrals">
+              <FaUsers /> Referrals
+            </Link>
+          </li>
+        </ul>
+        <button
+          className="gold-btn mt-4"
+          onClick={() => {
+            localStorage.removeItem("gr_token");
+            navigate("/login");
+          }}
+        >
+          Logout
+        </button>
+      </aside>
 
-      {/* Summary cards */}
-      <div className="cards-grid">
-        <div className="card gold">
-          <FaWallet className="icon" />
-          <h3>₦{stats.balance.toLocaleString()}</h3>
-          <p>Wallet Balance</p>
+      {/* Main Content */}
+      <main className="main">
+        <div className="topbar">
+          <h3>Dashboard</h3>
+          <div className="muted">Welcome, {user.fullname}</div>
         </div>
-        <div className="card dark">
-          <FaHandHoldingUsd className="icon" />
-          <h3>₦{stats.investments.toLocaleString()}</h3>
-          <p>Active Investments</p>
-        </div>
-        <div className="card gold">
-          <FaUsers className="icon" />
-          <h3>{stats.referrals}</h3>
-          <p>Total Referrals</p>
-        </div>
-        <div className="card dark">
-          <FaMoneyCheck className="icon" />
-          <h3>₦{stats.withdrawals.toLocaleString()}</h3>
-          <p>Withdrawals</p>
-        </div>
-      </div>
 
-      {/* Recent activity */}
-      <div className="recent-section">
-        <h3>Recent Transactions</h3>
-        {stats.recent.length === 0 ? (
-          <p className="muted">No transactions yet.</p>
-        ) : (
-          <table className="recent-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recent.map((tx, i) => (
-                <tr key={i}>
-                  <td>{new Date(tx.date).toLocaleDateString()}</td>
-                  <td>{tx.type}</td>
-                  <td>₦{tx.amount.toLocaleString()}</td>
-                  <td className={tx.status.toLowerCase()}>{tx.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+        <div className="content">
+          {/* Stats */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <h4>Active Investment</h4>
+              <p>₦{user.investmentAmount || 0}</p>
+            </div>
 
-      {/* Quick Links */}
-      <div className="quick-links">
-        <Link to="/deposit" className="gold-btn">Make Deposit</Link>
-        <Link to="/withdrawals" className="dark-btn">Withdraw</Link>
-      </div>
+            <div className="stat-card">
+              <h4>Expected Return</h4>
+              <p>₦{user.expectedReturn || 0}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Maturity</h4>
+              <p>
+                {user.maturityDate
+                  ? new Date(user.maturityDate).toLocaleDateString()
+                  : "N/A"}
+              </p>
+              <div className="progress-bar">
+                <div
+                  className="progress-bar-fill"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+              <small>
+                {daysLeft > 0
+                  ? `${daysLeft} day(s) left`
+                  : "Ready for withdrawal"}
+              </small>
+            </div>
+
+            <div className="stat-card">
+              <h4>Referral Code</h4>
+              <p>{user.referralCode || "N/A"}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Referred By</h4>
+              <p>{user.referredBy || "None"}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Status</h4>
+              <p
+                className={
+                  user.eligibleForWithdrawal ? "status-ok" : "status-bad"
+                }
+              >
+                {user.eligibleForWithdrawal ? "Eligible" : "Not Eligible"}
+              </p>
+            </div>
+          </div>
+
+          {/* Investments Table */}
+          <div className="investments">
+            <h4>Your Investments</h4>
+            {investments.length === 0 ? (
+              <p className="muted">No active investments yet.</p>
+            ) : (
+              <table className="styled-table">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Maturity</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {investments.map((inv, idx) => (
+                    <tr key={idx}>
+                      <td>₦{inv.amount}</td>
+                      <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                      <td>{new Date(inv.maturityDate).toLocaleDateString()}</td>
+                      <td>{inv.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
-}
+                }
