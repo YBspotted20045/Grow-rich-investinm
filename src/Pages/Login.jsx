@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../axios";
-import "./Login.css";
+import "./Auth.css"; // new CSS file for auth pages
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,23 +11,18 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
       const res = await API.post("/auth/login", { email, password });
-      // ✅ save token
       localStorage.setItem("gr_token", res.data.token);
-
-      // ✅ redirect
       navigate("/dashboard");
     } catch (err) {
       setError(
-        err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          "Login failed"
+        err?.response?.data?.message || "Login failed. Check your credentials."
       );
     } finally {
       setLoading(false);
@@ -35,38 +30,39 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <h2 className="gold-text">GrowRich Login</h2>
+    <div className="auth-page">
+      <div className="auth-box">
+        <h2>GrowRich Login</h2>
+        {error && <div className="error">{error}</div>}
 
-        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="Enter email"
-          />
-        </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Enter password"
-          />
-        </div>
-
-        <button type="submit" className="gold-btn" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          <button type="submit" className="gold-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
