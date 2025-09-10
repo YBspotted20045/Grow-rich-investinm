@@ -1,4 +1,4 @@
- // src/Pages/Dashboard.jsx
+// src/Pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -74,8 +74,13 @@ export default function Dashboard() {
           setProgress(percent);
         }
       } catch (err) {
-        localStorage.removeItem("gr_token");
-        navigate("/login");
+        console.error("Auth check failed:", err?.response?.data || err.message);
+
+        // only logout if unauthorized (401)
+        if (err?.response?.status === 401) {
+          localStorage.removeItem("gr_token");
+          navigate("/login");
+        }
       }
     })();
   }, [navigate]);
@@ -224,4 +229,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-                }
+}
