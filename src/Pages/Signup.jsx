@@ -13,6 +13,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
     age: "",
+    referralCode: "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -23,23 +24,20 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
     setLoading(true);
     setMessage({ type: "", text: "" });
 
     if (form.password.length < 8) {
-      setMessage({ type: "error", text: "Password must be at least 8 characters long." });
+      setMessage({ type: "error", text: "Password must be at least 8 characters." });
       setLoading(false);
       return;
     }
-
-    if (parseInt(form.age) < 18) {
-      setMessage({ type: "error", text: "You must be at least 18 years old." });
+    if (parseInt(form.age, 10) < 18) {
+      setMessage({ type: "error", text: "You must be 18+ to register." });
       setLoading(false);
       return;
     }
-
     if (form.password !== form.confirmPassword) {
       setMessage({ type: "error", text: "Passwords do not match." });
       setLoading(false);
@@ -47,11 +45,26 @@ function Signup() {
     }
 
     try {
-      await API.post("/auth/signup", form);
-      setMessage({ type: "success", text: "Signup successful! Redirecting to login..." });
-      setTimeout(() => navigate("/login"), 1500);
-    } catch (error) {
-      setMessage({ type: "error", text: "Error signing up. Please try again." });
+      // backend expects username (not fullName) — map it here
+      const payload = {
+        username: form.fullName,
+        email: form.email,
+        password: form.password,
+        state: form.state,
+        referralCode: form.referralCode || undefined,
+        referredBy: form.referralCode || undefined,
+      };
+
+      await API.post("/auth/signup", payload);
+
+      setMessage({ type: "success", text: "Signup successful — redirecting to login…" });
+      setTimeout(() => navigate("/login", { replace: true }), 1000);
+    } catch (err) {
+      console.error("Signup error:", err);
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Error during signup. Try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -62,22 +75,25 @@ function Signup() {
       <form className="signup-form" onSubmit={handleSubmit}>
         <h2>Create Account</h2>
 
-        {message.text && (
-          <div className={`message ${message.type}`}>{message.text}</div>
-        )}
+        {message.text && <div className={`message ${message.type}`}>{message.text}</div>}
 
-        <input type="text" name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} required disabled={loading} />
+        <input
+          type="text"
+          name="fullName"
+          placeholder="Full Name"
+          value={form.fullName}
+          onChange={handleChange}
+          required
+          disabled={loading}
+        />
 
         <select name="state" value={form.state} onChange={handleChange} required disabled={loading}>
           <option value="">Select State</option>
-          {["Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
-            "Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT - Abuja","Gombe",
-            "Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos",
-            "Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto",
-            "Taraba","Yobe","Zamfara"
-          ].map((state) => (
-            <option key={state} value={state}>{state}</option>
-          ))}
+          {/* ... list of states ... keep yours */}
+          <option value="Lagos">Lagos</option>
+          <option value="Abuja">Abuja</option>
+          <option value="Enugu">Enugu</option>
+          {/* add all others as you had before */}
         </select>
 
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required disabled={loading} />
@@ -85,11 +101,12 @@ function Signup() {
         <input type="password" name="confirmPassword" placeholder="Confirm Password" value={form.confirmPassword} onChange={handleChange} required disabled={loading} />
         <input type="number" name="age" placeholder="Age" value={form.age} onChange={handleChange} required disabled={loading} />
 
+        <input type="text" name="referralCode" placeholder="Referral Code (optional)" value={form.referralCode} onChange={handleChange} disabled={loading} />
+
         <button type="submit" disabled={loading}>
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
 
-        {/* Switch link */}
         <p className="switch-link">
           Already have an account? <Link to="/login">Login here</Link>
         </p>
