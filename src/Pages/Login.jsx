@@ -1,83 +1,93 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// src/Pages/Login.jsx
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "./Login.css";
 import API from "../axios";
-import "./Login.css"; // ✅ make sure you have this CSS file for styles
 
-export default function Login() {
+function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
-    setError("");
+    setMessage({ type: "", text: "" });
 
     try {
-      const res = await API.post("/auth/login", { email, password });
+      const res = await API.post("/auth/login", form);
 
-      if (res.data.token) {
-        // ✅ Save token
-        localStorage.setItem("gr_token", res.data.token);
-        console.log("Saved token:", res.data.token);
+      // backend sometimes returns token at root or inside data — handle common keys
+      const token = res.data?.token || res.data?.jwt || res.data?.accessToken;
+      const user = res.data?.user || res.data?.data || res.data || null;
 
-        // ✅ Redirect to dashboard
-        navigate("/dashboard");
-      } else {
-        setError("No token received from server.");
+      if (!token) {
+        throw new Error("No token received from server");
       }
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-          "Login failed. Please check your email & password."
-      );
+
+      // Save token + user
+      localStorage.setItem("gr_token", token);
+      if (user) localStorage.setItem("gr_user", JSON.stringify(user));
+
+      // show a brief non-blocking message and navigate immediately
+      setMessage({ type: "success", text: "Login successful — redirecting…" });
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      console.error("Login failed:", error);
+      setMessage({
+        type: "error",
+        text: error.response?.data?.message || error.message || "Invalid email or password.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="brand">GrowRich</h2>
-        <h3>Login</h3>
-        <p className="muted">Enter your details to access your account</p>
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
 
-        {error && <div className="error-box">{error}</div>}
+        {message.text && (
+          <div className={`message ${message.type}`}>{message.text}</div>
+        )}
 
-        <form onSubmit={handleLogin} className="auth-form">
-          <label>Email</label>
-          <input
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+          disabled={loading}
+        />
 
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          disabled={loading}
+        />
 
-          <button type="submit" className="gold-btn" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging In..." : "Login"}
+        </button>
 
-        <p className="muted mt-3">
-          Don’t have an account?{" "}
-          <Link to="/signup" className="link">
-            Sign Up
-          </Link>
+        <p className="switch-link">
+          Don’t have an account? <Link to="/signup">Sign up here</Link>
         </p>
-      </div>
+      </form>
     </div>
   );
 }
+
+export default Login;
