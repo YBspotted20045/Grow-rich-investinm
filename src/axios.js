@@ -2,11 +2,11 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://grow-0nfm.onrender.com/api", // backend base URL
+  baseURL: "https://grow-0nfm.onrender.com/api", // your backend base path
   headers: { "Content-Type": "application/json" },
 });
 
-// Attach token automatically
+// Attach token automatically (uses the key gr_token)
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("gr_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
