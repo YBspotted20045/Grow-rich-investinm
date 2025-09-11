@@ -1,7 +1,6 @@
-// src/Pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle } from "react-icons/fa";
+import { FaHome, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle, FaBars } from "react-icons/fa";
 import API from "../axios";
 import "./Dashboard.css";
 
@@ -12,6 +11,7 @@ export default function Dashboard() {
   const [daysLeft, setDaysLeft] = useState(0);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Auto logout after 10 minutes inactivity
   useEffect(() => {
@@ -43,16 +43,13 @@ export default function Dashboard() {
         }
 
         const res = await API.get("/auth/me");
-        // handle both shapes: res.data.user or res.data
         const me = res.data?.user || res.data;
         if (!me) throw new Error("No user returned from server");
         setUser(me);
 
-        // fetch investments (server route: /investments/my)
         const inv = await API.get("/investments/my");
         setInvestments(inv.data || []);
 
-        // compute maturity progress
         if (me.investmentDate && me.maturityDate) {
           const start = new Date(me.investmentDate);
           const end = new Date(me.maturityDate);
@@ -67,7 +64,6 @@ export default function Dashboard() {
         }
       } catch (err) {
         console.error("Dashboard error:", err);
-        // if token invalid or 401 => force logout and redirect
         const status = err?.response?.status;
         if (status === 401) {
           localStorage.removeItem("gr_token");
@@ -85,19 +81,19 @@ export default function Dashboard() {
 
   if (!user) return <div className="loader">Loading...</div>;
 
-  // determine eligibility from user object
   const eligible = user.eligibleForWithdrawal ?? (user.referralDeposits >= 2);
 
   return (
     <div className="page-shell">
-      <aside className="sidebar">
-        <h2>GrowRich</h2>
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <h2 className="logo">GrowRich</h2>
         <ul>
           <li><Link to="/dashboard"><FaHome /> Dashboard</Link></li>
           <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
           <li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
           <li><Link to="/account"><FaUniversity /> Account</Link></li>
-          <li style={{ display: "none" }}><Link to="/invest">Invest</Link></li> {/* hidden */}
+          <li style={{ display: "none" }}><Link to="/invest">Invest</Link></li>
           <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
         </ul>
         <button
@@ -111,8 +107,12 @@ export default function Dashboard() {
         </button>
       </aside>
 
+      {/* Main Content */}
       <main className="main">
         <div className="topbar">
+          <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <FaBars />
+          </button>
           <h3>Dashboard</h3>
           <div className="muted">Welcome, {user.username || user.fullName || user.fullname || "Investor"}</div>
         </div>
