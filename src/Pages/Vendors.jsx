@@ -1,48 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import "./Vendors.css"; // ✅ Import Vendor CSS
+import "./Vendors.css";
 
-const Vendor = () => {
+const Vendors = () => {
   const location = useLocation();
-  const { amount } = location.state || { amount: 0 };
+  const params = new URLSearchParams(location.search);
+  const amount = params.get("amount");
 
-  // Replace with your real vendor list
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [evidence, setEvidence] = useState(null);
+
+  // Vendors list (add your real vendors here)
   const vendors = [
-    { id: 1, name: "Vendor A", whatsapp: "2348012345678" },
-    { id: 2, name: "Vendor B", whatsapp: "2348098765432" },
-    { id: 3, name: "Vendor C", whatsapp: "2348076543210" },
+    {
+      id: 1,
+      name: "Vendor A",
+      phone: "2348012345678", // must be WhatsApp-enabled
+    },
+    {
+      id: 2,
+      name: "Vendor B",
+      phone: "2348098765432",
+    },
   ];
 
-  const sendToWhatsApp = (number) => {
-    const message = `Hello, I want to deposit ₦${amount} into GrowRich.`;
-    window.open(`https://wa.me/${number}?text=${encodeURIComponent(message)}`, "_blank");
+  // Generate WhatsApp link
+  const handleContact = (vendor) => {
+    setSelectedVendor(vendor);
+    const message = `Hello ${vendor.name}, I want to make a deposit of ₦${amount} for my investment.`;
+    window.open(
+      `https://wa.me/${vendor.phone}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
+  };
+
+  // Handle evidence upload
+  const handleEvidenceChange = (e) => {
+    setEvidence(e.target.files[0]);
+  };
+
+  const handleEvidenceSubmit = (e) => {
+    e.preventDefault();
+    if (!evidence || !selectedVendor) {
+      alert("Please select a vendor and upload evidence before submitting.");
+      return;
+    }
+    alert(`Evidence uploaded for ${selectedVendor.name}. (Connect this to backend)`);
   };
 
   return (
-    <div className="vendor-container">
-      <h2 className="vendor-title">Select a Vendor</h2>
-      <p className="vendor-subtext">
-        Deposit Amount: <strong>₦{amount}</strong>
+    <div className="vendors-page">
+      <h2 className="vendors-title">Choose a Vendor</h2>
+      <p className="vendors-subtitle">
+        Selected Deposit Amount: <strong>₦{amount}</strong>
       </p>
 
-      <div className="vendor-grid">
+      <div className="vendors-list">
         {vendors.map((vendor) => (
-          <div className="vendor-card" key={vendor.id}>
-            <div className="vendor-info">
-              <h3 className="vendor-name">{vendor.name}</h3>
-              <p className="vendor-number">{vendor.whatsapp}</p>
-            </div>
+          <div key={vendor.id} className="vendor-card">
+            <h3>{vendor.name}</h3>
+            <p>WhatsApp: +{vendor.phone}</p>
             <button
-              className="vendor-button"
-              onClick={() => sendToWhatsApp(vendor.whatsapp)}
+              className="vendor-btn"
+              onClick={() => handleContact(vendor)}
             >
-              Contact on WhatsApp
+              Contact Vendor
             </button>
           </div>
         ))}
       </div>
+
+      {selectedVendor && (
+        <form className="evidence-form" onSubmit={handleEvidenceSubmit}>
+          <h3>Upload Payment Evidence</h3>
+          <input type="file" onChange={handleEvidenceChange} />
+          <button type="submit" className="upload-btn">
+            Submit Evidence
+          </button>
+        </form>
+      )}
     </div>
   );
 };
 
-export default Vendor;
+export default Vendors;
