@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Deposits.css";
 
-const Deposits = () => {
+const Deposit = () => {
   const navigate = useNavigate();
 
   const handleDepositClick = (amount) => {
