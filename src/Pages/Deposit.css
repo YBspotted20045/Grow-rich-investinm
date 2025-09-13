@@ -1,84 +1,65 @@
-.dashboard-container {
-  padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
+/* src/pages/Deposits.css */
+
+.deposit-container {
+  text-align: center;
+  padding: 40px;
+  background: linear-gradient(to bottom right, #ffffff, #fdf5e6);
+  min-height: 100vh;
 }
 
-.welcome-banner {
-  background: linear-gradient(135deg, goldenrod, #daa520);
-  color: #fff;
-  font-size: 1.5rem;
+.deposit-title {
+  font-size: 2rem;
   font-weight: bold;
-  text-align: center;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  color: #d4af37; /* Gold */
+  text-shadow: 1px 1px 2px #000;
 }
 
-.welcome-banner .highlight {
-  color: #fffacd;
-  font-weight: 700;
+.deposit-options {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+.deposit-card {
+  background: #fff;
+  border: 2px solid #d4af37;
+  border-radius: 15px;
+  padding: 25px;
+  width: 220px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
-.dashboard-card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
-}
-
-.dashboard-card:hover {
+.deposit-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-.dashboard-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: goldenrod;
+.deposit-card h3 {
+  font-size: 1.5rem;
+  color: #000;
   margin-bottom: 10px;
 }
 
-.dashboard-value {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.dashboard-label {
-  font-size: 0.95rem;
-  color: #666;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 12px;
-  background-color: #eee;
-  border-radius: 8px;
-  margin-top: 15px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: goldenrod;
-  border-radius: 8px;
-  width: 0;
-  transition: width 0.6s ease;
-}
-
-.loader {
-  text-align: center;
-  color: #666;
+.deposit-card p {
   font-size: 1rem;
-  padding: 30px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.deposit-btn {
+  background: #d4af37;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.deposit-btn:hover {
+  background: #b8860b; /* darker gold */
 }
