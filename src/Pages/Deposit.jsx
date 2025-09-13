@@ -1,45 +1,36 @@
 // src/pages/Deposits.jsx
 import React from "react";
-import Sidebar from "../components/Sidebar"; // assuming Sidebar.jsx exists
+import { useNavigate } from "react-router-dom";
 import "./Deposits.css";
 
-const packages = [
-  {
-    amount: 5000,
-    desc: "Start with ₦5,000 and grow your wealth.",
-  },
-  {
-    amount: 10000,
-    desc: "Double your returns with ₦10,000.",
-  },
-  {
-    amount: 15000,
-    desc: "Go premium with ₦15,000 investment.",
-  },
-];
-
 const Deposits = () => {
+  const navigate = useNavigate();
+
+  const handleDepositClick = (amount) => {
+    navigate(`/vendor?amount=${amount}`);
+  };
+
   return (
-    <div className="deposit-layout">
-      {/* Sidebar on the left */}
-      <Sidebar />
+    <div className="deposit-container">
+      <h2 className="deposit-title">Choose Your Deposit Plan</h2>
 
-      {/* Main content */}
-      <div className="deposit-main">
-        <h2 className="deposit-title">💰 Deposit Packages</h2>
+      <div className="deposit-options">
+        <div className="deposit-card" onClick={() => handleDepositClick(5000)}>
+          <h3>₦5,000</h3>
+          <p>Starter Plan</p>
+          <button className="deposit-btn">Deposit ₦5,000</button>
+        </div>
 
-        <div className="deposit-grid">
-          {packages.map((pkg, index) => (
-            <div key={index} className="deposit-card">
-              <h3 className="deposit-package">
-                ₦{pkg.amount.toLocaleString()} Package
-              </h3>
-              <p className="deposit-description">{pkg.desc}</p>
-              <button className="deposit-btn">
-                Deposit ₦{pkg.amount.toLocaleString()}
-              </button>
-            </div>
-          ))}
+        <div className="deposit-card" onClick={() => handleDepositClick(10000)}>
+          <h3>₦10,000</h3>
+          <p>Growth Plan</p>
+          <button className="deposit-btn">Deposit ₦10,000</button>
+        </div>
+
+        <div className="deposit-card" onClick={() => handleDepositClick(15000)}>
+          <h3>₦15,000</h3>
+          <p>Premium Plan</p>
+          <button className="deposit-btn">Deposit ₦15,000</button>
         </div>
       </div>
     </div>
