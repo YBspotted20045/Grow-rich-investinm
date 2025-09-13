@@ -1,7 +1,7 @@
 // src/pages/Deposits.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./Deposits.css";
+import "./Deposit.css";
 
 const Deposit = () => {
   const navigate = useNavigate();
