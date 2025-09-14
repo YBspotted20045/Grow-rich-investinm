@@ -1,4 +1,4 @@
-// src/pages/Deposits.jsx
+// src/Pages/Deposits.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Deposit.css";
@@ -6,32 +6,26 @@ import "./Deposit.css";
 const Deposit = () => {
   const navigate = useNavigate();
 
-  const handleDepositClick = (amount) => {
-    navigate(`/vendor?amount=${amount}`);
+  const handleDeposit = (amount) => {
+    // redirect to vendors page with chosen amount
+    navigate("/vendors", { state: { amount } });
   };
 
   return (
     <div className="deposit-container">
-      <h2 className="deposit-title">Choose Your Deposit Plan</h2>
+      <h2 className="deposit-title">Make a Deposit</h2>
+      <p className="deposit-sub">Select an amount to continue:</p>
 
       <div className="deposit-options">
-        <div className="deposit-card" onClick={() => handleDepositClick(5000)}>
-          <h3>₦5,000</h3>
-          <p>Starter Plan</p>
-          <button className="deposit-btn">Deposit ₦5,000</button>
-        </div>
-
-        <div className="deposit-card" onClick={() => handleDepositClick(10000)}>
-          <h3>₦10,000</h3>
-          <p>Growth Plan</p>
-          <button className="deposit-btn">Deposit ₦10,000</button>
-        </div>
-
-        <div className="deposit-card" onClick={() => handleDepositClick(15000)}>
-          <h3>₦15,000</h3>
-          <p>Premium Plan</p>
-          <button className="deposit-btn">Deposit ₦15,000</button>
-        </div>
+        {[5000, 10000, 15000].map((amt) => (
+          <button
+            key={amt}
+            className="deposit-btn"
+            onClick={() => handleDeposit(amt)}
+          >
+            ₦{amt.toLocaleString()}
+          </button>
+        ))}
       </div>
     </div>
   );
