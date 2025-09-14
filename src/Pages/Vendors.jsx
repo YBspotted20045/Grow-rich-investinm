@@ -1,84 +1,54 @@
+// src/Pages/Vendors.jsx
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./Vendors.css";
 
 const Vendors = () => {
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const amount = params.get("amount");
+  const amount = location.state?.amount || 0;
+  const [receipt, setReceipt] = useState(null);
 
-  const [selectedVendor, setSelectedVendor] = useState(null);
-  const [evidence, setEvidence] = useState(null);
-
-  // Vendors list (add your real vendors here)
+  // Example vendor list
   const vendors = [
-    {
-      id: 1,
-      name: "Vendor A",
-      phone: "2348012345678", // must be WhatsApp-enabled
-    },
-    {
-      id: 2,
-      name: "Vendor B",
-      phone: "2348098765432",
-    },
+    { name: "Kelvin", phone: "2347012345678" },
+    { name: "Chidera", phone: "2348098765432" },
   ];
 
-  // Generate WhatsApp link
-  const handleContact = (vendor) => {
-    setSelectedVendor(vendor);
-    const message = `Hello ${vendor.name}, I want to make a deposit of ₦${amount} for my investment.`;
-    window.open(
-      `https://wa.me/${vendor.phone}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
+  const handleWhatsApp = (phone) => {
+    const message = `Hello, I want to make a deposit of ₦${amount.toLocaleString()} into GrowRich Investments.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
-  // Handle evidence upload
-  const handleEvidenceChange = (e) => {
-    setEvidence(e.target.files[0]);
-  };
-
-  const handleEvidenceSubmit = (e) => {
-    e.preventDefault();
-    if (!evidence || !selectedVendor) {
-      alert("Please select a vendor and upload evidence before submitting.");
-      return;
-    }
-    alert(`Evidence uploaded for ${selectedVendor.name}. (Connect this to backend)`);
+  const handleReceiptUpload = (e) => {
+    const file = e.target.files[0];
+    setReceipt(file);
+    alert("Receipt uploaded successfully (demo). Backend API will handle saving.");
   };
 
   return (
-    <div className="vendors-page">
+    <div className="vendors-container">
       <h2 className="vendors-title">Choose a Vendor</h2>
-      <p className="vendors-subtitle">
-        Selected Deposit Amount: <strong>₦{amount}</strong>
-      </p>
+      <p className="vendors-sub">Deposit Amount: ₦{amount.toLocaleString()}</p>
 
       <div className="vendors-list">
-        {vendors.map((vendor) => (
-          <div key={vendor.id} className="vendor-card">
+        {vendors.map((vendor, idx) => (
+          <div className="vendor-card" key={idx}>
             <h3>{vendor.name}</h3>
-            <p>WhatsApp: +{vendor.phone}</p>
             <button
               className="vendor-btn"
-              onClick={() => handleContact(vendor)}
+              onClick={() => handleWhatsApp(vendor.phone)}
             >
-              Contact Vendor
+              Pay via WhatsApp
             </button>
           </div>
         ))}
       </div>
 
-      {selectedVendor && (
-        <form className="evidence-form" onSubmit={handleEvidenceSubmit}>
-          <h3>Upload Payment Evidence</h3>
-          <input type="file" onChange={handleEvidenceChange} />
-          <button type="submit" className="upload-btn">
-            Submit Evidence
-          </button>
-        </form>
-      )}
+      <div className="receipt-upload">
+        <h3>Upload Payment Evidence</h3>
+        <input type="file" onChange={handleReceiptUpload} />
+        {receipt && <p className="receipt-name">Uploaded: {receipt.name}</p>}
+      </div>
     </div>
   );
 };
