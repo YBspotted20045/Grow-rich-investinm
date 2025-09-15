@@ -1,6 +1,6 @@
+// src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaUsers, FaMoneyCheck, FaUniversity, FaPlusCircle, FaBars } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import API from "../axios";
 import "./Dashboard.css";
 
@@ -11,7 +11,6 @@ export default function Dashboard() {
   const [daysLeft, setDaysLeft] = useState(0);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Auto logout after 10 minutes inactivity
   useEffect(() => {
@@ -84,98 +83,70 @@ export default function Dashboard() {
   const eligible = user.eligibleForWithdrawal ?? (user.referralDeposits >= 2);
 
   return (
-    <div className="page-shell">
-      {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <h2 className="logo">GrowRich</h2>
-        <ul>
-          <li><Link to="/dashboard"><FaHome /> Dashboard</Link></li>
-          <li><Link to="/deposit"><FaPlusCircle /> Deposit</Link></li>
-          <li><Link to="/withdrawals"><FaMoneyCheck /> Withdrawals</Link></li>
-          <li><Link to="/account"><FaUniversity /> Account</Link></li>
-          <li style={{ display: "none" }}><Link to="/invest">Invest</Link></li>
-          <li><Link to="/referrals"><FaUsers /> Referrals</Link></li>
-        </ul>
-        <button
-          className="gold-btn mt-4"
-          onClick={() => {
-            localStorage.removeItem("gr_token");
-            navigate("/login", { replace: true });
-          }}
-        >
-          Logout
-        </button>
-      </aside>
+    <div className="dashboard-content">
+      <h3>Dashboard</h3>
+      <div className="muted">Welcome, {user.username || user.fullName || user.fullname || "Investor"}</div>
 
-      {/* Main Content */}
-      <main className="main">
-        <div className="topbar">
-          <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <FaBars />
-          </button>
-          <h3>Dashboard</h3>
-          <div className="muted">Welcome, {user.username || user.fullName || user.fullname || "Investor"}</div>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <h4>Active Investment</h4>
+          <p>₦{user.investmentAmount || 0}</p>
         </div>
 
-        <div className="content">
-          <div className="stats-grid">
-            <div className="stat-card">
-              <h4>Active Investment</h4>
-              <p>₦{user.investmentAmount || 0}</p>
-            </div>
-
-            <div className="stat-card">
-              <h4>Expected Return</h4>
-              <p>₦{user.expectedReturn || 0}</p>
-            </div>
-
-            <div className="stat-card">
-              <h4>Maturity</h4>
-              <p>{user.maturityDate ? new Date(user.maturityDate).toLocaleDateString() : "N/A"}</p>
-              <div className="progress-bar"><div className="progress-bar-fill" style={{ width: `${progress}%` }} /></div>
-              <small>{daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}</small>
-            </div>
-
-            <div className="stat-card">
-              <h4>Referral Code</h4>
-              <p>{user.referralCode || "N/A"}</p>
-            </div>
-
-            <div className="stat-card">
-              <h4>Referred By</h4>
-              <p>{user.referredBy || "None"}</p>
-            </div>
-
-            <div className="stat-card">
-              <h4>Status</h4>
-              <p className={eligible ? "status-ok" : "status-bad"}>{eligible ? "Eligible" : "Not Eligible"}</p>
-            </div>
-          </div>
-
-          <div className="investments">
-            <h4>Your Investments</h4>
-            {investments.length === 0 ? (
-              <p className="muted">No active investments yet.</p>
-            ) : (
-              <table className="styled-table">
-                <thead>
-                  <tr><th>Amount</th><th>Date</th><th>Maturity</th><th>Status</th></tr>
-                </thead>
-                <tbody>
-                  {investments.map((inv, idx) => (
-                    <tr key={idx}>
-                      <td>₦{inv.amount}</td>
-                      <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
-                      <td>{inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString() : "N/A"}</td>
-                      <td>{inv.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+        <div className="stat-card">
+          <h4>Expected Return</h4>
+          <p>₦{user.expectedReturn || 0}</p>
         </div>
-      </main>
+
+        <div className="stat-card">
+          <h4>Maturity</h4>
+          <p>{user.maturityDate ? new Date(user.maturityDate).toLocaleDateString() : "N/A"}</p>
+          <div className="progress-bar">
+            <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+          </div>
+          <small>{daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}</small>
+        </div>
+
+        <div className="stat-card">
+          <h4>Referral Code</h4>
+          <p>{user.referralCode || "N/A"}</p>
+        </div>
+
+        <div className="stat-card">
+          <h4>Referred By</h4>
+          <p>{user.referredBy || "None"}</p>
+        </div>
+
+        <div className="stat-card">
+          <h4>Status</h4>
+          <p className={eligible ? "status-ok" : "status-bad"}>
+            {eligible ? "Eligible" : "Not Eligible"}
+          </p>
+        </div>
+      </div>
+
+      <div className="investments">
+        <h4>Your Investments</h4>
+        {investments.length === 0 ? (
+          <p className="muted">No active investments yet.</p>
+        ) : (
+          <table className="styled-table">
+            <thead>
+              <tr><th>Amount</th><th>Date</th><th>Maturity</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {investments.map((inv, idx) => (
+                <tr key={idx}>
+                  <td>₦{inv.amount}</td>
+                  <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                  <td>{inv.maturityDate ? new Date(inv.maturityDate).toLocaleDateString() : "N/A"}</td>
+                  <td>{inv.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }
