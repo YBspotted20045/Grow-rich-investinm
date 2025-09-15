@@ -50,40 +50,115 @@ export default function Dashboard() {
   if (error) return <div className="error">{error}</div>;
   if (!user) return <div className="loader">Loading...</div>;
 
+  const eligible = user.eligibleForWithdrawal ?? (user.referralDeposits >= 2);
+
   return (
-    <div className="dashboard-page">
-      <h2>📊 Dashboard</h2>
-      <p>Welcome, {user.username || "Investor"}!</p>
+    <div className="page-shell">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2 className="logo">GrowRich</h2>
+        <ul>
+          <li><a href="/dashboard">📊 Dashboard</a></li>
+          <li><a href="/deposit">💰 Deposit</a></li>
+          <li><a href="/withdrawal">🏦 Withdrawals</a></li>
+          <li><a href="/account">👤 Account</a></li>
+          <li><a href="/referrals">👥 Referrals</a></li>
+        </ul>
+        <button
+          className="gold-btn mt-4"
+          onClick={() => {
+            localStorage.removeItem("gr_token");
+            navigate("/login", { replace: true });
+          }}
+        >
+          Logout
+        </button>
+      </aside>
 
-      <div className="stats-grid">
-        <div className="stat-card">
-          <h4>Active Investment</h4>
-          <p>₦{user.investmentAmount || 0}</p>
-        </div>
-
-        <div className="stat-card">
-          <h4>Expected Return</h4>
-          <p>₦{user.expectedReturn || 0}</p>
-        </div>
-
-        <div className="stat-card">
-          <h4>Maturity</h4>
-          <p>
-            {user.maturityDate
-              ? new Date(user.maturityDate).toLocaleDateString()
-              : "N/A"}
-          </p>
-          <div className="progress-bar">
-            <div
-              className="progress-bar-fill"
-              style={{ width: `${progress}%` }}
-            />
+      {/* Main Dashboard */}
+      <main className="main">
+        <div className="topbar">
+          <h3>Dashboard</h3>
+          <div className="muted">
+            Welcome, {user.username || user.fullName || "Investor"}
           </div>
-          <small>
-            {daysLeft > 0 ? `${daysLeft} day(s) left` : "Ready for withdrawal"}
-          </small>
         </div>
-      </div>
+
+        <div className="content">
+          {/* Stats */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <h4>Active Investment</h4>
+              <p>₦{user.investmentAmount || 0}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Expected Return</h4>
+              <p>₦{user.expectedReturn || 0}</p>
+            </div>
+
+            <div className="stat-card">
+              <h4>Maturity</h4>
+              <p>
+                {user.maturityDate
+                  ? new Date(user.maturityDate).toLocaleDateString()
+                  : "N/A"}
+              </p>
+              <div className="progress-bar">
+                <div
+                  className="progress-bar-fill"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <small>
+                {daysLeft > 0
+                  ? `${daysLeft} day(s) left`
+                  : "Ready for withdrawal"}
+              </small>
+            </div>
+
+            <div className="stat-card">
+              <h4>Status</h4>
+              <p className={eligible ? "status-ok" : "status-bad"}>
+                {eligible ? "Eligible" : "Not Eligible"}
+              </p>
+            </div>
+          </div>
+
+          {/* Investments Table */}
+          <div className="investments">
+            <h4>Your Investments</h4>
+            {investments.length === 0 ? (
+              <p className="muted">No active investments yet.</p>
+            ) : (
+              <table className="styled-table">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Maturity</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {investments.map((inv, idx) => (
+                    <tr key={idx}>
+                      <td>₦{inv.amount}</td>
+                      <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        {inv.maturityDate
+                          ? new Date(inv.maturityDate).toLocaleDateString()
+                          : "N/A"}
+                      </td>
+                      <td>{inv.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
-}
+      }
