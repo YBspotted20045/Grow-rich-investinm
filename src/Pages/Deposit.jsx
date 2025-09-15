@@ -1,45 +1,14 @@
-// src/pages/Deposits.jsx
+// src/pages/Deposit.jsx
 import React, { useState } from "react";
 import "./Deposit.css";
 
 const packages = [
-  {
-    amount: 10000,
-    desc: "Start strong with ₦10,000 and grow your wealth.",
-  },
-  {
-    amount: 20000,
-    desc: "Boost your returns with ₦20,000 premium package.",
-  },
+  { amount: 10000, desc: "Secure your future with ₦10,000 investment." },
+  { amount: 20000, desc: "Boost your wealth with ₦20,000 premium plan." },
 ];
 
-const Deposits = () => {
-  const [selectedAmount, setSelectedAmount] = useState(null);
-  const [receipt, setReceipt] = useState(null);
-
-  const handleDeposit = (amount) => {
-    setSelectedAmount(amount);
-  };
-
-  const handleFileChange = (e) => {
-    setReceipt(e.target.files[0]);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!receipt || !selectedAmount) {
-      alert("Please select an amount and upload receipt!");
-      return;
-    }
-
-    // TODO: connect with backend API later
-    alert(
-      `Deposit request submitted:\nAmount: ₦${selectedAmount}\nReceipt: ${receipt.name}`
-    );
-
-    setSelectedAmount(null);
-    setReceipt(null);
-  };
+const Deposit = () => {
+  const [selected, setSelected] = useState(null);
 
   return (
     <div className="deposit-container">
@@ -47,12 +16,15 @@ const Deposits = () => {
 
       <div className="deposit-grid">
         {packages.map((pkg, index) => (
-          <div key={index} className="deposit-card">
+          <div
+            key={index}
+            className={`deposit-card ${selected === pkg.amount ? "active" : ""}`}
+          >
             <h3 className="deposit-package">₦{pkg.amount.toLocaleString()}</h3>
             <p className="deposit-description">{pkg.desc}</p>
             <button
               className="deposit-btn"
-              onClick={() => handleDeposit(pkg.amount)}
+              onClick={() => setSelected(pkg.amount)}
             >
               Deposit ₦{pkg.amount.toLocaleString()}
             </button>
@@ -60,37 +32,27 @@ const Deposits = () => {
         ))}
       </div>
 
-      {selectedAmount && (
-        <div className="deposit-form">
-          <h3>Complete Your Deposit</h3>
-          <p>
-            Please transfer{" "}
-            <strong>₦{selectedAmount.toLocaleString()}</strong> to the account
-            below:
-          </p>
-          <div className="bank-details">
-            <p>🏦 Bank: First Bank</p>
-            <p>👤 Account Name: John Doe</p>
-            <p>💳 Account Number: 1234567890</p>
+      {selected && (
+        <div className="deposit-details">
+          <h3 className="details-title">Complete Your Payment</h3>
+          <div className="account-card">
+            <p><strong>Bank Name:</strong> Access Bank</p>
+            <p><strong>Account Number:</strong> 1234567890</p>
+            <p><strong>Account Name:</strong> GrowRich Investments</p>
+            <p className="note">
+              💡 Please transfer exactly ₦{selected.toLocaleString()} and upload your payment receipt below.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="receipt">Upload Payment Receipt:</label>
-            <input
-              type="file"
-              id="receipt"
-              onChange={handleFileChange}
-              accept="image/*,.pdf"
-              required
-            />
-            <button type="submit" className="submit-btn">
-              Submit Deposit
-            </button>
-          </form>
+          <div className="upload-section">
+            <label className="upload-label">Upload Payment Receipt</label>
+            <input type="file" className="upload-input" />
+            <button className="confirm-btn">Submit Payment</button>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default Deposits;
+export default Deposit;
