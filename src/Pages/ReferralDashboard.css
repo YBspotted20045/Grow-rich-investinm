@@ -1,111 +1,161 @@
-.referral-page {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff, #fffdf5);
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
-.topbar h3 {
-  font-size: 22px;
-  font-weight: bold;
+/* ReferralDashboard.css - gold / white theme, mobile-first */
+.rd-page {
+  padding: 18px;
+  min-height: 100%;
+  background: linear-gradient(180deg, #fffdf7 0%, #ffffff 100%);
   color: #222;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-.topbar .muted {
-  color: #777;
-  font-style: italic;
-}
-
-/* Referral Code Box */
-.referral-box {
-  background: white;
-  border: 2px solid gold;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-  margin-bottom: 30px;
-}
-
-.referral-box h4 {
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: #333;
-}
-
-.referral-code {
+/* header */
+.rd-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  background: #fff8dc;
-  border: 1px dashed gold;
-  padding: 10px 15px;
-  border-radius: 8px;
+  gap: 12px;
+  margin-bottom: 18px;
 }
-
-.referral-code span {
-  font-weight: bold;
-  font-size: 16px;
-  color: #222;
+.rd-header h2 {
+  color: #1f1f1f;
+  margin: 0;
+  font-size: 20px;
 }
-
-.copy-btn {
-  background: gold;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: black;
+.rd-user {
+  color: #666;
   font-size: 14px;
 }
-.copy-btn:hover {
-  background: #e6c200;
-}
 
-.copied-msg {
-  margin-top: 8px;
-  font-size: 13px;
-  color: green;
-  font-weight: bold;
+/* top metrics */
+.rd-topgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
 }
-
-/* Referral Table */
-.referral-table-wrapper h4 {
-  margin-bottom: 12px;
-  color: #333;
-}
-
-.referral-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-
-.referral-table th,
-.referral-table td {
+.rd-metric {
+  background: #fff;
+  border: 1px solid rgba(212, 175, 55, 0.15);
   padding: 12px;
-  border: 1px solid #eee;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
   text-align: center;
 }
+.rd-metric-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+}
+.rd-metric-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+.rd-metric-value.ok { color: #138000; }
+.rd-metric-value.bad { color: #b00020; }
 
-.referral-table th {
-  background: gold;
-  color: black;
-  font-weight: bold;
+/* referral code box */
+.rd-codebox {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, #fffefa, #fff9ef);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.rd-code-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rd-code-title {
+  font-size: 13px;
+  color: #333;
+}
+.rd-code {
+  font-weight: 800;
+  font-size: 18px;
+  color: #1a1a1a;
+  background: rgba(255,255,255,0.9);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px dashed rgba(212,175,55,0.2);
 }
 
-.referral-table tr:nth-child(even) {
-  background: #fffdf0;
+.rd-code-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.rd-btn {
+  background: #d4af37; /* gold */
+  color: #111;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.rd-btn.outline {
+  background: transparent;
+  border: 1px solid #d4af37;
+}
+.rd-btn:hover { filter: brightness(0.98); }
+.rd-copied {
+  font-size: 13px;
+  color: #138000;
+  margin-left: 8px;
 }
 
-.referral-table tr:hover {
-  background: #fff8dc;
+/* referrals table */
+.rd-table-wrap {
+  margin-top: 10px;
+}
+.rd-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+.rd-table th, .rd-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #f1e9d4;
+  font-size: 14px;
+}
+.rd-table thead th {
+  background: #f8f2e0;
+  color: #111;
+  font-weight: 800;
+}
+.rd-table tbody tr:nth-child(even) {
+  background: #fffaf0;
+}
+.rd-muted {
+  color: #7a7a7a;
+  padding: 12px 0;
+}
+
+/* loaders & errors */
+.rd-loader {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+.rd-error, .rd-error-inline {
+  padding: 12px;
+  background: #ffecec;
+  color: #8a1f1f;
+  border: 1px solid #f2c1c1;
+  border-radius: 8px;
+  margin: 8px 0;
 }
