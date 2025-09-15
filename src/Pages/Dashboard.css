@@ -1,101 +1,50 @@
-/* ====== Page Shell ====== */
-.page-shell {
-  display: flex;
-  min-height: 100vh;
+.dashboard-page {
+  padding: 20px;
   background: white;
-  background-image: linear-gradient(to bottom right, #fff, #fff8e1);
+  min-height: 100vh;
 }
 
-/* ====== Sidebar ====== */
-.sidebar {
-  width: 240px;
-  background: #111;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0; /* ✅ sidebar always visible */
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
-.sidebar .logo {
-  color: gold;
-  margin-bottom: 20px;
-  font-size: 22px;
+.dash-title {
+  font-size: 24px;
   font-weight: bold;
-}
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-.sidebar ul li {
-  margin: 15px 0;
-}
-.sidebar ul li a {
-  color: white;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: color 0.3s ease;
-}
-.sidebar ul li a:hover {
-  color: gold;
+  color: black;
+  margin-bottom: 10px;
 }
 
-/* ====== Main Section ====== */
-.main {
-  flex: 1;
-  margin-left: 240px; /* ✅ space for sidebar */
-  padding: 20px;
-  width: calc(100% - 240px);
-  transition: margin-left 0.3s ease, width 0.3s ease;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.welcome {
+  color: #555;
   margin-bottom: 20px;
 }
-.topbar h3 {
-  font-size: 20px;
-  color: black;
-}
-.topbar .muted {
-  color: #666;
-}
 
-/* ====== Stats Cards ====== */
+/* Stats Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  margin-bottom: 20px;
 }
+
 .stat-card {
-  background: white;
+  background: #fffdf5;
   border: 2px solid gold;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
-.stat-card:hover {
-  transform: translateY(-3px);
-}
+
 .stat-card h4 {
   font-size: 14px;
   font-weight: bold;
   color: #444;
   margin-bottom: 6px;
 }
+
 .stat-card p {
   font-size: 18px;
   font-weight: bold;
   color: black;
 }
+
+/* Progress */
 .progress-bar {
   width: 100%;
   background: #eee;
@@ -103,50 +52,21 @@
   margin-top: 5px;
   height: 8px;
 }
+
 .progress-bar-fill {
   height: 8px;
   background: gold;
   border-radius: 6px;
 }
-.status-ok {
-  color: green;
-  font-weight: bold;
-}
-.status-bad {
+
+/* Utility */
+.error {
   color: red;
   font-weight: bold;
+  padding: 10px;
 }
 
-/* ====== Investments Table ====== */
-.investments h4 {
-  margin-bottom: 10px;
-  color: #444;
-  font-weight: bold;
+.loader {
+  padding: 20px;
+  font-size: 16px;
 }
-.styled-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.styled-table th, .styled-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
-.styled-table th {
-  background: gold;
-  color: black;
-}
-.styled-table tr:nth-child(even) {
-  background: #f9f9f9;
-}
-.styled-table tr:hover {
-  background: #fff7d6;
-}
-.muted {
-  color: #777;
-  font-size: 14px;
-  }
