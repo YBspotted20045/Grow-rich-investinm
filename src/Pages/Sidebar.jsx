@@ -1,3 +1,4 @@
+// src/Pages/Sidebar.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
@@ -13,7 +14,6 @@ export default function Sidebar() {
         <Link to="/deposit" onClick={() => setOpen(false)}>Deposit</Link>
         <Link to="/withdrawal" onClick={() => setOpen(false)}>Withdrawal</Link>
         <Link to="/account" onClick={() => setOpen(false)}>Account</Link>
-        <Link to="/vendors" onClick={() => setOpen(false)}>Vendors</Link>
         <Link to="/referrals" onClick={() => setOpen(false)}>Referrals</Link>
       </nav>
     </aside>
