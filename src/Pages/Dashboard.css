@@ -1,47 +1,72 @@
 .dashboard-page {
   padding: 20px;
-  background: white;
+  background: linear-gradient(to bottom right, #fff, #fffdf0);
   min-height: 100vh;
 }
 
+/* Title */
 .dash-title {
   font-size: 24px;
   font-weight: bold;
-  color: black;
+  color: #222;
   margin-bottom: 10px;
 }
 
 .welcome {
-  color: #555;
-  margin-bottom: 20px;
+  color: #666;
+  margin-bottom: 25px;
+  font-style: italic;
 }
 
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 20px;
 }
 
 .stat-card {
-  background: #fffdf5;
-  border: 2px solid gold;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  background: white;
+  border: 1px solid #f4d03f;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -40%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
+  z-index: 0;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
 }
 
 .stat-card h4 {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
   color: #444;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .stat-card p {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
-  color: black;
+  color: #222;
+  position: relative;
+  z-index: 1;
 }
 
 /* Progress */
@@ -49,13 +74,15 @@
   width: 100%;
   background: #eee;
   border-radius: 6px;
-  margin-top: 5px;
+  margin-top: 8px;
   height: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .progress-bar-fill {
   height: 8px;
-  background: gold;
+  background: linear-gradient(to right, gold, #e6c200);
   border-radius: 6px;
 }
 
