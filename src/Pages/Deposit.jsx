@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../axios"; // Make sure this is your centralized Axios instance
+import axios from "../axios"; // Make sure baseURL points to your backend
 import "./Deposit.css";
 
 const packages = [
@@ -13,11 +13,13 @@ const Deposit = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = async () => {
+    if (!selected) {
+      setMessage("Please select a deposit package.");
+      return;
+    }
     if (!file) {
       setMessage("Please upload your payment receipt.");
       return;
@@ -31,15 +33,15 @@ const Deposit = () => {
       formData.append("amount", selected);
       formData.append("receipt", file);
 
-      const res = await axios.post("/deposits", formData, {
+      const res = await axios.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setMessage(res.data.message || "Payment submitted successfully!");
       setFile(null);
     } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.error || "Failed to submit payment.");
+      console.error("Deposit submit error:", err);
+      setMessage(err.response?.data?.message || "Failed to submit payment.");
     } finally {
       setLoading(false);
     }
@@ -57,10 +59,7 @@ const Deposit = () => {
           >
             <h3 className="deposit-package">₦{pkg.amount.toLocaleString()}</h3>
             <p className="deposit-description">{pkg.desc}</p>
-            <button
-              className="deposit-btn"
-              onClick={() => setSelected(pkg.amount)}
-            >
+            <button className="deposit-btn" onClick={() => setSelected(pkg.amount)}>
               Deposit ₦{pkg.amount.toLocaleString()}
             </button>
           </div>
@@ -71,8 +70,8 @@ const Deposit = () => {
         <div className="deposit-details">
           <h3 className="details-title">Complete Your Payment</h3>
           <div className="account-card">
-            <p><strong>Bank Name:</strong> Access Bank</p>
-            <p><strong>Account Number:</strong> 1234567890</p>
+            <p><strong>Bank Name:</strong> opay</p>
+            <p><strong>Account Number:</strong> 8149253500</p>
             <p><strong>Account Name:</strong> GrowRich Investments</p>
             <p className="note">
               💡 Please transfer exactly ₦{selected.toLocaleString()} and upload your payment receipt below.
