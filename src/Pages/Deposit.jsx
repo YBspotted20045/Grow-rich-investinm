@@ -1,6 +1,6 @@
 // src/pages/Deposit.jsx
 import React, { useState } from "react";
-import API from "../axios"; // ✅ make sure this points to your backend
+import API from "../axios";
 import "./Deposit.css";
 
 const packages = [
@@ -8,29 +8,43 @@ const packages = [
   { amount: 20000, desc: "Boost your wealth with ₦20,000 premium plan." },
 ];
 
-const Deposit = () => {
+export default function Deposit() {
   const [selected, setSelected] = useState(null);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(null);
+
+  const handleFile = (e) => {
+    setFile(e.target.files?.[0] || null);
+  };
 
   const handleSubmit = async () => {
-    if (!file || !selected) {
-      return setMessage("⚠️ Please select a package and upload a receipt");
-    }
+    if (!selected) return setMessage({ type: "error", text: "Select an amount first." });
+    if (!file) return setMessage({ type: "error", text: "Please upload the receipt." });
 
-    const formData = new FormData();
-    formData.append("amount", selected);
-    formData.append("receipt", file); // ✅ must match backend multer field
+    setLoading(true);
+    setMessage(null);
 
     try {
-      setLoading(true);
+      const formData = new FormData();
+      formData.append("amount", selected);
+      formData.append("receipt", file);
+
+      // Use API (axios instance). Override Content-Type so boundary is set automatically.
       const res = await API.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setMessage(res.data.message || "✅ Payment submitted successfully");
+
+      setMessage({ type: "success", text: res.data?.message || "Upload successful." });
+      setFile(null);
+      setSelected(null);
     } catch (err) {
-      setMessage(err.response?.data?.message || "❌ Upload failed");
+      console.error("Upload error:", err);
+      const text =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Upload failed. Check backend logs or network.";
+      setMessage({ type: "error", text });
     } finally {
       setLoading(false);
     }
@@ -41,17 +55,14 @@ const Deposit = () => {
       <h2 className="deposit-title">💰 Deposit Packages</h2>
 
       <div className="deposit-grid">
-        {packages.map((pkg, index) => (
+        {packages.map((pkg) => (
           <div
-            key={index}
+            key={pkg.amount}
             className={`deposit-card ${selected === pkg.amount ? "active" : ""}`}
           >
             <h3 className="deposit-package">₦{pkg.amount.toLocaleString()}</h3>
             <p className="deposit-description">{pkg.desc}</p>
-            <button
-              className="deposit-btn"
-              onClick={() => setSelected(pkg.amount)}
-            >
+            <button className="deposit-btn" onClick={() => setSelected(pkg.amount)}>
               Deposit ₦{pkg.amount.toLocaleString()}
             </button>
           </div>
@@ -61,6 +72,7 @@ const Deposit = () => {
       {selected && (
         <div className="deposit-details">
           <h3 className="details-title">Complete Your Payment</h3>
+
           <div className="account-card">
             <p><strong>Bank Name:</strong> Access Bank</p>
             <p><strong>Account Number:</strong> 1234567890</p>
@@ -72,24 +84,25 @@ const Deposit = () => {
 
           <div className="upload-section">
             <label className="upload-label">Upload Payment Receipt</label>
-            <input
-              type="file"
-              className="upload-input"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-            <button
-              className="confirm-btn"
-              onClick={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? "Uploading..." : "Submit Payment"}
-            </button>
-            {message && <p style={{ marginTop: "10px" }}>{message}</p>}
+            <input type="file" accept="image/*,application/pdf" onChange={handleFile} />
+            <div style={{ marginTop: 10 }}>
+              <button
+                className="confirm-btn"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? "Uploading..." : "Submit Payment"}
+              </button>
+            </div>
+
+            {message && (
+              <div className={`msg ${message.type === "error" ? "err" : "ok"}`}>
+                {message.text}
+              </div>
+            )}
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default Deposit;
+              }
