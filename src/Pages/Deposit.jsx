@@ -1,5 +1,5 @@
-// src/pages/Deposit.jsx
 import React, { useState } from "react";
+import axios from "../axios"; // Make sure this is your centralized Axios instance
 import "./Deposit.css";
 
 const packages = [
@@ -9,6 +9,41 @@ const packages = [
 
 const Deposit = () => {
   const [selected, setSelected] = useState(null);
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async () => {
+    if (!file) {
+      setMessage("Please upload your payment receipt.");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const formData = new FormData();
+      formData.append("amount", selected);
+      formData.append("receipt", file);
+
+      const res = await axios.post("/deposits", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setMessage(res.data.message || "Payment submitted successfully!");
+      setFile(null);
+    } catch (err) {
+      console.error(err);
+      setMessage(err.response?.data?.error || "Failed to submit payment.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="deposit-container">
@@ -46,8 +81,11 @@ const Deposit = () => {
 
           <div className="upload-section">
             <label className="upload-label">Upload Payment Receipt</label>
-            <input type="file" className="upload-input" />
-            <button className="confirm-btn">Submit Payment</button>
+            <input type="file" className="upload-input" onChange={handleFileChange} />
+            <button className="confirm-btn" onClick={handleSubmit} disabled={loading}>
+              {loading ? "Submitting..." : "Submit Payment"}
+            </button>
+            {message && <p className="upload-message">{message}</p>}
           </div>
         </div>
       )}
