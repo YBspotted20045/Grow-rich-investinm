@@ -1,5 +1,6 @@
+// src/pages/Deposit.jsx
 import React, { useState } from "react";
-import axios from "../axios"; // Make sure baseURL points to your backend
+import API from "../axios"; // ✅ make sure this points to your backend
 import "./Deposit.css";
 
 const packages = [
@@ -13,35 +14,23 @@ const Deposit = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleFileChange = (e) => setFile(e.target.files[0]);
-
   const handleSubmit = async () => {
-    if (!selected) {
-      setMessage("Please select a deposit package.");
-      return;
-    }
-    if (!file) {
-      setMessage("Please upload your payment receipt.");
-      return;
+    if (!file || !selected) {
+      return setMessage("⚠️ Please select a package and upload a receipt");
     }
 
-    setLoading(true);
-    setMessage("");
+    const formData = new FormData();
+    formData.append("amount", selected);
+    formData.append("receipt", file); // ✅ must match backend multer field
 
     try {
-      const formData = new FormData();
-      formData.append("amount", selected);
-      formData.append("receipt", file);
-
-      const res = await axios.post("/deposits/upload", formData, {
+      setLoading(true);
+      const res = await API.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
-      setMessage(res.data.message || "Payment submitted successfully!");
-      setFile(null);
+      setMessage(res.data.message || "✅ Payment submitted successfully");
     } catch (err) {
-      console.error("Deposit submit error:", err);
-      setMessage(err.response?.data?.message || "Failed to submit payment.");
+      setMessage(err.response?.data?.message || "❌ Upload failed");
     } finally {
       setLoading(false);
     }
@@ -59,7 +48,10 @@ const Deposit = () => {
           >
             <h3 className="deposit-package">₦{pkg.amount.toLocaleString()}</h3>
             <p className="deposit-description">{pkg.desc}</p>
-            <button className="deposit-btn" onClick={() => setSelected(pkg.amount)}>
+            <button
+              className="deposit-btn"
+              onClick={() => setSelected(pkg.amount)}
+            >
               Deposit ₦{pkg.amount.toLocaleString()}
             </button>
           </div>
@@ -70,8 +62,8 @@ const Deposit = () => {
         <div className="deposit-details">
           <h3 className="details-title">Complete Your Payment</h3>
           <div className="account-card">
-            <p><strong>Bank Name:</strong> opay</p>
-            <p><strong>Account Number:</strong> 8149253500</p>
+            <p><strong>Bank Name:</strong> Access Bank</p>
+            <p><strong>Account Number:</strong> 1234567890</p>
             <p><strong>Account Name:</strong> GrowRich Investments</p>
             <p className="note">
               💡 Please transfer exactly ₦{selected.toLocaleString()} and upload your payment receipt below.
@@ -80,11 +72,19 @@ const Deposit = () => {
 
           <div className="upload-section">
             <label className="upload-label">Upload Payment Receipt</label>
-            <input type="file" className="upload-input" onChange={handleFileChange} />
-            <button className="confirm-btn" onClick={handleSubmit} disabled={loading}>
-              {loading ? "Submitting..." : "Submit Payment"}
+            <input
+              type="file"
+              className="upload-input"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            <button
+              className="confirm-btn"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Uploading..." : "Submit Payment"}
             </button>
-            {message && <p className="upload-message">{message}</p>}
+            {message && <p style={{ marginTop: "10px" }}>{message}</p>}
           </div>
         </div>
       )}
