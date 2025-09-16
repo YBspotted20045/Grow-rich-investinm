@@ -8,7 +8,6 @@ import "./ReferralDashboard.css";
 export default function ReferralDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
@@ -20,57 +19,27 @@ export default function ReferralDashboard() {
       try {
         const token = localStorage.getItem("gr_token");
         if (!token) {
-          // no token -> send to login
           navigate("/login", { replace: true });
           return;
         }
 
-        // fetch user and referrals in parallel
-        const [meResult, referralsResult] = await Promise.allSettled([
-          API.get("/auth/me"),
-          API.get("/referrals/my"),
-        ]);
+        const res = await API.get("/auth/me");
+        const meData = res.data?.user || res.data;
 
-        // handle /auth/me result
-        if (meResult.status === "fulfilled") {
-          const meData = meResult.value.data?.user || meResult.value.data;
-          if (!meData) {
-            // backend returned something unexpected but don't immediately logout
-            setError("Could not read user info from server response.");
-          } else if (mounted) {
-            setUser(meData);
-          }
-        } else {
-          // something failed when fetching user
-          const status = meResult.reason?.response?.status;
-          if (status === 401) {
-            // only logout on 401
-            localStorage.removeItem("gr_token");
-            navigate("/login", { replace: true });
-            return;
-          }
-          console.error("Fetch /auth/me error:", meResult.reason);
-          setError("Unable to load user info (server).");
-        }
-
-        // handle referrals result
-        if (referralsResult.status === "fulfilled") {
-          const r = referralsResult.value.data || [];
-          if (mounted) setReferrals(r);
-        } else {
-          const status = referralsResult.reason?.response?.status;
-          if (status === 401) {
-            localStorage.removeItem("gr_token");
-            navigate("/login", { replace: true });
-            return;
-          }
-          console.error("Fetch /referrals/my error:", referralsResult.reason);
-          // don't overwrite a previous error if there is one
-          if (!error) setError("Could not load referrals.");
+        if (!meData) {
+          setError("Could not read user info from server response.");
+        } else if (mounted) {
+          setUser(meData);
         }
       } catch (err) {
-        console.error("ReferralDashboard unexpected error:", err);
-        if (!error) setError("Unexpected error loading referral dashboard.");
+        console.error("Fetch /auth/me error:", err);
+        const status = err.response?.status;
+        if (status === 401) {
+          localStorage.removeItem("gr_token");
+          navigate("/login", { replace: true });
+          return;
+        }
+        setError("Unable to load referral dashboard.");
       } finally {
         if (mounted) setLoading(false);
       }
@@ -107,7 +76,6 @@ export default function ReferralDashboard() {
         console.error("Native share failed:", err);
       }
     } else {
-      // fallback: copy share URL
       try {
         await navigator.clipboard.writeText(shareUrl);
         setCopied(true);
@@ -119,13 +87,10 @@ export default function ReferralDashboard() {
   };
 
   if (loading) return <div className="rd-loader">Loading...</div>;
-
-  // if nothing loaded and error exist
-  if (!user && !referrals.length && error) {
-    return <div className="rd-error">⚠️ {error}</div>;
-  }
+  if (!user && error) return <div className="rd-error">⚠️ {error}</div>;
 
   // computed metrics
+  const referrals = user?.referrals || [];
   const totalReferrals = referrals.length;
   const totalReferralDeposits = user?.referralDeposits ?? 0;
   const requirementMet = user?.referralRequirementMet ?? false;
@@ -134,7 +99,9 @@ export default function ReferralDashboard() {
     <div className="rd-page">
       <div className="rd-header">
         <h2>Referral Dashboard</h2>
-        <div className="rd-user">Welcome, {user?.username || user?.fullname || "Investor"}</div>
+        <div className="rd-user">
+          Welcome, {user?.username || user?.fullname || "Investor"}
+        </div>
       </div>
 
       <div className="rd-topgrid">
@@ -163,8 +130,12 @@ export default function ReferralDashboard() {
         </div>
 
         <div className="rd-code-actions">
-          <button className="rd-btn" onClick={copyCode}><FaCopy /> Copy</button>
-          <button className="rd-btn outline" onClick={shareLink}><FaShareAlt /> Share</button>
+          <button className="rd-btn" onClick={copyCode}>
+            <FaCopy /> Copy
+          </button>
+          <button className="rd-btn outline" onClick={shareLink}>
+            <FaShareAlt /> Share
+          </button>
           {copied && <div className="rd-copied">Copied!</div>}
         </div>
       </section>
@@ -192,7 +163,11 @@ export default function ReferralDashboard() {
                   <td>{r.fullname || r.username || "—"}</td>
                   <td>{r.email || "—"}</td>
                   <td>₦{r.investmentAmount || 0}</td>
-                  <td>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "—"}</td>
+                  <td>
+                    {r.createdAt
+                      ? new Date(r.createdAt).toLocaleDateString()
+                      : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
