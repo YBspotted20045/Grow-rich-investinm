@@ -128,3 +128,28 @@
 .confirm-btn:hover {
   background: #ffd700;
   }
+.msg {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.msg.err {
+  background: #ffe0e0;
+  color: #d8000c;
+  border: 1px solid #d8000c;
+}
+
+.msg.ok {
+  background: #e0ffe0;
+  color: #4f8a10;
+  border: 1px solid #4f8a10;
+}
+
+.msg.info {
+  background: #e7f3fe;
+  color: #0c5460;
+  border: 1px solid #0c5460;
+  }
