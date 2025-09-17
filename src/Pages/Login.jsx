@@ -23,7 +23,6 @@ function Login() {
     try {
       const res = await API.post("/auth/login", form);
 
-      // backend sometimes returns token at root or inside data — handle common keys
       const token = res.data?.token || res.data?.jwt || res.data?.accessToken;
       const user = res.data?.user || res.data?.data || res.data || null;
 
@@ -35,9 +34,13 @@ function Login() {
       localStorage.setItem("gr_token", token);
       if (user) localStorage.setItem("gr_user", JSON.stringify(user));
 
-      // show a brief non-blocking message and navigate immediately
+      // ✅ Redirect based on role
       setMessage({ type: "success", text: "Login successful — redirecting…" });
-      navigate("/dashboard", { replace: true });
+      if (user?.isAdmin) {
+        navigate("/admin/dashboard", { replace: true }); // 👈 admin page
+      } else {
+        navigate("/dashboard", { replace: true }); // 👈 normal user
+      }
     } catch (error) {
       console.error("Login failed:", error);
       setMessage({
