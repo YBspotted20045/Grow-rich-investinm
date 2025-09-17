@@ -19,23 +19,22 @@ export default function Deposit() {
   };
 
   const handleSubmit = async () => {
-    if (!selected) return setMessage({ type: "error", text: "Select an amount first." });
-    if (!file) return setMessage({ type: "error", text: "Please upload the receipt." });
+    if (!selected) return setMessage({ type: "error", text: "⚠️ Select an amount first." });
+    if (!file) return setMessage({ type: "error", text: "⚠️ Please upload the receipt." });
 
     setLoading(true);
-    setMessage(null);
+    setMessage({ type: "info", text: "⏳ Uploading receipt..." });
 
     try {
       const formData = new FormData();
       formData.append("amount", selected);
       formData.append("receipt", file);
 
-      // Use API (axios instance). Override Content-Type so boundary is set automatically.
       const res = await API.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setMessage({ type: "success", text: res.data?.message || "Upload successful." });
+      setMessage({ type: "success", text: res.data?.message || "✅ Upload successful." });
       setFile(null);
       setSelected(null);
     } catch (err) {
@@ -43,7 +42,7 @@ export default function Deposit() {
       const text =
         err?.response?.data?.message ||
         err?.message ||
-        "Upload failed. Check backend logs or network.";
+        "❌ Upload failed. Please try again.";
       setMessage({ type: "error", text });
     } finally {
       setLoading(false);
@@ -96,7 +95,15 @@ export default function Deposit() {
             </div>
 
             {message && (
-              <div className={`msg ${message.type === "error" ? "err" : "ok"}`}>
+              <div
+                className={`msg ${
+                  message.type === "error"
+                    ? "err"
+                    : message.type === "success"
+                    ? "ok"
+                    : "info"
+                }`}
+              >
                 {message.text}
               </div>
             )}
