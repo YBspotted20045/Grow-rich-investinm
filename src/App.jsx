@@ -1,8 +1,7 @@
-// src/App.jsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// ── User Pages ───────────────────────────────────────────
+// ── User Pages ───────────────────────────────
 import Layout from "./Pages/Layout.jsx";
 import Signup from "./Pages/Signup.jsx";
 import Login from "./Pages/Login.jsx";
@@ -13,20 +12,20 @@ import Withdrawal from "./Pages/Withdrawal.jsx";
 import Account from "./Pages/Account.jsx";
 import ReferralDashboard from "./Pages/ReferralDashboard.jsx";
 
-// ── Admin Pages ──────────────────────────────────────────
+// ── Admin Pages ──────────────────────────────
 import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
 import DashboardHome from "./Pages/admin/DashboardHome.jsx";
-// later we’ll add: ManageUsers, ManageDeposits, etc.
+import ManageUsers from "./Pages/admin/ManageUsers.jsx";
+import ManageDeposits from "./Pages/admin/ManageDeposits.jsx";
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("gr_token");
   return token ? children : <Navigate to="/login" replace />;
 }
 
-// ✅ Optional: separate admin auth
 function RequireAdmin({ children }) {
   const token = localStorage.getItem("gr_token");
-  const isAdmin = localStorage.getItem("isAdmin") === "true"; 
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
   return token && isAdmin ? children : <Navigate to="/login" replace />;
 }
 
@@ -76,9 +75,11 @@ export default function App() {
       >
         <Route index element={<DashboardHome />} />
         <Route path="dashboard" element={<DashboardHome />} />
-        {/* later: /admin/users, /admin/deposits, etc. */}
+        <Route path="users" element={<ManageUsers />} />
+        <Route path="deposits" element={<ManageDeposits />} />
       </Route>
 
+      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
