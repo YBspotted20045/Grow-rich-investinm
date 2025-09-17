@@ -24,22 +24,24 @@ function Login() {
       const res = await API.post("/auth/login", form);
 
       const token = res.data?.token || res.data?.jwt || res.data?.accessToken;
-      const user = res.data?.user || res.data?.data || res.data || null;
+      const user = res.data?.user || null;
 
-      if (!token) {
-        throw new Error("No token received from server");
+      if (!token || !user) {
+        throw new Error("Invalid response from server");
       }
 
-      // Save token + user
+      // ✅ Save token and user details
       localStorage.setItem("gr_token", token);
-      if (user) localStorage.setItem("gr_user", JSON.stringify(user));
+      localStorage.setItem("gr_user", JSON.stringify(user));
+      localStorage.setItem("isAdmin", user.isAdmin ? "true" : "false");
+
+      setMessage({ type: "success", text: "Login successful — redirecting…" });
 
       // ✅ Redirect based on role
-      setMessage({ type: "success", text: "Login successful — redirecting…" });
-      if (user?.isAdmin) {
-        navigate("/admin/dashboard", { replace: true }); // 👈 admin page
+      if (user.isAdmin) {
+        navigate("/admin/dashboard", { replace: true });
       } else {
-        navigate("/dashboard", { replace: true }); // 👈 normal user
+        navigate("/dashboard", { replace: true });
       }
     } catch (error) {
       console.error("Login failed:", error);
