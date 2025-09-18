@@ -6,8 +6,9 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("gr_token");
+    localStorage.removeItem("gr_user");
     localStorage.removeItem("isAdmin");
-    navigate("/login");
+    navigate("/admin-login"); // ✅ send admin back to AdminLogin
   };
 
   return (
