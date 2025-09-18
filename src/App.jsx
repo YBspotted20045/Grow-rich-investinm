@@ -13,12 +13,12 @@ import Account from "./Pages/Account.jsx";
 import ReferralDashboard from "./Pages/ReferralDashboard.jsx";
 
 // ── Admin Pages ──────────────────────────────
+import AdminLogin from "./Pages/AdminLogin.jsx"; // ✅ NEW PAGE
 import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
 import DashboardHome from "./Pages/admin/DashboardHome.jsx";
 import ManageUsers from "./Pages/admin/ManageUsers.jsx";
 import ManageDeposits from "./Pages/admin/ManageDeposits.jsx";
 
-// ── Guards ───────────────────────────────────
 function RequireAuth({ children }) {
   const token = localStorage.getItem("gr_token");
   return token ? children : <Navigate to="/login" replace />;
@@ -27,20 +27,20 @@ function RequireAuth({ children }) {
 function RequireAdmin({ children }) {
   const token = localStorage.getItem("gr_token");
   const isAdmin = localStorage.getItem("isAdmin") === "true";
-  return token && isAdmin ? children : <Navigate to="/login" replace />;
+  return token && isAdmin ? children : <Navigate to="/admin-login" replace />;
 }
 
 export default function App() {
   return (
     <Routes>
-      {/* Default: if logged in → dashboard, otherwise → login */}
+      {/* Default: if logged in → dashboard, otherwise → signup */}
       <Route
         path="/"
         element={
           localStorage.getItem("gr_token") ? (
             <Navigate to="/dashboard" replace />
           ) : (
-            <Login />
+            <Signup />
           )
         }
       />
@@ -64,6 +64,9 @@ export default function App() {
         <Route path="account" element={<Account />} />
         <Route path="referrals" element={<ReferralDashboard />} />
       </Route>
+
+      {/* ── Admin Login ── */}
+      <Route path="/admin-login" element={<AdminLogin />} /> {/* ✅ NEW */}
 
       {/* ── Admin Layout ── */}
       <Route
