@@ -26,25 +26,19 @@ function Login() {
       const token = res.data?.token;
       const user = res.data?.user || null;
 
-      if (!token) {
-        throw new Error("No token received from server");
-      }
+      if (!token) throw new Error("No token received from server");
 
       // Save token + user
       localStorage.setItem("gr_token", token);
       if (user) {
         localStorage.setItem("gr_user", JSON.stringify(user));
-        localStorage.setItem("isAdmin", user.isAdmin ? "true" : "false");
+        localStorage.setItem("isAdmin", "false"); // ✅ Always false for user login
       }
 
       setMessage({ type: "success", text: "Login successful — redirecting…" });
 
-      // Redirect based on admin status
-      if (user?.isAdmin) {
-        navigate("/admin/dashboard", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
+      // Always redirect users to dashboard
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error("Login failed:", error);
       setMessage({
