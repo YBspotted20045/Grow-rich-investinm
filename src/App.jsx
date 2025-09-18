@@ -1,14 +1,46 @@
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+// ── User Pages ───────────────────────────────
+import Layout from "./Pages/Layout.jsx";
+import Signup from "./Pages/Signup.jsx";
+import Login from "./Pages/Login.jsx";
+import Dashboard from "./Pages/Dashboard.jsx";
+import Deposit from "./Pages/Deposit.jsx";
+import Vendors from "./Pages/Vendors.jsx";
+import Withdrawal from "./Pages/Withdrawal.jsx";
+import Account from "./Pages/Account.jsx";
+import ReferralDashboard from "./Pages/ReferralDashboard.jsx";
+
+// ── Admin Pages ──────────────────────────────
+import AdminDashboard from "./Pages/admin/AdminDashboard.jsx";
+import DashboardHome from "./Pages/admin/DashboardHome.jsx";
+import ManageUsers from "./Pages/admin/ManageUsers.jsx";
+import ManageDeposits from "./Pages/admin/ManageDeposits.jsx";
+
+// ── Guards ───────────────────────────────────
+function RequireAuth({ children }) {
+  const token = localStorage.getItem("gr_token");
+  return token ? children : <Navigate to="/login" replace />;
+}
+
+function RequireAdmin({ children }) {
+  const token = localStorage.getItem("gr_token");
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  return token && isAdmin ? children : <Navigate to="/login" replace />;
+}
+
 export default function App() {
   return (
     <Routes>
-      {/* Default: if logged in → dashboard, otherwise → signup */}
+      {/* Default: if logged in → dashboard, otherwise → login */}
       <Route
         path="/"
         element={
           localStorage.getItem("gr_token") ? (
             <Navigate to="/dashboard" replace />
           ) : (
-            <Signup />
+            <Login />
           )
         }
       />
@@ -33,9 +65,7 @@ export default function App() {
         <Route path="referrals" element={<ReferralDashboard />} />
       </Route>
 
-      {/* ── Admin Routes ── */}
-      <Route path="/admin-login" element={<AdminLogin />} />
-
+      {/* ── Admin Layout ── */}
       <Route
         path="/admin"
         element={
