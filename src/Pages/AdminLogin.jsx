@@ -25,12 +25,13 @@ function AdminLogin() {
       const token = res.data?.token;
       if (!token) throw new Error("No token received");
 
-      // ✅ Save admin session in the same way RequireAdmin expects
+      // ✅ Save both user and admin tokens
+      localStorage.setItem("admin_token", token);
       localStorage.setItem("gr_token", token);
       localStorage.setItem("isAdmin", "true");
 
       setMessage("✅ Login successful! Redirecting...");
-      navigate("/admin", { replace: true }); // ✅ Correct path
+      navigate("/admin/dashboard", { replace: true });
     } catch (err) {
       console.error("Admin login error:", err);
       setMessage(err.response?.data?.message || "❌ Invalid credentials");
