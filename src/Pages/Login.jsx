@@ -23,22 +23,24 @@ function Login() {
     try {
       const res = await API.post("/auth/login", form);
 
-      const token = res.data?.token || res.data?.jwt || res.data?.accessToken;
+      const token = res.data?.token;
       const user = res.data?.user || null;
 
-      if (!token || !user) {
-        throw new Error("Invalid response from server");
+      if (!token) {
+        throw new Error("No token received from server");
       }
 
-      // ✅ Save token and user details
+      // Save token + user
       localStorage.setItem("gr_token", token);
-      localStorage.setItem("gr_user", JSON.stringify(user));
-      localStorage.setItem("isAdmin", user.isAdmin ? "true" : "false");
+      if (user) {
+        localStorage.setItem("gr_user", JSON.stringify(user));
+        localStorage.setItem("isAdmin", user.isAdmin ? "true" : "false");
+      }
 
       setMessage({ type: "success", text: "Login successful — redirecting…" });
 
-      // ✅ Redirect based on role
-      if (user.isAdmin) {
+      // Redirect based on admin status
+      if (user?.isAdmin) {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/dashboard", { replace: true });
@@ -47,7 +49,10 @@ function Login() {
       console.error("Login failed:", error);
       setMessage({
         type: "error",
-        text: error.response?.data?.message || error.message || "Invalid email or password.",
+        text:
+          error.response?.data?.message ||
+          error.message ||
+          "Invalid email or password.",
       });
     } finally {
       setLoading(false);
