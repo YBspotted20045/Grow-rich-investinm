@@ -1,5 +1,6 @@
 // frontend/src/pages/Login.jsx
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../axios";
 
 const Login = () => {
@@ -13,15 +14,16 @@ const Login = () => {
     try {
       const { data } = await API.post("/auth/login", { email, password });
 
-      // save token + user in localStorage
-      localStorage.setItem("token", data.token);
+      // ✅ use consistent key names
+      localStorage.setItem("gr_token", data.token);
+      localStorage.setItem("isAdmin", data.user.isAdmin ? "true" : "false");
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // ✅ check if the user is admin
+      // Redirect based on role
       if (data.user.isAdmin) {
-        navigate("/admin/dashboard");  // send to admin dashboard
+        navigate("/admin/dashboard");
       } else {
-        navigate("/dashboard");        // send to user dashboard
+        navigate("/dashboard");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -29,22 +31,32 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="auth-container">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+
+      {/* ✅ Link to signup */}
+      <p>
+        Don’t have an account? <Link to="/signup">Sign up here</Link>
+      </p>
+    </div>
   );
 };
 
