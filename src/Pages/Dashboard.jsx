@@ -19,7 +19,10 @@ export default function Dashboard() {
           return;
         }
 
-        const res = await API.get("/auth/me");
+        const res = await API.get("/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         const me = res.data?.user || res.data;
         setUser(me);
 
@@ -75,10 +78,12 @@ export default function Dashboard() {
             />
           </div>
           <small>
-            {daysLeft > 0 ? `${daysLeft} day(s) left` : "✅ Ready for withdrawal"}
+            {daysLeft > 0
+              ? `${daysLeft} day(s) left`
+              : "✅ Ready for withdrawal"}
           </small>
         </div>
       </div>
     </div>
   );
-}
+            }
