@@ -2,10 +2,15 @@
 import React, { useEffect, useState } from "react";
 import API from "../../axios";
 
-export default function ManageDeposits() {
+function ManageDeposits() {
   const [deposits, setDeposits] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+
+  // Fetch deposits from backend
+  useEffect(() => {
+    fetchDeposits();
+  }, []);
 
   const fetchDeposits = async () => {
     setLoading(true);
@@ -16,7 +21,7 @@ export default function ManageDeposits() {
       setDeposits(res.data || []);
     } catch (err) {
       console.error("Error fetching deposits:", err);
-      setMessage("Failed to load deposits");
+      setMessage("❌ Failed to load deposits");
     } finally {
       setLoading(false);
     }
@@ -24,89 +29,98 @@ export default function ManageDeposits() {
 
   const handleAction = async (id, action) => {
     try {
-      const res = await API.put(
-        `/admin/deposits/${id}`,
-        { action },
+      const res = await API.post(
+        `/admin/deposits/${id}/${action}`,
+        {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("gr_token")}` } }
       );
 
-      setMessage(res.data.message || "Action completed");
-      fetchDeposits(); // refresh list
+      setMessage(`✅ ${res.data.message || "Action successful"}`);
+      // Refresh deposits after action
+      fetchDeposits();
     } catch (err) {
-      console.error("Error updating deposit:", err);
-      setMessage(err.response?.data?.message || "Failed to update deposit");
+      console.error(`Error on ${action}:`, err);
+      setMessage(`❌ Failed to ${action} deposit`);
     }
   };
-
-  useEffect(() => {
-    fetchDeposits();
-  }, []);
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Manage Deposits</h2>
+
       {message && <div className="mb-3 text-sm text-blue-600">{message}</div>}
+
       {loading ? (
         <p>Loading deposits...</p>
       ) : deposits.length === 0 ? (
         <p>No deposits found.</p>
       ) : (
-        <table className="min-w-full bg-white border border-gray-200 shadow">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="p-3 border-b">User</th>
-              <th className="p-3 border-b">Amount</th>
-              <th className="p-3 border-b">Receipt</th>
-              <th className="p-3 border-b">Status</th>
-              <th className="p-3 border-b">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {deposits.map((d) => (
-              <tr key={d._id} className="border-b hover:bg-gray-50">
-                <td className="p-3">
-                  {d.userId?.email || "Unknown"} <br />
-                  <small className="text-gray-500">{d.userId?._id}</small>
-                </td>
-                <td className="p-3">₦{d.amount.toLocaleString()}</td>
-                <td className="p-3">
-                  {d.receiptUrl ? (
-                    <a
-                      href={d.receiptUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-500 underline"
-                    >
-                      View Receipt
-                    </a>
-                  ) : (
-                    "No receipt"
-                  )}
-                </td>
-                <td className="p-3 capitalize">{d.status}</td>
-                <td className="p-3 flex gap-2">
-                  {d.status === "pending" && (
-                    <>
-                      <button
-                        onClick={() => handleAction(d._id, "approve")}
-                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleAction(d._id, "reject")}
-                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-gray-300 bg-white shadow-sm rounded">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border px-4 py-2">User</th>
+                <th className="border px-4 py-2">Amount</th>
+                <th className="border px-4 py-2">Date</th>
+                <th className="border px-4 py-2">Receipt</th>
+                <th className="border px-4 py-2">Status</th>
+                <th className="border px-4 py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {deposits.map((deposit) => (
+                <tr key={deposit._id}>
+                  <td className="border px-4 py-2">
+                    {deposit.user?.email || "Unknown"}
+                  </td>
+                  <td className="border px-4 py-2">₦{deposit.amount}</td>
+                  <td className="border px-4 py-2">
+                    {new Date(deposit.createdAt).toLocaleString()}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {deposit.receiptUrl ? (
+                      <a
+                        href={deposit.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline"
+                      >
+                        View Receipt
+                      </a>
+                    ) : (
+                      "No receipt"
+                    )}
+                  </td>
+                  <td className="border px-4 py-2">{deposit.status}</td>
+                  <td className="border px-4 py-2 flex gap-2">
+                    {deposit.status === "pending" && (
+                      <>
+                        <button
+                          onClick={() => handleAction(deposit._id, "approve")}
+                          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleAction(deposit._id, "reject")}
+                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    {deposit.status !== "pending" && (
+                      <span className="text-gray-500 italic">Completed</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
 }
+
+export default ManageDeposits;
