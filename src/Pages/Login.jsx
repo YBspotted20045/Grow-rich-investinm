@@ -1,97 +1,51 @@
-// src/Pages/Login.jsx
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import "./Login.css";
+// frontend/src/pages/Login.jsx
+import { useNavigate } from "react-router-dom";
 import API from "../axios";
 
-function Login() {
+const Login = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return;
-    setLoading(true);
-    setMessage({ type: "", text: "" });
-
     try {
-      const res = await API.post("/auth/login", form);
+      const { data } = await API.post("/auth/login", { email, password });
 
-      const token = res.data?.token;
-      const user = res.data?.user || null;
+      // save token + user in localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-      if (!token) throw new Error("No token received from server");
-
-      // Save token + user
-      localStorage.setItem("gr_token", token);
-      if (user) {
-        localStorage.setItem("gr_user", JSON.stringify(user));
-        localStorage.setItem("isAdmin", "false"); // ✅ Always false for user login
+      // ✅ check if the user is admin
+      if (data.user.isAdmin) {
+        navigate("/admin/dashboard");  // send to admin dashboard
+      } else {
+        navigate("/dashboard");        // send to user dashboard
       }
-
-      setMessage({ type: "success", text: "Login successful — redirecting…" });
-
-      // Always redirect users to dashboard
-      navigate("/dashboard", { replace: true });
-    } catch (error) {
-      console.error("Login failed:", error);
-      setMessage({
-        type: "error",
-        text:
-          error.response?.data?.message ||
-          error.message ||
-          "Invalid email or password.",
-      });
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
-
-        {message.text && (
-          <div className={`message ${message.type}`}>{message.text}</div>
-        )}
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging In..." : "Login"}
-        </button>
-
-        <p className="switch-link">
-          Don’t have an account? <Link to="/signup">Sign up here</Link>
-        </p>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button type="submit">Login</button>
+    </form>
   );
-}
+};
 
 export default Login;
