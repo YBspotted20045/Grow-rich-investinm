@@ -1,0 +1,39 @@
+/* src/Pages/admin/SidebarAdmin.css */
+
+.sidebar-admin {
+  width: 250px;
+  height: 100vh;
+  background-color: #fff; /* White background */
+  border-right: 2px solid #000; /* Black line */
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #d4af37; /* Golden */
+  margin-bottom: 30px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin: 15px 0;
+}
+
+.sidebar-menu li a {
+  text-decoration: none;
+  font-size: 16px;
+  color: #000; /* Black text */
+  transition: color 0.3s ease;
+}
+
+.sidebar-menu li a:hover {
+  color: #d4af37; /* Golden hover */
+}
