@@ -1,34 +1,22 @@
+// src/Pages/admin/SidebarAdmin.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { FaUsers, FaMoneyCheckAlt, FaHome, FaSignOutAlt } from "react-icons/fa";
-import "../../styles/admin.css"; // Import styles
+import { Link } from "react-router-dom";
+import "./SidebarAdmin.css";
 
-export default function AdminSidebar() {
-  const location = useLocation();
-
-  const menuItems = [
-    { path: "/admin", label: "Dashboard", icon: <FaHome /> },
-    { path: "/admin/users", label: "Manage Users", icon: <FaUsers /> },
-    { path: "/admin/deposits", label: "Manage Deposits", icon: <FaMoneyCheckAlt /> },
-    { path: "/logout", label: "Logout", icon: <FaSignOutAlt /> },
-  ];
-
+const SidebarAdmin = () => {
   return (
-    <div className="admin-sidebar">
-      <h2 className="sidebar-title">GrowRich Admin</h2>
-      <ul>
-        {menuItems.map((item) => (
-          <li
-            key={item.path}
-            className={location.pathname === item.path ? "active" : ""}
-          >
-            <Link to={item.path}>
-              <span className="icon">{item.icon}</span>
-              {item.label}
-            </Link>
-          </li>
-        ))}
+    <div className="sidebar-admin">
+      <h2 className="sidebar-title">Admin Panel</h2>
+      <ul className="sidebar-menu">
+        <li><Link to="/admin/dashboard">📊 Dashboard</Link></li>
+        <li><Link to="/admin/users">👥 Manage Users</Link></li>
+        <li><Link to="/admin/deposits">💰 Manage Deposits</Link></li>
+        <li><Link to="/admin/withdrawals">💸 Manage Withdrawals</Link></li>
+        <li><Link to="/admin/settings">⚙️ Settings</Link></li>
+        <li><Link to="/admin/logout">🚪 Logout</Link></li>
       </ul>
     </div>
   );
-      }
+};
+
+export default SidebarAdmin;
