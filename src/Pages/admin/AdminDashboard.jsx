@@ -1,3 +1,4 @@
+// src/Pages/admin/AdminDashboard.jsx
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import {
@@ -5,11 +6,12 @@ import {
   FaUsers,
   FaMoneyCheckAlt,
   FaSignOutAlt,
+  FaBars,
 } from "react-icons/fa";
-import "./AdminDashboard.css"; // we'll add CSS next
+import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false); // start closed
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -20,34 +22,36 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
+      {/* 🔹 Hamburger always visible */}
+      <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)}>
+        <FaBars />
+      </button>
+
       {/* Sidebar */}
-      <aside className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
+      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <h2>Admin</h2>
-          <button onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? "←" : "→"}
-          </button>
         </div>
         <nav>
           <ul>
             <li>
-              <Link to="/admin/dashboard">
-                <FaTachometerAlt /> {isOpen && "Dashboard"}
+              <Link to="/admin/dashboard" onClick={() => setIsOpen(false)}>
+                <FaTachometerAlt /> Dashboard
               </Link>
             </li>
             <li>
-              <Link to="/admin/users">
-                <FaUsers /> {isOpen && "Manage Users"}
+              <Link to="/admin/users" onClick={() => setIsOpen(false)}>
+                <FaUsers /> Manage Users
               </Link>
             </li>
             <li>
-              <Link to="/admin/deposits">
-                <FaMoneyCheckAlt /> {isOpen && "Manage Deposits"}
+              <Link to="/admin/deposits" onClick={() => setIsOpen(false)}>
+                <FaMoneyCheckAlt /> Manage Deposits
               </Link>
             </li>
             <li>
               <button className="logout" onClick={handleLogout}>
-                <FaSignOutAlt /> {isOpen && "Logout"}
+                <FaSignOutAlt /> Logout
               </button>
             </li>
           </ul>
@@ -60,4 +64,4 @@ export default function AdminDashboard() {
       </main>
     </div>
   );
-}
+      }
