@@ -1,3 +1,4 @@
+// src/Pages/admin/ManageDeposits.jsx
 import React, { useEffect, useState } from "react";
 import API from "../../axios";
 
@@ -6,13 +7,28 @@ export default function ManageDeposits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const token = localStorage.getItem("gr_token");
+
   const fetchDeposits = async () => {
+    if (!token) {
+      setError("❌ Admin not logged in");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { data } = await API.get("/admin/deposits");
+      const { data } = await API.get("/admin/deposits", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setDeposits(data);
+      setError("");
     } catch (err) {
-      console.error("Fetch deposits error:", err.response || err.message);
-      setError("Failed to load deposits");
+      console.error("Fetch deposits error:", err);
+      if (err.response) {
+        setError(`Error ${err.response.status}: ${err.response.data.message}`);
+      } else {
+        setError("Failed to load deposits. Check your network or token.");
+      }
     } finally {
       setLoading(false);
     }
@@ -20,21 +36,25 @@ export default function ManageDeposits() {
 
   const approveDeposit = async (id) => {
     try {
-      await API.put(`/admin/deposits/${id}/approve`);
+      await API.put(`/admin/deposits/${id}/approve`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchDeposits();
     } catch (err) {
-      console.error("Approve error:", err.response || err.message);
-      alert("Failed to approve deposit");
+      console.error("Approve error:", err);
+      alert(err.response?.data?.message || "Failed to approve deposit");
     }
   };
 
   const rejectDeposit = async (id) => {
     try {
-      await API.put(`/admin/deposits/${id}/reject`);
+      await API.put(`/admin/deposits/${id}/reject`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchDeposits();
     } catch (err) {
-      console.error("Reject error:", err.response || err.message);
-      alert("Failed to reject deposit");
+      console.error("Reject error:", err);
+      alert(err.response?.data?.message || "Failed to reject deposit");
     }
   };
 
@@ -52,57 +72,63 @@ export default function ManageDeposits() {
       {deposits.length === 0 ? (
         <p>No deposits found</p>
       ) : (
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">User</th>
-              <th className="border p-2">Amount</th>
-              <th className="border p-2">Receipt</th>
-              <th className="border p-2">Status</th>
-              <th className="border p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {deposits.map((dep) => (
-              <tr key={dep._id}>
-                <td className="border p-2">
-                  {dep.userId?.username || dep.userId?.email}
-                </td>
-                <td className="border p-2">₦{dep.amount}</td>
-                <td className="border p-2">
-                  {dep.receiptUrl ? (
-                    <a
-                      href={`https://grow-0nfm.onrender.com${dep.receiptUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 underline"
-                    >
-                      View Receipt
-                    </a>
-                  ) : (
-                    "No receipt"
-                  )}
-                </td>
-                <td className="border p-2">{dep.status}</td>
-                <td className="border p-2 space-x-2">
-                  <button
-                    onClick={() => approveDeposit(dep._id)}
-                    className="bg-green-500 text-white px-2 py-1 rounded"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => rejectDeposit(dep._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Reject
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300 text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border p-2">User</th>
+                <th className="border p-2">Amount</th>
+                <th className="border p-2">Receipt</th>
+                <th className="border p-2">Status</th>
+                <th className="border p-2">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {deposits.map((dep) => (
+                <tr key={dep._id}>
+                  <td className="border p-2">
+                    {dep.userId?.username || dep.userId?.email}
+                  </td>
+                  <td className="border p-2">₦{dep.amount}</td>
+                  <td className="border p-2">
+                    {dep.receiptUrl ? (
+                      <a
+                        href={dep.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 underline"
+                      >
+                        View Receipt
+                      </a>
+                    ) : (
+                      "No receipt"
+                    )}
+                  </td>
+                  <td className="border p-2">{dep.status}</td>
+                  <td className="border p-2 space-x-2">
+                    {dep.status !== "approved" && (
+                      <button
+                        onClick={() => approveDeposit(dep._id)}
+                        className="bg-green-500 text-white px-2 py-1 rounded"
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {dep.status !== "rejected" && (
+                      <button
+                        onClick={() => rejectDeposit(dep._id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded"
+                      >
+                        Reject
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
-}
+    }
