@@ -1,100 +1,124 @@
-// src/pages/AdminDashboard.jsx
-import React from "react";
-import { Link } from "react-router-dom";
+// src/Pages/admin/AdminDashboard.jsx
+import { useState } from "react";
 import {
-  Users,
-  CreditCard,
-  Hourglass,
-  DollarSign,
-  LogOut,
-  LayoutDashboard,
-  FileText,
-} from "lucide-react";
+  HomeIcon,
+  UsersIcon,
+  CreditCardIcon,
+  BanknotesIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 
-const AdminDashboard = () => {
+export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-green-700 text-white flex flex-col">
-        <div className="p-6 text-2xl font-bold border-b border-green-600">
-          Admin Panel
+      <aside className="w-64 bg-white shadow-lg flex flex-col">
+        <div className="px-6 py-4 border-b">
+          <h1 className="text-xl font-bold text-green-600">GrowRich Admin</h1>
         </div>
-        <nav className="flex-1 p-4 space-y-4">
-          <Link
-            to="/admin/dashboard"
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-600 transition"
+        <nav className="flex-1 px-4 py-6 space-y-2">
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`flex items-center w-full p-2 rounded-lg ${
+              activeTab === "dashboard"
+                ? "bg-green-100 text-green-700"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
           >
-            <LayoutDashboard size={20} /> Dashboard
-          </Link>
-          <Link
-            to="/admin/users"
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-600 transition"
+            <HomeIcon className="h-5 w-5 mr-3" />
+            Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`flex items-center w-full p-2 rounded-lg ${
+              activeTab === "users"
+                ? "bg-green-100 text-green-700"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
           >
-            <Users size={20} /> Manage Users
-          </Link>
-          <Link
-            to="/admin/deposits"
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-600 transition"
+            <UsersIcon className="h-5 w-5 mr-3" />
+            Manage Users
+          </button>
+          <button
+            onClick={() => setActiveTab("deposits")}
+            className={`flex items-center w-full p-2 rounded-lg ${
+              activeTab === "deposits"
+                ? "bg-green-100 text-green-700"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
           >
-            <CreditCard size={20} /> Manage Deposits
-          </Link>
-          <Link
-            to="/admin/withdrawals"
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-600 transition"
+            <CreditCardIcon className="h-5 w-5 mr-3" />
+            Manage Deposits
+          </button>
+          <button
+            onClick={() => setActiveTab("withdrawals")}
+            className={`flex items-center w-full p-2 rounded-lg ${
+              activeTab === "withdrawals"
+                ? "bg-green-100 text-green-700"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
           >
-            <DollarSign size={20} /> Manage Withdrawals
-          </Link>
+            <BanknotesIcon className="h-5 w-5 mr-3" />
+            Withdrawals
+          </button>
         </nav>
-        <div className="p-4 border-t border-green-600">
-          <button className="flex items-center gap-3 p-2 w-full rounded-lg hover:bg-red-600 transition">
-            <LogOut size={20} /> Logout
+        <div className="p-4 border-t">
+          <button className="flex items-center w-full p-2 text-red-600 hover:bg-red-50 rounded-lg">
+            <ArrowRightOnRectangleIcon className="h-5 w-5 mr-3" />
+            Logout
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Admin Dashboard
-        </h1>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-            <Users className="text-green-600" size={32} />
-            <div>
-              <p className="text-gray-500 text-sm">Total Users</p>
-              <p className="text-xl font-bold">0</p>
+      <main className="flex-1 p-6 overflow-y-auto">
+        {activeTab === "dashboard" && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Admin Dashboard</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="text-gray-500">Total Users</h3>
+                <p className="text-2xl font-bold">0</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="text-gray-500">Total Deposits</h3>
+                <p className="text-2xl font-bold">0</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="text-gray-500">Pending Deposits</h3>
+                <p className="text-2xl font-bold">0</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="text-gray-500">Withdrawals</h3>
+                <p className="text-2xl font-bold">0</p>
+              </div>
             </div>
           </div>
+        )}
 
-          <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-            <CreditCard className="text-green-600" size={32} />
-            <div>
-              <p className="text-gray-500 text-sm">Total Deposits</p>
-              <p className="text-xl font-bold">0</p>
-            </div>
+        {activeTab === "users" && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Manage Users</h2>
+            <p>List of all users will appear here.</p>
           </div>
+        )}
 
-          <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-            <Hourglass className="text-yellow-500" size={32} />
-            <div>
-              <p className="text-gray-500 text-sm">Pending Deposits</p>
-              <p className="text-xl font-bold">0</p>
-            </div>
+        {activeTab === "deposits" && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Manage Deposits</h2>
+            <p>Deposit receipts will appear here.</p>
           </div>
+        )}
 
-          <div className="bg-white p-6 rounded-2xl shadow flex items-center gap-4">
-            <DollarSign className="text-blue-600" size={32} />
-            <div>
-              <p className="text-gray-500 text-sm">Withdrawals</p>
-              <p className="text-xl font-bold">0</p>
-            </div>
+        {activeTab === "withdrawals" && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Withdrawals</h2>
+            <p>Withdrawal requests will appear here.</p>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
-};
-
-export default AdminDashboard;
+}
