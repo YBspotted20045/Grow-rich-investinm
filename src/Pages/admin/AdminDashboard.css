@@ -1,13 +1,13 @@
 .admin-dashboard {
   display: flex;
   min-height: 100vh;
-  background: #f5f6fa;
+  background: #fff; /* White main background */
 }
 
 /* Sidebar */
 .sidebar {
   width: 240px;
-  background: #2c3e50;
+  background: #FFD700; /* Golden */
   color: #fff;
   transition: width 0.3s ease;
   padding: 1rem 0;
@@ -24,6 +24,7 @@
 }
 .sidebar h2 {
   font-size: 1.2rem;
+  color: #fff; /* White text */
 }
 .sidebar button {
   background: none;
@@ -44,14 +45,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #ecf0f1;
+  color: #fff; /* White text for links */
   text-decoration: none;
   padding: 0.6rem 1rem;
   transition: background 0.2s;
+  font-weight: 500;
 }
 .sidebar nav a:hover,
 .sidebar nav .logout:hover {
-  background: #34495e;
+  background: #e6c200; /* Darker gold on hover */
 }
 .sidebar .logout {
   background: none;
@@ -65,4 +67,6 @@
 .main-content {
   flex: 1;
   padding: 2rem;
+  background: #fff; /* White clean background */
+  color: #333;
 }
