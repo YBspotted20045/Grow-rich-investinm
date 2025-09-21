@@ -1,67 +1,77 @@
-// src/Pages/admin/AdminDashboard.jsx
-import React, { useState } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
-import {
-  FaTachometerAlt,
-  FaUsers,
-  FaMoneyCheckAlt,
-  FaSignOutAlt,
-  FaBars,
-} from "react-icons/fa";
-import "./AdminDashboard.css";
+/* 🔹 Hamburger button */
+.hamburger-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: goldenrod;
+  border: none;
+  color: #1e1e1e;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 6px;
+  z-index: 1100;
+}
 
-export default function AdminDashboard() {
-  const [isOpen, setIsOpen] = useState(false); // start closed
-  const navigate = useNavigate();
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* hidden */
+  width: 250px;
+  height: 100vh;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 20px;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
 
-  const handleLogout = () => {
-    localStorage.removeItem("gr_token");
-    localStorage.removeItem("isAdmin");
-    navigate("/admin-login");
-  };
+.sidebar.open {
+  left: 0; /* slide in */
+}
 
-  return (
-    <div className="admin-dashboard">
-      {/* 🔹 Hamburger always visible */}
-      <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)}>
-        <FaBars />
-      </button>
+.sidebar-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: goldenrod;
+  margin-bottom: 20px;
+}
 
-      {/* Sidebar */}
-      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <h2>Admin</h2>
-        </div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/admin/dashboard" onClick={() => setIsOpen(false)}>
-                <FaTachometerAlt /> Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/users" onClick={() => setIsOpen(false)}>
-                <FaUsers /> Manage Users
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/deposits" onClick={() => setIsOpen(false)}>
-                <FaMoneyCheckAlt /> Manage Deposits
-              </Link>
-            </li>
-            <li>
-              <button className="logout" onClick={handleLogout}>
-                <FaSignOutAlt /> Logout
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-      {/* Main content */}
-      <main className="main-content">
-        <Outlet />
-      </main>
-    </div>
-  );
-        }
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a,
+.sidebar .logout {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar ul li a:hover,
+.sidebar .logout:hover {
+  background-color: goldenrod;
+  color: #1e1e1e;
+  font-weight: bold;
+}
+
+/* Main content */
+.main-content {
+  margin-left: 0;
+  padding: 20px;
+  transition: margin-left 0.3s;
+}
