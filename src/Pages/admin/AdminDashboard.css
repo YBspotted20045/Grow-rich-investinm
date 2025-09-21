@@ -1,72 +1,77 @@
+/* src/Pages/admin/AdminDashboard.css */
+
 .admin-dashboard {
   display: flex;
   min-height: 100vh;
-  background: #fff; /* White main background */
+  background: #f9f9f9; /* light background for content */
 }
 
 /* Sidebar */
 .sidebar {
-  width: 240px;
-  background: #FFD700; /* Golden */
-  color: #000; /* Black text */
+  width: 250px;
+  background: #ffffff; /* white background */
+  border-right: 2px solid #000; /* black dividing line */
+  padding: 20px;
   transition: width 0.3s ease;
-  padding: 1rem 0;
 }
+
 .sidebar.collapsed {
-  width: 70px;
+  width: 80px;
 }
+
 .sidebar-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  color: #d4af37; /* golden */
+  margin-bottom: 20px;
 }
+
 .sidebar h2 {
-  font-size: 1.2rem;
-  color: #000; /* Black title */
+  font-size: 20px;
+  font-weight: bold;
+  color: #d4af37; /* golden text */
 }
-.sidebar button {
+
+.sidebar-header button {
   background: none;
   border: none;
-  color: #000; /* Black button */
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
+  color: #000;
 }
+
 .sidebar nav ul {
   list-style: none;
   padding: 0;
 }
-.sidebar nav li {
-  margin: 1rem 0;
+
+.sidebar nav ul li {
+  margin: 15px 0;
 }
-.sidebar nav a,
-.sidebar nav .logout {
+
+.sidebar nav ul li a,
+.sidebar nav ul li button.logout {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #000; /* Black links/icons */
+  color: #000; /* black text */
   text-decoration: none;
-  padding: 0.6rem 1rem;
-  transition: background 0.2s;
-  font-weight: 500;
-}
-.sidebar nav a:hover,
-.sidebar nav .logout:hover {
-  background: #e6c200; /* Darker gold on hover */
-}
-.sidebar .logout {
+  font-size: 16px;
+  transition: color 0.3s ease;
   background: none;
   border: none;
-  width: 100%;
-  text-align: left;
   cursor: pointer;
 }
 
-/* Main Content */
+.sidebar nav ul li a:hover,
+.sidebar nav ul li button.logout:hover {
+  color: #d4af37; /* golden hover */
+}
+
+/* Main content */
 .main-content {
   flex: 1;
-  padding: 2rem;
-  background: #fff; /* White clean background */
-  color: #333;
-  }
+  padding: 30px;
+  background: #fdfdfd;
+}
