@@ -62,7 +62,7 @@ export default function ManageUsers() {
           <tbody>
             {users.map((u) => (
               <tr key={u._id} className="border-b hover:bg-gray-50">
-                <td className="p-3">{u.name || "No Name"}</td>
+                <td className="p-3">{u.username || u.name || "No Name"}</td>
                 <td className="p-3">{u.email}</td>
                 <td className="p-3">{u.isBanned ? "Banned" : "Active"}</td>
                 <td className="p-3 flex gap-2">
