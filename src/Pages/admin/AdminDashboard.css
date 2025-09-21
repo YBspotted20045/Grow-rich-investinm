@@ -8,7 +8,7 @@
 .sidebar {
   width: 240px;
   background: #FFD700; /* Golden */
-  color: #fff;
+  color: #000; /* Black text */
   transition: width 0.3s ease;
   padding: 1rem 0;
 }
@@ -24,12 +24,12 @@
 }
 .sidebar h2 {
   font-size: 1.2rem;
-  color: #fff; /* White text */
+  color: #000; /* Black title */
 }
 .sidebar button {
   background: none;
   border: none;
-  color: #fff;
+  color: #000; /* Black button */
   font-size: 1rem;
   cursor: pointer;
 }
@@ -45,7 +45,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #fff; /* White text for links */
+  color: #000; /* Black links/icons */
   text-decoration: none;
   padding: 0.6rem 1rem;
   transition: background 0.2s;
@@ -69,4 +69,4 @@
   padding: 2rem;
   background: #fff; /* White clean background */
   color: #333;
-}
+  }
