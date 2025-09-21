@@ -1,4 +1,3 @@
-// src/Pages/admin/ManageDeposits.jsx
 import React, { useEffect, useState } from "react";
 import API from "../../axios";
 
@@ -7,37 +6,34 @@ export default function ManageDeposits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch all deposits from backend
   const fetchDeposits = async () => {
     try {
-      const { data } = await API.get("/admin/deposits"); // ✅ Admin route
+      const { data } = await API.get("/admin/deposits");
       setDeposits(data);
     } catch (err) {
-      console.error("Error fetching deposits:", err);
+      console.error("Fetch deposits error:", err.response || err.message);
       setError("Failed to load deposits");
     } finally {
       setLoading(false);
     }
   };
 
-  // Approve deposit
   const approveDeposit = async (id) => {
     try {
       await API.put(`/admin/deposits/${id}/approve`);
-      fetchDeposits(); // Refresh after approval
+      fetchDeposits();
     } catch (err) {
-      console.error("Approve error:", err);
+      console.error("Approve error:", err.response || err.message);
       alert("Failed to approve deposit");
     }
   };
 
-  // Reject deposit
   const rejectDeposit = async (id) => {
     try {
       await API.put(`/admin/deposits/${id}/reject`);
-      fetchDeposits(); // Refresh after rejection
+      fetchDeposits();
     } catch (err) {
-      console.error("Reject error:", err);
+      console.error("Reject error:", err.response || err.message);
       alert("Failed to reject deposit");
     }
   };
@@ -76,7 +72,7 @@ export default function ManageDeposits() {
                 <td className="border p-2">
                   {dep.receiptUrl ? (
                     <a
-                      href={dep.receiptUrl}
+                      href={`https://grow-0nfm.onrender.com${dep.receiptUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500 underline"
@@ -89,23 +85,18 @@ export default function ManageDeposits() {
                 </td>
                 <td className="border p-2">{dep.status}</td>
                 <td className="border p-2 space-x-2">
-                  {dep.status === "pending" && (
-                    <>
-                      <button
-                        onClick={() => approveDeposit(dep._id)}
-                        className="bg-green-500 text-white px-2 py-1 rounded"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => rejectDeposit(dep._id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                  {dep.status !== "pending" && <span>Processed</span>}
+                  <button
+                    onClick={() => approveDeposit(dep._id)}
+                    className="bg-green-500 text-white px-2 py-1 rounded"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => rejectDeposit(dep._id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Reject
+                  </button>
                 </td>
               </tr>
             ))}
@@ -114,4 +105,4 @@ export default function ManageDeposits() {
       )}
     </div>
   );
-                      }
+}
