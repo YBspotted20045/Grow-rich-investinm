@@ -1,3 +1,4 @@
+// src/Pages/admin/ManageDeposits.jsx
 import React, { useEffect, useState } from "react";
 import API from "../../axios";
 
@@ -6,42 +7,35 @@ export default function ManageDeposits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Fetch all deposits from backend
   const fetchDeposits = async () => {
     try {
-      const { data } = await API.get("/admin/deposits", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("gr_token")}` },
-      });
+      const { data } = await API.get("/admin/deposits"); // ✅ Admin route
       setDeposits(data);
     } catch (err) {
-      console.error("Fetch deposits error:", err);
+      console.error("Error fetching deposits:", err);
       setError("Failed to load deposits");
     } finally {
       setLoading(false);
     }
   };
 
+  // Approve deposit
   const approveDeposit = async (id) => {
     try {
-      await API.put(
-        `/admin/deposits/${id}/approve`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("gr_token")}` } }
-      );
-      fetchDeposits();
+      await API.put(`/admin/deposits/${id}/approve`);
+      fetchDeposits(); // Refresh after approval
     } catch (err) {
       console.error("Approve error:", err);
       alert("Failed to approve deposit");
     }
   };
 
+  // Reject deposit
   const rejectDeposit = async (id) => {
     try {
-      await API.put(
-        `/admin/deposits/${id}/reject`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("gr_token")}` } }
-      );
-      fetchDeposits();
+      await API.put(`/admin/deposits/${id}/reject`);
+      fetchDeposits(); // Refresh after rejection
     } catch (err) {
       console.error("Reject error:", err);
       alert("Failed to reject deposit");
@@ -95,18 +89,23 @@ export default function ManageDeposits() {
                 </td>
                 <td className="border p-2">{dep.status}</td>
                 <td className="border p-2 space-x-2">
-                  <button
-                    onClick={() => approveDeposit(dep._id)}
-                    className="bg-green-500 text-white px-2 py-1 rounded"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => rejectDeposit(dep._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Reject
-                  </button>
+                  {dep.status === "pending" && (
+                    <>
+                      <button
+                        onClick={() => approveDeposit(dep._id)}
+                        className="bg-green-500 text-white px-2 py-1 rounded"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => rejectDeposit(dep._id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {dep.status !== "pending" && <span>Processed</span>}
                 </td>
               </tr>
             ))}
@@ -115,4 +114,4 @@ export default function ManageDeposits() {
       )}
     </div>
   );
-                }
+                      }
