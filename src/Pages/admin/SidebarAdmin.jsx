@@ -9,7 +9,7 @@ const SidebarAdmin = () => {
   return (
     <div className={`sidebar-admin ${isOpen ? "open" : "collapsed"}`}>
       <div className="sidebar-header">
-        <h2 className="sidebar-title">{isOpen ? "Admin Panel" : "AP"}</h2>
+        {isOpen && <h2 className="sidebar-title">Admin Panel</h2>}
         <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? "←" : "→"}
         </button>
