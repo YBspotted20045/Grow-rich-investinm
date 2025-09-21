@@ -1,29 +1,32 @@
 // src/Pages/admin/SidebarAdmin.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaBars } from "react-icons/fa"; // hamburger icon
 import "./SidebarAdmin.css";
 
 const SidebarAdmin = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={`sidebar-admin ${isOpen ? "open" : "collapsed"}`}>
-      <div className="sidebar-header">
-        {isOpen && <h2 className="sidebar-title">Admin Panel</h2>}
-        <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? "←" : "→"}
-        </button>
-      </div>
+    <>
+      {/* 🔹 Hamburger Icon (always visible at top-left) */}
+      <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)}>
+        <FaBars />
+      </button>
 
-      <ul className="sidebar-menu">
-        <li><Link to="/admin/dashboard">📊 {isOpen && "Dashboard"}</Link></li>
-        <li><Link to="/admin/users">👥 {isOpen && "Manage Users"}</Link></li>
-        <li><Link to="/admin/deposits">💰 {isOpen && "Manage Deposits"}</Link></li>
-        <li><Link to="/admin/withdrawals">💸 {isOpen && "Manage Withdrawals"}</Link></li>
-        <li><Link to="/admin/settings">⚙️ {isOpen && "Settings"}</Link></li>
-        <li><Link to="/admin/logout">🚪 {isOpen && "Logout"}</Link></li>
-      </ul>
-    </div>
+      {/* 🔹 Sidebar */}
+      <div className={`sidebar-admin ${isOpen ? "open" : ""}`}>
+        <h2 className="sidebar-title">Admin Panel</h2>
+        <ul className="sidebar-menu">
+          <li><Link to="/admin/dashboard" onClick={() => setIsOpen(false)}>📊 Dashboard</Link></li>
+          <li><Link to="/admin/users" onClick={() => setIsOpen(false)}>👥 Manage Users</Link></li>
+          <li><Link to="/admin/deposits" onClick={() => setIsOpen(false)}>💰 Manage Deposits</Link></li>
+          <li><Link to="/admin/withdrawals" onClick={() => setIsOpen(false)}>💸 Manage Withdrawals</Link></li>
+          <li><Link to="/admin/settings" onClick={() => setIsOpen(false)}>⚙️ Settings</Link></li>
+          <li><Link to="/admin/logout" onClick={() => setIsOpen(false)}>🚪 Logout</Link></li>
+        </ul>
+      </div>
+    </>
   );
 };
 
