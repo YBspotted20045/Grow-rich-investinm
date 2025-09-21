@@ -1,54 +1,44 @@
-/* Sidebar container */
+/* Hamburger button (always visible at top-left) */
+.hamburger-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: goldenrod;
+  border: none;
+  color: #1e1e1e;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 6px;
+  z-index: 1100; /* always above everything */
+}
+
+/* Sidebar (hidden by default) */
 .sidebar-admin {
+  position: fixed;
+  top: 0;
+  left: -250px; /* hidden off screen */
+  width: 250px;
   height: 100vh;
   background-color: #1e1e1e;
   color: white;
-  padding: 15px 10px;
+  padding: 20px;
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.3);
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  transition: width 0.3s ease;
-  z-index: 1000; /* ensures it’s always above */
+  transition: left 0.3s ease;
+  z-index: 1000;
 }
 
 .sidebar-admin.open {
-  width: 220px;
-}
-
-.sidebar-admin.collapsed {
-  width: 70px;
-}
-
-/* Header */
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 25px;
+  left: 0; /* slides in */
 }
 
 .sidebar-title {
   font-size: 18px;
   font-weight: bold;
   color: goldenrod;
-  white-space: nowrap;
+  margin-bottom: 20px;
 }
 
-/* Toggle button should ALWAYS show */
-.toggle-btn {
-  background: goldenrod;
-  border: none;
-  color: #1e1e1e;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 5px 8px;
-}
-
-/* Menu */
 .sidebar-menu {
   list-style: none;
   padding: 0;
@@ -63,9 +53,7 @@
   text-decoration: none;
   color: white;
   font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: block;
   padding: 8px 12px;
   border-radius: 6px;
   transition: background 0.3s, color 0.3s;
@@ -75,4 +63,4 @@
   background-color: goldenrod;
   color: #1e1e1e;
   font-weight: bold;
-  }
+}
