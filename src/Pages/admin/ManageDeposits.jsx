@@ -1,60 +1,40 @@
-// src/Pages/admin/ManageDeposits.jsx
 import React, { useEffect, useState } from "react";
 import API from "../../axios";
 
 export default function ManageDeposits() {
   const [deposits, setDeposits] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const token = localStorage.getItem("gr_token");
-
+  // ✅ Fetch deposits from backend
   const fetchDeposits = async () => {
-    if (!token) {
-      setError("❌ Admin not logged in");
-      setLoading(false);
-      return;
-    }
-
+    setLoading(true);
     try {
-      const { data } = await API.get("/admin/deposits", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await API.get("/admin/deposits", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("gr_token")}` },
       });
-      setDeposits(data);
-      setError("");
+      setDeposits(res.data || []);
     } catch (err) {
-      console.error("Fetch deposits error:", err);
-      if (err.response) {
-        setError(`Error ${err.response.status}: ${err.response.data.message}`);
-      } else {
-        setError("Failed to load deposits. Check your network or token.");
-      }
+      console.error("Error fetching deposits:", err);
+      setMessage("Failed to load deposits");
     } finally {
       setLoading(false);
     }
   };
 
-  const approveDeposit = async (id) => {
+  // ✅ Approve / Reject
+  const handleAction = async (id, action) => {
     try {
-      await API.put(`/admin/deposits/${id}/approve`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.put(
+        `/admin/deposits/${id}/${action}`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem("gr_token")}` } }
+      );
+      setMessage(res.data.message || "Action completed");
       fetchDeposits();
     } catch (err) {
-      console.error("Approve error:", err);
-      alert(err.response?.data?.message || "Failed to approve deposit");
-    }
-  };
-
-  const rejectDeposit = async (id) => {
-    try {
-      await API.put(`/admin/deposits/${id}/reject`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchDeposits();
-    } catch (err) {
-      console.error("Reject error:", err);
-      alert(err.response?.data?.message || "Failed to reject deposit");
+      console.error("Error updating deposit:", err);
+      setMessage(err.response?.data?.message || "Failed to update deposit");
     }
   };
 
@@ -62,73 +42,69 @@ export default function ManageDeposits() {
     fetchDeposits();
   }, []);
 
-  if (loading) return <p>Loading deposits...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Manage Deposits</h2>
-
-      {deposits.length === 0 ? (
-        <p>No deposits found</p>
+    <div>
+      <h2 className="text-2xl font-bold mb-4">Manage Deposits</h2>
+      {message && <div className="mb-3 text-sm text-blue-600">{message}</div>}
+      {loading ? (
+        <p>Loading deposits...</p>
+      ) : deposits.length === 0 ? (
+        <p>No deposits found.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300 text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border p-2">User</th>
-                <th className="border p-2">Amount</th>
-                <th className="border p-2">Receipt</th>
-                <th className="border p-2">Status</th>
-                <th className="border p-2">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deposits.map((dep) => (
-                <tr key={dep._id}>
-                  <td className="border p-2">
-                    {dep.userId?.username || dep.userId?.email}
-                  </td>
-                  <td className="border p-2">₦{dep.amount}</td>
-                  <td className="border p-2">
-                    {dep.receiptUrl ? (
-                      <a
-                        href={dep.receiptUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                      >
-                        View Receipt
-                      </a>
-                    ) : (
-                      "No receipt"
-                    )}
-                  </td>
-                  <td className="border p-2">{dep.status}</td>
-                  <td className="border p-2 space-x-2">
-                    {dep.status !== "approved" && (
+        <table className="min-w-full bg-white border border-gray-200 shadow">
+          <thead>
+            <tr className="bg-gray-100 text-left">
+              <th className="p-3 border-b">User</th>
+              <th className="p-3 border-b">Amount</th>
+              <th className="p-3 border-b">Status</th>
+              <th className="p-3 border-b">Receipt</th>
+              <th className="p-3 border-b">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deposits.map((d) => (
+              <tr key={d._id} className="border-b hover:bg-gray-50">
+                <td className="p-3">{d.userId?.email || "Unknown"}</td>
+                <td className="p-3">₦{d.amount}</td>
+                <td className="p-3 capitalize">{d.status}</td>
+                <td className="p-3">
+                  {d.receiptUrl ? (
+                    <a
+                      href={d.receiptUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      View Receipt
+                    </a>
+                  ) : (
+                    "No file"
+                  )}
+                </td>
+                <td className="p-3 flex gap-2">
+                  {d.status === "pending" && (
+                    <>
                       <button
-                        onClick={() => approveDeposit(dep._id)}
-                        className="bg-green-500 text-white px-2 py-1 rounded"
+                        onClick={() => handleAction(d._id, "approve")}
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                       >
                         Approve
                       </button>
-                    )}
-                    {dep.status !== "rejected" && (
                       <button
-                        onClick={() => rejectDeposit(dep._id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded"
+                        onClick={() => handleAction(d._id, "reject")}
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                       >
                         Reject
                       </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    </>
+                  )}
+                  {d.status !== "pending" && <span>✔️ {d.status}</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
-}
+                }
