@@ -31,12 +31,18 @@ export default function Deposit() {
       formData.append("receipt", file);
 
       const res = await API.post("/deposits/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("gr_token")}`,
+        },
       });
 
       setMessage({ type: "success", text: res.data?.message || "✅ Upload successful." });
       setFile(null);
       setSelected(null);
+
+      // reset file input field
+      document.querySelector('input[type="file"]').value = "";
     } catch (err) {
       console.error("Upload error:", err);
       const text =
@@ -73,9 +79,9 @@ export default function Deposit() {
           <h3 className="details-title">Complete Your Payment</h3>
 
           <div className="account-card">
-            <p><strong>Bank Name:</strong> Access Bank</p>
-            <p><strong>Account Number:</strong> 1234567890</p>
-            <p><strong>Account Name:</strong> GrowRich Investments</p>
+            <p><strong>Bank Name:</strong> PalmPay</p>
+            <p><strong>Account Number:</strong> 8984550866</p>
+            <p><strong>Account Name:</strong> Nnaji Kelvin Somtochukwu</p>
             <p className="note">
               💡 Please transfer exactly ₦{selected.toLocaleString()} and upload your payment receipt below.
             </p>
@@ -112,4 +118,4 @@ export default function Deposit() {
       )}
     </div>
   );
-              }
+    }
