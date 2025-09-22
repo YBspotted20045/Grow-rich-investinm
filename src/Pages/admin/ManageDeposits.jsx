@@ -1,3 +1,4 @@
+// src/Pages/admin/ManageDeposits.jsx
 import React, { useEffect, useState } from "react";
 import API from "../../axios";
 
@@ -6,7 +7,7 @@ export default function ManageDeposits() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // ✅ Fetch deposits from backend
+  // ✅ Fetch deposits
   const fetchDeposits = async () => {
     setLoading(true);
     try {
@@ -64,8 +65,12 @@ export default function ManageDeposits() {
           <tbody>
             {deposits.map((d) => (
               <tr key={d._id} className="border-b hover:bg-gray-50">
-                <td className="p-3">{d.userId?.email || "Unknown"}</td>
-                <td className="p-3">₦{d.amount}</td>
+                <td className="p-3">
+                  {d.userId?.username || d.userId?.email || "Unknown"}
+                </td>
+                <td className="p-3">
+                  ₦{Number(d.amount).toLocaleString()}
+                </td>
                 <td className="p-3 capitalize">{d.status}</td>
                 <td className="p-3">
                   {d.receiptUrl ? (
@@ -82,7 +87,7 @@ export default function ManageDeposits() {
                   )}
                 </td>
                 <td className="p-3 flex gap-2">
-                  {d.status === "pending" && (
+                  {d.status === "pending" ? (
                     <>
                       <button
                         onClick={() => handleAction(d._id, "approve")}
@@ -97,8 +102,9 @@ export default function ManageDeposits() {
                         Reject
                       </button>
                     </>
+                  ) : (
+                    <span>✔️ {d.status}</span>
                   )}
-                  {d.status !== "pending" && <span>✔️ {d.status}</span>}
                 </td>
               </tr>
             ))}
