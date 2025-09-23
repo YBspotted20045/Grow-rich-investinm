@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // Pages
 import Dashboard from "./pages/Dashboard.jsx";
 import Deposit from "./pages/Deposit.jsx";
-import Withdraw from "./pages/Withdraw.jsx";
+import Withdrawal from "./pages/Withdrawal.jsx";
 import Investment from "./pages/Investment.jsx";
 import Referrals from "./pages/Referrals.jsx";
 import Account from "./pages/Account.jsx";
