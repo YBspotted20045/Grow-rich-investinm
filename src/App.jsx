@@ -8,7 +8,7 @@ import Signup from "./pages/Signup.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 // Admin pages (inside admin folder)
-import AdminLogin from "./pages/admin/AdminLogin.jsx";
+
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminUsers from "./pages/admin/AdminUsers.jsx";
 import AdminDeposits from "./pages/admin/AdminDeposits.jsx";
