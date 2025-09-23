@@ -1,12 +1,28 @@
+// src/components/Header.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const Header = ({ title }) => {
+const Header = ({ user }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <h1 className="text-xl font-bold">{title}</h1>
+    <header className="flex justify-between items-center p-4 bg-green-600 text-white shadow">
+      <h1 className="text-xl font-bold cursor-pointer" onClick={() => navigate("/")}>
+        GrowRich Investments
+      </h1>
       <div className="flex items-center gap-4">
-        <span>Welcome, Admin</span>
-        {/* You can add profile picture or settings icon here */}
+        <span>{user?.username || "Guest"}</span>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
     </header>
   );
