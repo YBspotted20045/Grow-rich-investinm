@@ -1,43 +1,34 @@
+// src/components/Sidebar.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { FaHome, FaUser, FaMoneyBill, FaUsers, FaChartBar, FaSignOutAlt } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
-  const location = useLocation();
-  const navItems = [
-    { name: "Dashboard", path: "/", icon: <FaHome /> },
-    { name: "Users", path: "/users", icon: <FaUser /> },
-    { name: "Deposits", path: "/deposits", icon: <FaMoneyBill /> },
-    { name: "Withdrawals", path: "/withdrawals", icon: <FaMoneyBill /> },
-    { name: "Investments", path: "/investments", icon: <FaChartBar /> },
-    { name: "Referrals", path: "/referrals", icon: <FaUsers /> },
+  const links = [
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "Investments", path: "/investments" },
+    { name: "Deposits", path: "/deposits" },
+    { name: "Withdrawals", path: "/withdrawals" },
+    { name: "Referrals", path: "/referrals" },
+    { name: "Account", path: "/account" },
   ];
 
   return (
-    <aside className="w-64 bg-gray-800 text-white min-h-screen p-4">
-      <h2 className="text-xl font-bold mb-6">GrowRich Admin</h2>
-      <ul className="flex flex-col gap-4">
-        {navItems.map((item) => (
-          <li key={item.name}>
-            <Link
-              to={item.path}
-              className={`flex items-center gap-2 p-2 rounded hover:bg-gray-700 ${
-                location.pathname === item.path ? "bg-gray-700" : ""
-              }`}
-            >
-              {item.icon} {item.name}
-            </Link>
-          </li>
-        ))}
-        <li>
-          <Link
-            to="/logout"
-            className="flex items-center gap-2 p-2 rounded hover:bg-gray-700"
+    <aside className="w-64 bg-gray-100 min-h-screen p-4 shadow">
+      <nav className="flex flex-col gap-2">
+        {links.map((link) => (
+          <NavLink
+            key={link.path}
+            to={link.path}
+            className={({ isActive }) =>
+              `p-2 rounded hover:bg-green-200 ${
+                isActive ? "bg-green-400 text-white font-bold" : ""
+              }`
+            }
           >
-            <FaSignOutAlt /> Logout
-          </Link>
-        </li>
-      </ul>
+            {link.name}
+          </NavLink>
+        ))}
+      </nav>
     </aside>
   );
 };
