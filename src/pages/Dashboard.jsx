@@ -1,56 +1,49 @@
-// src/pages/Dashboard.jsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "../axios";
 import Header from "../components/Header";
-import AdminSidebar from "../components/AdminSidebar";
+import Sidebar from "../components/Sidebar";
 import Card from "../components/Card";
 import Table from "../components/Table";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({ plans: [], statuses: [] });
-  const [loading, setLoading] = useState(true);
-
-  const fetchStats = async () => {
-    try {
-      const res = await axios.get("/dashboard/stats");
-      setStats(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching dashboard stats:", err);
-      setLoading(false);
-    }
-  };
+  const [userData, setUserData] = useState(null);
+  const [deposits, setDeposits] = useState([]);
+  const [investment, setInvestment] = useState(null);
 
   useEffect(() => {
-    fetchStats();
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("/users/me");
+        setUserData(res.data.user);
+        setDeposits(res.data.deposits);
+        setInvestment(res.data.investment);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  if (loading) return <div className="text-center mt-10">Loading dashboard...</div>;
-
   return (
-    <div className="flex min-h-screen">
-      <AdminSidebar />
-      <div className="flex-1 p-6 bg-gray-100">
-        <Header />
-        <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="dashboard">
+      <Header />
+      <div className="main-layout">
+        <Sidebar />
+        <div className="dashboard-content">
+          <h1>Welcome, {userData?.username || "User"}</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {stats.plans.map((plan) => (
-            <Card
-              key={plan._id}
-              title={`Plan: ${plan._id}`}
-              value={`₦${plan.amount}`}
-              subtitle={`Users: ${plan.count}`}
-            />
-          ))}
-        </div>
+          <div className="stats-cards">
+            <Card title="Current Investment" value={investment?.amount || 0} />
+            <Card title="Maturity Date" value={investment?.maturityDate ? new Date(investment.maturityDate).toLocaleDateString() : "-"} />
+            <Card title="Total Deposits" value={deposits.reduce((acc, dep) => acc + dep.amount, 0)} />
+            <Card title="Referrals Count" value={userData?.referrals?.length || 0} />
+          </div>
 
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4">Investments by Status</h2>
-          <Table
-            columns={["Status", "Count"]}
-            data={stats.statuses.map((s) => [s._id, s.count])}
-          />
+          <div className="table-section">
+            <h2>Your Deposits</h2>
+            <Table data={deposits} columns={["amount", "status", "createdAt"]} />
+          </div>
         </div>
       </div>
     </div>
