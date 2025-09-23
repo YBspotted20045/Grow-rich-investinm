@@ -1,58 +1,55 @@
 import React, { useEffect, useState } from "react";
-import axios from "../axios";
-import Header from "../components/Header";
-import AdminSidebar from "../components/AdminSidebar";
-import Card from "../components/Card";
-import Table from "../components/Table";
+import axios from "../axios.js";
+import AdminSidebar from "../components/AdminSidebar.jsx";
+import Header from "../components/Header.jsx";
+import StatsCard from "../components/StatsCard.jsx";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ plans: [], statuses: [] });
-  const [deposits, setDeposits] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [message, setMessage] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get("/dashboard/stats", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setStats(res.data);
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to fetch dashboard stats");
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const statsRes = await axios.get("/dashboard/stats");
-        setStats(statsRes.data);
-
-        const depositsRes = await axios.get("/deposits/all");
-        setDeposits(depositsRes.data);
-
-        const usersRes = await axios.get("/admin/users");
-        setUsers(usersRes.data);
-      } catch (err) {
-        console.error("Admin dashboard fetch error:", err);
-      }
-    };
-
-    fetchDashboard();
+    fetchStats();
   }, []);
 
   return (
-    <div className="admin-dashboard">
-      <Header />
-      <div className="main-layout">
-        <AdminSidebar />
-        <div className="dashboard-content">
-          <h1>Admin Dashboard</h1>
+    <div className="flex min-h-screen">
+      <AdminSidebar />
+      <div className="flex-1 p-6">
+        <Header />
+        <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
 
-          <div className="stats-cards">
-            {stats.plans.map((plan) => (
-              <Card key={plan._id} title={`Plan ${plan._id}`} value={`₦${plan.amount} (${plan.count})`} />
-            ))}
-            {stats.statuses.map((status) => (
-              <Card key={status._id} title={`Status: ${status._id}`} value={status.count} />
-            ))}
-          </div>
+        {message && <p className="mb-4 text-red-600">{message}</p>}
 
-          <div className="table-section">
-            <h2>All Deposits</h2>
-            <Table data={deposits} columns={["userId.email", "amount", "status", "createdAt"]} />
-
-            <h2>All Users</h2>
-            <Table data={users} columns={["username", "email", "investmentAmount", "referrals.length"]} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {stats.plans.map((plan) => (
+            <StatsCard
+              key={plan._id}
+              title={`Plan: ₦${plan._id}`}
+              value={`Total Amount: ₦${plan.amount}, Users: ${plan.count}`}
+            />
+          ))}
+          {stats.statuses.map((status) => (
+            <StatsCard
+              key={status._id}
+              title={`Status: ${status._id}`}
+              value={`Count: ${status.count}`}
+            />
+          ))}
         </div>
       </div>
     </div>
