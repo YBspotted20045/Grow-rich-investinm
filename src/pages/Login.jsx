@@ -1,95 +1,146 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// src/Pages/Login.jsx
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../axios";
 
-export default function Login() {
+function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    if (loading) return;
     setLoading(true);
+    setMessage({ type: "", text: "" });
 
     try {
-      const res = await API.post("/auth/login", formData);
-      localStorage.setItem("gr_token", res.data.token);
-      navigate("/dashboard");
+      const res = await API.post("/auth/login", form);
+
+      // Save token in localStorage
+      localStorage.setItem("token", res.data.token);
+
+      setMessage({ type: "success", text: "Login successful — redirecting…" });
+      setTimeout(() => navigate("/dashboard", { replace: true }), 1000);
     } catch (err) {
-      console.error("Login failed:", err);
-      setError(err.response?.data?.message || "Login failed");
+      console.error("Login error:", err);
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Invalid email or password.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-8">
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-6">
-          Login to GrowRich
-        </h2>
+    <div style={styles.container}>
+      <form style={styles.form} onSubmit={handleSubmit}>
+        <h2 style={styles.title}>Login</h2>
 
-        {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
-            {error}
+        {message.text && (
+          <div
+            style={{
+              ...styles.message,
+              backgroundColor: message.type === "error" ? "#ffe5e5" : "#e5ffe5",
+              color: message.type === "error" ? "#d8000c" : "#4f8a10",
+            }}
+          >
+            {message.text}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </div>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+          disabled={loading}
+          style={styles.input}
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          disabled={loading}
+          style={styles.input}
+        />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </div>
+        <button type="submit" disabled={loading} style={styles.button}>
+          {loading ? "Logging In..." : "Login"}
+        </button>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition disabled:opacity-60"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-
-        <p className="text-sm text-center text-gray-600 mt-6">
-          Don’t have an account?{" "}
-          <button
-            onClick={() => navigate("/signup")}
-            className="text-green-600 hover:underline"
-          >
-            Sign up
-          </button>
+        <p style={styles.switch}>
+          Don’t have an account? <Link to="/signup">Sign up here</Link>
         </p>
-      </div>
+      </form>
     </div>
   );
-            }
+}
+
+const styles = {
+  container: {
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#f0f2f5",
+    padding: "20px",
+  },
+  form: {
+    width: "100%",
+    maxWidth: "400px",
+    background: "#fff",
+    padding: "30px",
+    borderRadius: "10px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+  },
+  title: {
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#333",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    margin: "8px 0",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+  },
+  button: {
+    width: "100%",
+    padding: "12px",
+    marginTop: "10px",
+    background: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    fontSize: "16px",
+    cursor: "pointer",
+  },
+  message: {
+    padding: "10px",
+    borderRadius: "6px",
+    marginBottom: "10px",
+    textAlign: "center",
+    fontSize: "14px",
+  },
+  switch: {
+    textAlign: "center",
+    marginTop: "15px",
+    fontSize: "14px",
+  },
+};
+
+export default Login;
