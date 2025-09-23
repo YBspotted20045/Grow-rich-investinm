@@ -64,7 +64,9 @@ export default function ReferralDashboard() {
   const shareLink = async () => {
     const code = user?.referralCode;
     if (!code) return;
-    const shareUrl = `${window.location.origin}/signup?ref=${encodeURIComponent(code)}`;
+    const shareUrl = `${window.location.origin}/signup?ref=${encodeURIComponent(
+      code
+    )}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -89,11 +91,12 @@ export default function ReferralDashboard() {
   if (loading) return <div className="rd-loader">Loading...</div>;
   if (!user && error) return <div className="rd-error">⚠️ {error}</div>;
 
-  // computed metrics
-  const referrals = user?.referrals || [];
-  const totalReferrals = referrals.length;
-  const totalReferralDeposits = user?.referralDeposits ?? 0;
-  const requirementMet = user?.referralRequirementMet ?? false;
+  // ✅ Referral stats from backend
+  const referralStats = user?.referrals || {};
+  const referrals = referralStats.users || [];
+  const totalReferrals = referralStats.total || 0;
+  const totalReferralDeposits = referralStats.paid || 0;
+  const requirementMet = referralStats.ok || false;
 
   return (
     <div className="rd-page">
@@ -158,13 +161,15 @@ export default function ReferralDashboard() {
             </thead>
             <tbody>
               {referrals.map((r, i) => (
-                <tr key={r._id || i}>
+                <tr key={r.id || r._id || i}>
                   <td>{i + 1}</td>
                   <td>{r.fullname || r.username || "—"}</td>
                   <td>{r.email || "—"}</td>
                   <td>₦{r.investmentAmount || 0}</td>
                   <td>
-                    {r.createdAt
+                    {r.date
+                      ? new Date(r.date).toLocaleDateString()
+                      : r.createdAt
                       ? new Date(r.createdAt).toLocaleDateString()
                       : "—"}
                   </td>
