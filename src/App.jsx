@@ -12,7 +12,7 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 
 // Admin Pages
-import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminUsers from "./pages/admin/Users.jsx";
 import AdminDeposits from "./pages/admin/Deposits.jsx";
 import AdminWithdrawals from "./pages/admin/Withdrawals.jsx";
