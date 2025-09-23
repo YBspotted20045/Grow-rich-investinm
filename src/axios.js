@@ -1,15 +1,15 @@
 // src/axios.js
 import axios from "axios";
 
-// Change this URL to your backend URL on Render or local dev
+// Use your live backend URL
 const API = axios.create({
-  baseURL: "https://your-backend-url.com/api", 
+  baseURL: "https://grow-0nfm.onrender.com/api", 
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Add a request interceptor to include token if available
+// Automatically add Authorization header if token exists
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
