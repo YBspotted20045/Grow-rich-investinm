@@ -1,132 +1,135 @@
-// src/pages/Signup.jsx
 import React, { useState } from "react";
-import axios from "../axios"; // centralized Axios instance
-import { useNavigate } from "react-router-dom";
+import axios from "../axios.js";
+import Header from "../components/Header.jsx";
 
 const states = [
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
-  "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT Abuja", "Gombe",
-  "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
-  "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto",
-  "Taraba", "Yobe", "Zamfara"
+  "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River","Delta",
+  "Ebonyi","Edo","Ekiti","Enugu","FCT","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina",
+  "Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo",
+  "Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"
 ];
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
     state: "",
-    referralCode: ""
+    referrerCode: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (formData.password.length < 8) {
-      return setError("Password must be at least 8 characters.");
+    if (form.password.length < 8) {
+      setMessage("Password must be at least 8 characters.");
+      return;
     }
-
-    if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match.");
+    if (form.password !== form.confirmPassword) {
+      setMessage("Passwords do not match.");
+      return;
     }
-
     try {
-      setLoading(true);
-      const response = await axios.post("/auth/signup", formData);
-      setLoading(false);
-      alert("Signup successful! Please login.");
-      navigate("/login");
+      const res = await axios.post("/auth/signup", {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+        state: form.state,
+        referrerCode: form.referrerCode,
+      });
+      setMessage(res.data.message);
+      setForm({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        state: "",
+        referrerCode: "",
+      });
     } catch (err) {
-      setLoading(false);
-      setError(err.response?.data?.message || "Signup failed");
+      console.error(err);
+      setMessage(err.response?.data?.message || "Signup failed");
     }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50">
-      <div className="w-full max-w-md p-6 bg-white rounded shadow">
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-        {error && <p className="text-red-500 mb-2">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <Header />
+      <main className="container mx-auto p-4 max-w-md">
+        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+        {message && <p className="mb-4 text-red-600">{message}</p>}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="text"
             name="username"
             placeholder="Full Name"
-            value={formData.username}
+            value={form.username}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
             required
+            className="border p-2 rounded"
           />
           <input
             type="email"
             name="email"
             placeholder="Email"
-            value={formData.email}
+            value={form.email}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
             required
+            className="border p-2 rounded"
           />
           <input
             type="password"
             name="password"
             placeholder="Password"
-            value={formData.password}
+            value={form.password}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
             required
+            className="border p-2 rounded"
           />
           <input
             type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
-            value={formData.confirmPassword}
+            value={form.confirmPassword}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
             required
+            className="border p-2 rounded"
           />
           <select
             name="state"
-            value={formData.state}
+            value={form.state}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
             required
+            className="border p-2 rounded"
           >
-            <option value="">Select Your State</option>
+            <option value="">Select State</option>
             {states.map((state) => (
               <option key={state} value={state}>{state}</option>
             ))}
           </select>
           <input
             type="text"
-            name="referralCode"
-            placeholder="Referral Code (optional)"
-            value={formData.referralCode}
+            name="referrerCode"
+            placeholder="Referrer Code (optional)"
+            value={form.referrerCode}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="border p-2 rounded"
           />
-          {/* Terms & Conditions checkbox placeholder */}
-          {/* <div>
-            <input type="checkbox" /> I agree to the Terms & Conditions
-          </div> */}
+          {/* Terms & Conditions placeholder */}
           <button
             type="submit"
-            className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700"
-            disabled={loading}
+            className="bg-green-600 text-white p-3 rounded hover:bg-green-700"
           >
-            {loading ? "Signing up..." : "Sign Up"}
+            Sign Up
           </button>
         </form>
-      </div>
+      </main>
     </div>
   );
 };
