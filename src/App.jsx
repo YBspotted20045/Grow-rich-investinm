@@ -13,10 +13,10 @@ import Signup from "./pages/Signup.jsx";
 
 // Admin Pages
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-import AdminUsers from "./pages/admin/Users.jsx";
-import AdminDeposits from "./pages/admin/Deposits.jsx";
-import AdminWithdrawals from "./pages/admin/Withdrawals.jsx";
-import AdminLogin from "./pages/admin/Login.jsx";
+import AdminUsers from "./pages/AdminUsers.jsx";
+import AdminDeposits from "./pages/AdminDeposits.jsx";
+import AdminWithdrawals from "./pages/AdminWithdrawals.jsx";
+import AdminLogin from "./pages/AdminLogin.jsx";
 
 function App() {
   return (
