@@ -1,0 +1,56 @@
+.withdrawal-container {
+  padding: 2rem;
+  background-color: #fff9f0; /* light gold */
+  min-height: 100vh;
+  color: #333;
+}
+
+.withdrawal-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin-bottom: 2rem;
+}
+
+.withdrawal-form label {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.withdrawal-form input[type="number"] {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.withdrawal-form button {
+  background-color: #b08d57; /* gold */
+  color: #fff;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.withdrawal-form button:hover {
+  background-color: #9c7540; /* darker gold */
+}
+
+.withdrawal-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.withdrawal-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.message {
+  margin-bottom: 1rem;
+  color: green;
+  font-weight: bold;
+}
