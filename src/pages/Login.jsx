@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import axios from "../axios";
+import axios from "../axios.js";
 import "./Login.css"; // CSS specific to this page
 import { useNavigate } from "react-router-dom";
 
