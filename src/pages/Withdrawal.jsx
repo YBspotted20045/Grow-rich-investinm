@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../axios.js";
+import axios from "./axios.js";
 import "./Withdrawal.css";
 
 const Withdrawal = () => {
