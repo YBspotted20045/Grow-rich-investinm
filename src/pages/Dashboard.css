@@ -1,0 +1,25 @@
+.dashboard-container {
+  padding: 2rem;
+  background-color: #fff9f0; /* light gold-ish */
+  color: #333;
+  min-height: 100vh;
+}
+
+.dashboard-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #e0dcdc;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.investment-card, .deposit-list li, .referral-list li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  background-color: #fef9f3; /* subtle gold */
+}
+
+h1, h2 {
+  color: #b08d57; /* gold */
+}
