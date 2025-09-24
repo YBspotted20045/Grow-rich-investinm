@@ -1,10 +1,118 @@
-.dashboard-container {
-  padding: 2rem;
-  background-color: #fff9f0; /* light gold-ish */
-  color: #333;
+/* Layout */
+.dashboard-layout {
+  display: flex;
   min-height: 100vh;
+  background-color: #fffaf2;
+  position: relative;
+  overflow-x: hidden;
 }
 
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background-color: #000;
+  color: #fff;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  left: -240px;
+  top: 0;
+  bottom: 0;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-logo {
+  color: #ffd700;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sidebar nav ul li:hover {
+  background-color: #ffd700;
+  color: #000;
+}
+
+.sidebar nav ul .logout {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+/* Main Content */
+.dashboard-main {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 0;
+  width: 100%;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+@media (min-width: 768px) {
+  .dashboard-main {
+    margin-left: 220px;
+  }
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #000;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.topbar h1 {
+  color: #ffd700;
+  margin: 0;
+}
+
+.username {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.menu-btn {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #ffd700;
+  cursor: pointer;
+  margin-right: 1rem;
+  display: inline-block;
+}
+
+@media (min-width: 768px) {
+  .menu-btn {
+    display: none;
+  }
+}
+
+/* Sections */
 .dashboard-section {
   margin-bottom: 2rem;
   padding: 1rem;
@@ -13,13 +121,25 @@
   background-color: #fff;
 }
 
-.investment-card, .deposit-list li, .referral-list li {
+.investment-card,
+.deposit-list li,
+.referral-list li {
   margin-bottom: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.8rem;
   border-radius: 5px;
-  background-color: #fef9f3; /* subtle gold */
+  background-color: #fdf6e3;
+  border-left: 4px solid #ffd700;
 }
 
-h1, h2 {
-  color: #b08d57; /* gold */
+h2 {
+  color: #b08d57;
+  margin-bottom: 1rem;
 }
+
+/* Loading */
+.loading {
+  text-align: center;
+  color: #b08d57;
+  font-weight: bold;
+  margin-top: 3rem;
+  }
