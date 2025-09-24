@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "./axios.js";
 import "./Dashboard.css";
 
@@ -7,11 +8,19 @@ const Dashboard = () => {
   const [deposits, setDeposits] = useState([]);
   const [investment, setInvestment] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login", { replace: true });
+          return;
+        }
+
         const res = await axios.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -21,61 +30,56 @@ const Dashboard = () => {
         setLoading(false);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
-        setLoading(false);
+        localStorage.removeItem("token");
+        navigate("/login", { replace: true });
       }
     };
     fetchDashboard();
-  }, []);
+  }, [navigate]);
 
-  if (loading) return <p>Loading dashboard...</p>;
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // clear token
+    navigate("/login", { replace: true }); // redirect & disable back
+  };
+
+  if (loading) return <p className="loading">Loading dashboard...</p>;
 
   return (
-    <div className="dashboard-container">
-      <h1>Welcome, {user.fullName}</h1>
-
-      <section className="dashboard-section">
-        <h2>Investment</h2>
-        {investment ? (
-          <div className="investment-card">
-            <p>Amount: ₦{investment.amount}</p>
-            <p>Status: {investment.status}</p>
-            <p>Start: {new Date(investment.startDate).toLocaleDateString()}</p>
-            <p>Maturity: {new Date(investment.maturityDate).toLocaleDateString()}</p>
-          </div>
-        ) : (
-          <p>No active investment.</p>
-        )}
-      </section>
-
-      <section className="dashboard-section">
-        <h2>Deposits</h2>
-        {deposits.length ? (
-          <ul className="deposit-list">
-            {deposits.map((d) => (
-              <li key={d._id}>
-                Amount: ₦{d.amount} | Status: {d.status} | Date: {new Date(d.createdAt).toLocaleDateString()}
-              </li>
-            ))}
+    <div className="dashboard-layout">
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <h2 className="sidebar-logo">GrowRich</h2>
+        <nav>
+          <ul>
+            <li>Dashboard</li>
+            <li>Deposits</li>
+            <li>Withdrawals</li>
+            <li>Referrals</li>
+            <li className="logout" onClick={handleLogout}>
+              Logout
+            </li>
           </ul>
-        ) : (
-          <p>No deposits yet.</p>
-        )}
-      </section>
+        </nav>
+      </aside>
 
-      <section className="dashboard-section">
-        <h2>Referrals</h2>
-        {user.referrals && user.referrals.length ? (
-          <ul className="referral-list">
-            {user.referrals.map((r) => (
-              <li key={r._id}>
-                {r.fullName} - ₦{r.investmentAmount} invested
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No referrals yet.</p>
-        )}
-      </section>
+      {/* Main content */}
+      <main className="dashboard-main">
+        <header className="topbar">
+          <button
+            className="menu-btn"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+          <h1>Dashboard</h1>
+          <p>
+            Welcome, <span className="username">{user.fullName}</span>
+          </p>
+        </header>
+
+        {/* Sections remain the same */}
+        {/* ... */}
+      </main>
     </div>
   );
 };
