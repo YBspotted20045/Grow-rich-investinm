@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [deposits, setDeposits] = useState([]);
   const [investment, setInvestment] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // collapsible sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -17,7 +17,6 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("Dashboard response:", res.data); // Debug
         setUser(res.data.user || {});
         setDeposits(res.data.deposits || []);
         setInvestment(res.data.investment || null);
@@ -37,7 +36,15 @@ const Dashboard = () => {
     <div className="dashboard-wrapper">
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <h2 className="logo">GrowRich</h2>
+        <div className="sidebar-header">
+          <h2 className="logo">GrowRich</h2>
+          <button
+            className="close-btn"
+            onClick={() => setSidebarOpen(false)}
+          >
+            ✖
+          </button>
+        </div>
         <nav>
           <ul>
             <li>Dashboard</li>
@@ -56,7 +63,7 @@ const Dashboard = () => {
         <header className="topbar">
           <button
             className="menu-btn"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setSidebarOpen(true)}
           >
             ☰
           </button>
@@ -71,13 +78,8 @@ const Dashboard = () => {
               <div className="card">
                 <p>Amount: ₦{investment.amount}</p>
                 <p>Status: {investment.status}</p>
-                <p>
-                  Start: {new Date(investment.startDate).toLocaleDateString()}
-                </p>
-                <p>
-                  Maturity:{" "}
-                  {new Date(investment.maturityDate).toLocaleDateString()}
-                </p>
+                <p>Start: {new Date(investment.startDate).toLocaleDateString()}</p>
+                <p>Maturity: {new Date(investment.maturityDate).toLocaleDateString()}</p>
               </div>
             ) : (
               <p>No active investment.</p>
