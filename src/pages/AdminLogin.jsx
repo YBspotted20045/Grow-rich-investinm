@@ -1,6 +1,6 @@
 // src/pages/AdminLogin.jsx
 import React, { useState } from "react";
-import axios from "../axios.js";
+import axios from "./axios.js";
 import "./AdminLogin.css"; // CSS specific to this page
 
 const AdminLogin = () => {
