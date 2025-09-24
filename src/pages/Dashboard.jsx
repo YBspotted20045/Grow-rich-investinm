@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "./axiosjs";
+import axios from "./axios.js";
 import "./Dashboard.css";
 
 const Dashboard = () => {
