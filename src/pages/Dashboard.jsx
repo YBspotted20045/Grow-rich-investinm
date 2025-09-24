@@ -1,104 +1,55 @@
 // src/pages/Dashboard.jsx
-import React, { useEffect, useState } from "react";
-import axios from "./axios.js";
-import Sidebar from "./Sidebar.jsx"; // import your Sidebar
+import React, { useState, useEffect } from "react";
+import Sidebar from "./Sidebar";
+import API from "../axios";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-  const [user, setUser] = useState({});
-  const [deposits, setDeposits] = useState([]);
-  const [investment, setInvestment] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // collapsible toggle
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
+  // fetch logged-in user
   useEffect(() => {
-    const fetchDashboard = async () => {
+    const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(res.data.user);
-        setDeposits(res.data.deposits);
-        setInvestment(res.data.investment);
-        setLoading(false);
+        const res = await API.get("/users/me");
+        if (res.data.success) {
+          setUser(res.data.user);
+        }
       } catch (err) {
-        console.error("Dashboard fetch error:", err);
-        setLoading(false);
+        console.error("Error fetching user:", err);
       }
     };
-    fetchDashboard();
+    fetchUser();
   }, []);
-
-  if (loading) return <p className="loading">Loading dashboard...</p>;
 
   return (
     <div className="dashboard-wrapper">
-      {/* Sidebar */}
-      <div className={`sidebar-container ${sidebarOpen ? "open" : ""}`}>
-        <Sidebar />
-      </div>
-
-      {/* Main content */}
-      <div className="dashboard-main">
-        {/* Toggle button for mobile */}
+      {/* Top navbar with hamburger */}
+      <div className="dashboard-navbar">
         <button
-          className="sidebar-toggle"
+          className="hamburger-btn"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           ☰
         </button>
-
         <h1 className="dashboard-title">
-          Welcome, {user.fullName || user.username || user.email}
+          Welcome, <span>{user ? user.username : "Investor"}</span>
         </h1>
+      </div>
 
-        <section className="dashboard-section">
-          <h2>Investment</h2>
-          {investment ? (
-            <div className="investment-card">
-              <p>Amount: ₦{investment.amount}</p>
-              <p>Status: {investment.status}</p>
-              <p>Start: {new Date(investment.startDate).toLocaleDateString()}</p>
-              <p>
-                Maturity: {new Date(investment.maturityDate).toLocaleDateString()}
-              </p>
-            </div>
-          ) : (
-            <p>No active investment.</p>
-          )}
-        </section>
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
 
-        <section className="dashboard-section">
-          <h2>Deposits</h2>
-          {deposits.length ? (
-            <ul className="deposit-list">
-              {deposits.map((d) => (
-                <li key={d._id}>
-                  Amount: ₦{d.amount} | Status: {d.status} | Date:{" "}
-                  {new Date(d.createdAt).toLocaleDateString()}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No deposits yet.</p>
-          )}
-        </section>
-
-        <section className="dashboard-section">
-          <h2>Referrals</h2>
-          {user.referrals && user.referrals.length ? (
-            <ul className="referral-list">
-              {user.referrals.map((r) => (
-                <li key={r._id}>
-                  {r.fullName || r.username || r.email} - ₦{r.investmentAmount} invested
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No referrals yet.</p>
-          )}
-        </section>
+      {/* Main content */}
+      <div className="dashboard-content">
+        <div className="dashboard-section">
+          <h2>Your Overview</h2>
+          <p>Investments, deposits, and referrals will show here.</p>
+        </div>
       </div>
     </div>
   );
