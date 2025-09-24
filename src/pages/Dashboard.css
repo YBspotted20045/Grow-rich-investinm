@@ -2,30 +2,45 @@
 .dashboard-wrapper {
   display: flex;
   min-height: 100vh;
-  background-color: #fff9f0;
+  background-color: #000; /* black background */
+  color: #ffd700; /* gold text */
 }
 
 /* Sidebar */
 .sidebar {
-  width: 220px;
-  background-color: #000;
+  width: 240px;
+  background-color: #111;
   color: #ffd700;
   padding: 1rem;
   flex-shrink: 0;
   transition: transform 0.3s ease;
 }
 
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .logo {
   font-size: 22px;
   font-weight: bold;
-  margin-bottom: 2rem;
-  text-align: center;
   color: #ffd700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #ffd700;
+  font-size: 20px;
+  cursor: pointer;
+  display: none; /* only visible on mobile */
 }
 
 .sidebar ul {
   list-style: none;
   padding: 0;
+  margin-top: 2rem;
 }
 
 .sidebar li {
@@ -40,16 +55,18 @@
   background-color: #333;
 }
 
-/* Main area */
+/* Main */
 .dashboard-main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #000;
+  color: #ffd700;
 }
 
 /* Topbar */
 .topbar {
-  background-color: #000;
+  background-color: #111;
   color: #ffd700;
   padding: 1rem;
   font-size: 20px;
@@ -65,7 +82,7 @@
   color: #ffd700;
   font-size: 24px;
   cursor: pointer;
-  display: none; /* hidden on desktop */
+  display: none;
 }
 
 /* Content */
@@ -77,13 +94,13 @@
   margin-bottom: 1.5rem;
   padding: 1rem;
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  background: #111;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
 }
 
 .card,
 .list li {
-  background: #fef9f3;
+  background: #222;
   padding: 0.75rem;
   margin-bottom: 0.5rem;
   border-radius: 6px;
@@ -91,7 +108,7 @@
 
 h1,
 h2 {
-  color: #b08d57;
+  color: #ffd700;
 }
 
 .loading {
@@ -120,6 +137,10 @@ h2 {
   }
 
   .menu-btn {
+    display: block;
+  }
+
+  .close-btn {
     display: block;
   }
 
