@@ -1,16 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Home from "./pages/Home.jsx"; // first page to render
-import AdminLogin from "./pages/AdminLogin.jsx"; // optional: for admin login
-
-// You can import CSS for pages here if needed, e.g.
-// import "./pages-css/Home.css";
+import { BrowserRouter } from "react-router-dom";
+import Home from "./Home";  // adjust if default export
+import Signup from "./Signup";
+import Login from "./Login";
+import Dashboard from "./Dashboard";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <React.StrictMode>
-    {/* Render your initial page */}
+  <BrowserRouter>
     <Home />
-  </React.StrictMode>
+  </BrowserRouter>
 );
