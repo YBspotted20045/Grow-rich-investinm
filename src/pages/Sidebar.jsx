@@ -1,9 +1,9 @@
 // src/pages/Sidebar.jsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import "./Sidebar.css"; // CSS file for styling
+import "./Sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
 
   const menuItems = [
@@ -16,15 +16,23 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isOpen ? "open" : ""}`}>
+      {/* Toggle button */}
+      <button className="sidebar-close" onClick={toggleSidebar}>
+        ✖
+      </button>
+
       <h2 className="sidebar-title">GrowRich</h2>
+
       <ul className="sidebar-menu">
         {menuItems.map((item) => (
           <li
             key={item.name}
             className={location.pathname === item.path ? "active" : ""}
           >
-            <Link to={item.path}>{item.name}</Link>
+            <Link to={item.path} onClick={toggleSidebar}>
+              {item.name}
+            </Link>
           </li>
         ))}
       </ul>
