@@ -1,0 +1,44 @@
+.account-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #fff9f0; /* light gold */
+  color: #333;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+  margin-top: 2rem;
+}
+
+.account-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.account-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.account-form button {
+  padding: 0.7rem;
+  background-color: #b08d57; /* gold */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.account-form button:hover {
+  background-color: #a17b4a;
+}
+
+.account-message {
+  margin-top: 1rem;
+  color: green;
+}
