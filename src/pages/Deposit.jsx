@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../axios.js";
+import axios from "./axios.js";
 import "./Deposit.css";
 
 const Deposit = () => {
