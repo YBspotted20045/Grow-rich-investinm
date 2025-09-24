@@ -1,5 +1,7 @@
+// src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "./axios.js";
+import Sidebar from "./Sidebar.jsx"; // import your Sidebar
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -7,7 +9,7 @@ const Dashboard = () => {
   const [deposits, setDeposits] = useState([]);
   const [investment, setInvestment] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // collapsible toggle
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -16,17 +18,15 @@ const Dashboard = () => {
         const res = await axios.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        setUser(res.data.user || {});
-        setDeposits(res.data.deposits || []);
-        setInvestment(res.data.investment || null);
+        setUser(res.data.user);
+        setDeposits(res.data.deposits);
+        setInvestment(res.data.investment);
+        setLoading(false);
       } catch (err) {
-        console.error("Dashboard fetch error:", err.response?.data || err.message);
-      } finally {
+        console.error("Dashboard fetch error:", err);
         setLoading(false);
       }
     };
-
     fetchDashboard();
   }, []);
 
@@ -35,88 +35,70 @@ const Dashboard = () => {
   return (
     <div className="dashboard-wrapper">
       {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <h2 className="logo">GrowRich</h2>
-          <button
-            className="close-btn"
-            onClick={() => setSidebarOpen(false)}
-          >
-            ✖
-          </button>
-        </div>
-        <nav>
-          <ul>
-            <li>Dashboard</li>
-            <li>Invest</li>
-            <li>Deposits</li>
-            <li>Referrals</li>
-            <li>Settings</li>
-            <li>Logout</li>
-          </ul>
-        </nav>
-      </aside>
+      <div className={`sidebar-container ${sidebarOpen ? "open" : ""}`}>
+        <Sidebar />
+      </div>
 
-      {/* Main Content */}
+      {/* Main content */}
       <div className="dashboard-main">
-        {/* Top Navbar */}
-        <header className="topbar">
-          <button
-            className="menu-btn"
-            onClick={() => setSidebarOpen(true)}
-          >
-            ☰
-          </button>
-          <h1>Welcome, {user.fullName || "Investor"}</h1>
-        </header>
+        {/* Toggle button for mobile */}
+        <button
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          ☰
+        </button>
 
-        {/* Dashboard Content */}
-        <div className="dashboard-content">
-          <section className="dashboard-section">
-            <h2>Investment</h2>
-            {investment ? (
-              <div className="card">
-                <p>Amount: ₦{investment.amount}</p>
-                <p>Status: {investment.status}</p>
-                <p>Start: {new Date(investment.startDate).toLocaleDateString()}</p>
-                <p>Maturity: {new Date(investment.maturityDate).toLocaleDateString()}</p>
-              </div>
-            ) : (
-              <p>No active investment.</p>
-            )}
-          </section>
+        <h1 className="dashboard-title">
+          Welcome, {user.fullName || user.username || user.email}
+        </h1>
 
-          <section className="dashboard-section">
-            <h2>Deposits</h2>
-            {deposits.length ? (
-              <ul className="list">
-                {deposits.map((d) => (
-                  <li key={d._id}>
-                    Amount: ₦{d.amount} | Status: {d.status} | Date:{" "}
-                    {new Date(d.createdAt).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No deposits yet.</p>
-            )}
-          </section>
+        <section className="dashboard-section">
+          <h2>Investment</h2>
+          {investment ? (
+            <div className="investment-card">
+              <p>Amount: ₦{investment.amount}</p>
+              <p>Status: {investment.status}</p>
+              <p>Start: {new Date(investment.startDate).toLocaleDateString()}</p>
+              <p>
+                Maturity: {new Date(investment.maturityDate).toLocaleDateString()}
+              </p>
+            </div>
+          ) : (
+            <p>No active investment.</p>
+          )}
+        </section>
 
-          <section className="dashboard-section">
-            <h2>Referrals</h2>
-            {user.referrals && user.referrals.length ? (
-              <ul className="list">
-                {user.referrals.map((r) => (
-                  <li key={r._id}>
-                    {r.fullName} - ₦{r.investmentAmount} invested
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No referrals yet.</p>
-            )}
-          </section>
-        </div>
+        <section className="dashboard-section">
+          <h2>Deposits</h2>
+          {deposits.length ? (
+            <ul className="deposit-list">
+              {deposits.map((d) => (
+                <li key={d._id}>
+                  Amount: ₦{d.amount} | Status: {d.status} | Date:{" "}
+                  {new Date(d.createdAt).toLocaleDateString()}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No deposits yet.</p>
+          )}
+        </section>
+
+        <section className="dashboard-section">
+          <h2>Referrals</h2>
+          {user.referrals && user.referrals.length ? (
+            <ul className="referral-list">
+              {user.referrals.map((r) => (
+                <li key={r._id}>
+                  {r.fullName || r.username || r.email} - ₦{r.investmentAmount} invested
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No referrals yet.</p>
+          )}
+        </section>
       </div>
     </div>
   );
