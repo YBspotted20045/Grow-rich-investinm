@@ -1,6 +1,6 @@
 // src/pages/Signup.jsx
 import React, { useState } from "react";
-import axios from "../axios";
+import axios from "../axios.js";
 import "./Signup.css"; // CSS specific to this page
 
 const states = [
