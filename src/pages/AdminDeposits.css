@@ -1,0 +1,38 @@
+.admin-deposits-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #fff9f0; /* light gold */
+  color: #333;
+}
+
+.deposits-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+.deposits-table th,
+.deposits-table td {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.approve-btn {
+  background-color: #b08d57; /* gold */
+  color: white;
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background-color: #333; /* black */
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
