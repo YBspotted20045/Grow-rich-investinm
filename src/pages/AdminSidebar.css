@@ -1,0 +1,38 @@
+.admin-sidebar {
+  width: 220px;
+  background-color: #fff8f0;
+  color: #333;
+  padding: 20px;
+  height: 100vh;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+
+.admin-sidebar-title {
+  font-size: 24px;
+  color: #d4af37; /* gold */
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.admin-sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-sidebar-menu li {
+  margin: 15px 0;
+}
+
+.admin-sidebar-menu li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 18px;
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-sidebar-menu li.active a,
+.admin-sidebar-menu li a:hover {
+  color: #d4af37; /* gold */
+  font-weight: bold;
+}
