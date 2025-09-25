@@ -1,52 +1,37 @@
+/* Sidebar container */
 .sidebar {
-  width: 220px;
-  background-color: #fff8f0;
-  color: #333;
-  padding: 20px;
-  height: 100vh;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
-  left: 0;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
+  left: -250px; /* hidden by default */
+  width: 220px;
+  height: 100%;
+  background-color: #fff8f0; /* soft white-gold background */
+  color: #333;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: left 0.3s ease-in-out;
   z-index: 1000;
 }
 
+/* When sidebar is open */
 .sidebar.open {
-  transform: translateX(0);
-}
-
-/* Close button (inside sidebar) */
-.sidebar-close {
-  background: #000;
-  color: #ffd700;
-  border: none;
-  font-size: 20px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  float: right;
-}
-.sidebar-close:hover {
-  background: #333;
+  left: 0;
 }
 
 /* Sidebar title */
 .sidebar-title {
-  font-size: 24px;
+  font-size: 22px;
   color: #d4af37; /* gold */
   text-align: center;
-  margin: 20px 0 30px;
+  margin-bottom: 30px;
   font-weight: bold;
 }
 
-/* Menu */
+/* Menu styles */
 .sidebar-menu {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin: 0;
 }
 
 .sidebar-menu li {
@@ -59,13 +44,35 @@
   font-size: 18px;
   transition: all 0.2s ease-in-out;
   display: block;
-  padding: 10px;
+  padding: 8px 12px;
   border-radius: 6px;
 }
 
 .sidebar-menu li.active a,
 .sidebar-menu li a:hover {
   color: #fff;
-  background-color: #d4af37; /* gold background */
+  background-color: #d4af37; /* gold highlight */
   font-weight: bold;
+}
+
+/* Close button (visible only on mobile sidebar) */
+.sidebar-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #333;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+}
+
+/* Desktop: always open sidebar */
+@media (min-width: 768px) {
+  .sidebar {
+    left: 0;
+  }
+  .sidebar-close {
+    display: none;
+  }
 }
