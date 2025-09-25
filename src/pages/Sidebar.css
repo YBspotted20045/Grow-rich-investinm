@@ -72,4 +72,25 @@
   .sidebar-close {
     display: none;
   }
+  /* Logout button */
+.sidebar-logout {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.sidebar-logout button {
+  background: #d9534f; /* red */
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+.sidebar-logout button:hover {
+  background: #c9302c;
+}
 }
