@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [investment, setInvestment] = useState(null);
   const [earnings, setEarnings] = useState(null);
 
-  // fetch user
+  // Fetch user profile
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -22,7 +22,7 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
-  // fetch investment
+  // Fetch user investment
   useEffect(() => {
     const fetchInvestment = async () => {
       try {
@@ -40,7 +40,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-wrapper">
-      {/* Sidebar with hamburger */}
+      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -48,44 +48,47 @@ const Dashboard = () => {
 
       {/* Main content */}
       <div className="dashboard-content">
-        <h1 className="dashboard-title">
-          Welcome back,{" "}
-          <span>{user ? user.username : "Investor"}</span>
+        <h1 className="dashboard-heading">
+          Welcome back, <span>{user ? user.username : "Investor"}</span>
         </h1>
 
-        <div className="dashboard-section">
-          <h2>Your Investment Overview</h2>
-          {!investment ? (
-            <p>No active investment yet.</p>
-          ) : (
-            <div className="cards-grid">
-              <div className="info-card">
-                <h3>Plan</h3>
-                <p>{investment.plan}</p>
-              </div>
-              <div className="info-card">
-                <h3>Amount Invested</h3>
-                <p>₦{investment.amount.toLocaleString()}</p>
-              </div>
-              <div className="info-card">
-                <h3>Expected Return</h3>
-                <p>₦{earnings?.maxPayout?.toLocaleString()}</p>
-              </div>
-              <div className="info-card">
-                <h3>Accrued Earnings</h3>
-                <p>₦{earnings?.accrued?.toLocaleString()}</p>
-              </div>
-              <div className="info-card">
-                <h3>Available to Withdraw</h3>
-                <p>₦{earnings?.available?.toLocaleString()}</p>
-              </div>
-              <div className="info-card">
-                <h3>Maturity Date</h3>
-                <p>{new Date(investment.maturityDate).toDateString()}</p>
-              </div>
+        <h2 className="overview-title">Your Investment Overview</h2>
+
+        {!investment ? (
+          <p className="no-investment">No active investment yet.</p>
+        ) : (
+          <div className="cards-grid">
+            <div className="info-card">
+              <h3>Investment Amount</h3>
+              <p>₦{investment.amount.toLocaleString()}</p>
             </div>
-          )}
-        </div>
+
+            <div className="info-card">
+              <h3>Expected Return</h3>
+              <p>₦{earnings?.maxPayout.toLocaleString()}</p>
+            </div>
+
+            <div className="info-card">
+              <h3>Accrued Earnings</h3>
+              <p>₦{earnings?.accrued.toLocaleString()}</p>
+            </div>
+
+            <div className="info-card">
+              <h3>Available to Withdraw</h3>
+              <p>₦{earnings?.available.toLocaleString()}</p>
+            </div>
+
+            <div className="info-card">
+              <h3>Maturity Date</h3>
+              <p>{new Date(investment.maturityDate).toDateString()}</p>
+            </div>
+
+            <div className="info-card status-card">
+              <h3>Status</h3>
+              <p className={investment.status}>{investment.status}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
