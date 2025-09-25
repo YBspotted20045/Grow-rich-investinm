@@ -17,7 +17,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <div className={`sidebar ${isOpen ? "open" : ""}`}>
-      {/* Toggle button */}
+      {/* Close button only on mobile */}
       <button className="sidebar-close" onClick={toggleSidebar}>
         ✖
       </button>
