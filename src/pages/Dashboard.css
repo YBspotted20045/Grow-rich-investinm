@@ -1,7 +1,37 @@
 .dashboard-wrapper {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #fffdf7, #fff8f0);
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative black & gold circles */
+.dashboard-wrapper::before,
+.dashboard-wrapper::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08;
+  z-index: 0;
+}
+
+/* Gold circle */
+.dashboard-wrapper::before {
+  width: 200px;
+  height: 200px;
+  background: #d4af37;
+  top: 10%;
+  left: -80px;
+}
+
+/* Black circle */
+.dashboard-wrapper::after {
+  width: 150px;
+  height: 150px;
+  background: #000;
+  bottom: 15%;
+  right: -60px;
 }
 
 /* Main content */
@@ -9,6 +39,8 @@
   flex: 1;
   padding: 20px;
   margin-left: 220px; /* space for sidebar */
+  position: relative;
+  z-index: 1; /* ensures text/cards are above background */
 }
 
 .dashboard-heading {
@@ -24,17 +56,18 @@
 
 .overview-title {
   font-size: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #333;
 }
 
 .no-investment {
   background: #fff3cd;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ffeeba;
   border-radius: 8px;
   color: #856404;
   font-weight: 500;
+  margin-bottom: 15px;
   text-align: center;
 }
 
@@ -49,20 +82,23 @@
 .info-card {
   background: #fff;
   border-radius: 12px;
-  padding: 20px;
+  padding: 18px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   text-align: center;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative;
+  z-index: 1;
 }
 
 .info-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
 
 .info-card h3 {
-  font-size: 16px;
+  font-size: 15px;
   color: #555;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .info-card p {
@@ -71,22 +107,18 @@
   color: #111;
 }
 
-/* Status card */
-.status-card p {
-  text-transform: capitalize;
-  font-weight: bold;
-}
-
+/* Status card colors */
 .status-card p.active {
   color: green;
 }
-
 .status-card p.pending {
   color: orange;
 }
-
 .status-card p.matured {
   color: #d4af37; /* gold */
+}
+.status-card p.no-investment {
+  color: #999;
 }
 
 /* Mobile */
