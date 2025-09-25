@@ -16,27 +16,34 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   ];
 
   return (
-    <div className={`sidebar ${isOpen ? "open" : ""}`}>
-      {/* Close button only on mobile */}
-      <button className="sidebar-close" onClick={toggleSidebar}>
-        ✖
+    <>
+      {/* Hamburger button - mobile only */}
+      <button className="hamburger" onClick={toggleSidebar}>
+        ☰
       </button>
 
-      <h2 className="sidebar-title">GrowRich</h2>
+      {/* Sidebar */}
+      <div className={`sidebar ${isOpen ? "open" : ""}`}>
+        <button className="sidebar-close" onClick={toggleSidebar}>
+          ✖
+        </button>
 
-      <ul className="sidebar-menu">
-        {menuItems.map((item) => (
-          <li
-            key={item.name}
-            className={location.pathname === item.path ? "active" : ""}
-          >
-            <Link to={item.path} onClick={toggleSidebar}>
-              {item.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <h2 className="sidebar-title">GrowRich</h2>
+
+        <ul className="sidebar-menu">
+          {menuItems.map((item) => (
+            <li
+              key={item.name}
+              className={location.pathname === item.path ? "active" : ""}
+            >
+              <Link to={item.path} onClick={toggleSidebar}>
+                {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 };
 
