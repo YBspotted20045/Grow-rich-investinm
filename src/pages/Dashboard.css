@@ -1,77 +1,101 @@
 .dashboard-wrapper {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #fffdf8, #fff8f0, #fdf5e6);
+  background: linear-gradient(135deg, #fffdf7, #fff8f0);
 }
 
 /* Main content */
 .dashboard-content {
   flex: 1;
   padding: 20px;
-  margin-left: 220px; /* sidebar width */
+  margin-left: 220px; /* space for sidebar */
 }
 
-@media (max-width: 768px) {
-  .dashboard-content {
-    margin-left: 0;
-    padding: 15px;
-  }
-}
-
-.dashboard-title {
+.dashboard-heading {
   font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
   color: #222;
+  margin-bottom: 10px;
 }
 
-.dashboard-title span {
+.dashboard-heading span {
   color: #d4af37; /* gold */
+  font-weight: bold;
 }
 
-/* Section */
-.dashboard-section {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.dashboard-section h2 {
+.overview-title {
   font-size: 20px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: #333;
 }
 
-/* Cards grid */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 15px;
+.no-investment {
+  background: #fff3cd;
+  padding: 12px;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  color: #856404;
+  font-weight: 500;
+  text-align: center;
 }
 
+/* Grid for cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Card styling */
 .info-card {
-  background: linear-gradient(135deg, #ffffff, #fdf9f3);
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   text-align: center;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease-in-out;
 }
 
 .info-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
 }
 
 .info-card h3 {
-  font-size: 14px;
+  font-size: 16px;
   color: #555;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .info-card p {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: #111;
+}
+
+/* Status card */
+.status-card p {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.status-card p.active {
+  color: green;
+}
+
+.status-card p.pending {
+  color: orange;
+}
+
+.status-card p.matured {
+  color: #d4af37; /* gold */
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .dashboard-content {
+    margin-left: 0;
   }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
