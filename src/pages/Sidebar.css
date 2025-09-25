@@ -2,15 +2,16 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: -250px; /* hidden by default */
-  width: 220px;
+  left: -250px; /* hidden on mobile by default */
+  width: 230px;
   height: 100%;
-  background-color: #fff8f0; /* soft white-gold background */
+  background: linear-gradient(180deg, #ffffff, #fffaf2); /* soft white-gold tone */
   color: #333;
-  padding: 20px;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  padding: 20px 15px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
   transition: left 0.3s ease-in-out;
   z-index: 1000;
+  border-right: 1px solid #eee6d3; /* light golden border */
 }
 
 /* When sidebar is open */
@@ -23,8 +24,9 @@
   font-size: 22px;
   color: #d4af37; /* gold */
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
   font-weight: bold;
+  letter-spacing: 1px;
 }
 
 /* Menu styles */
@@ -35,44 +37,62 @@
 }
 
 .sidebar-menu li {
-  margin: 15px 0;
+  margin: 18px 0;
 }
 
 .sidebar-menu li a {
   text-decoration: none;
   color: #333;
-  font-size: 18px;
-  transition: all 0.2s ease-in-out;
+  font-size: 17px;
+  font-weight: 500;
+  transition: all 0.25s ease-in-out;
   display: block;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px; /* smooth pill look */
 }
 
+/* Active + hover effect */
 .sidebar-menu li.active a,
 .sidebar-menu li a:hover {
   color: #fff;
-  background-color: #d4af37; /* gold highlight */
-  font-weight: bold;
+  background: #d4af37; /* gold highlight */
+  box-shadow: 0 3px 6px rgba(212, 175, 55, 0.4);
 }
 
-/* Close button (visible only on mobile sidebar) */
+/* Close button */
 .sidebar-close {
   background: none;
   border: none;
   font-size: 20px;
-  color: #333;
+  color: #555;
   position: absolute;
   top: 15px;
   right: 15px;
   cursor: pointer;
 }
 
-/* Desktop: always open sidebar */
+/* Hamburger button */
+.hamburger {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+/* Desktop view: sidebar always open */
 @media (min-width: 768px) {
   .sidebar {
     left: 0;
   }
   .sidebar-close {
+    display: none;
+  }
+  .hamburger {
     display: none;
   }
 }
