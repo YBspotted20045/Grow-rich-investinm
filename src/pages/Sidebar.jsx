@@ -1,10 +1,11 @@
 // src/pages/Sidebar.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { name: "Dashboard", path: "/dashboard" },
@@ -15,15 +16,26 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: "Account", path: "/account" },
   ];
 
+  const handleLogout = () => {
+    // remove token or user info
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // redirect to login & prevent back button from returning
+    navigate("/login", { replace: true });
+    window.location.reload(); // ensure fresh state
+  };
+
   return (
     <>
-      {/* Hamburger button - mobile only */}
+      {/* Mobile hamburger */}
       <button className="hamburger" onClick={toggleSidebar}>
         ☰
       </button>
 
       {/* Sidebar */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* Close button only on mobile */}
         <button className="sidebar-close" onClick={toggleSidebar}>
           ✖
         </button>
@@ -42,6 +54,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </li>
           ))}
         </ul>
+
+        {/* Logout Button */}
+        <div className="sidebar-logout">
+          <button onClick={handleLogout}>Logout</button>
+        </div>
       </div>
     </>
   );
