@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-import API from "../axios";
+import API from "./axios";
 import "./Dashboard.css";
 
 const Dashboard = () => {
