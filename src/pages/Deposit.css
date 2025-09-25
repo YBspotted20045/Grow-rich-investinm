@@ -1,79 +1,76 @@
-/* Layout */
 .dashboard-wrapper {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: #fff9f0; /* light gold-ish */
+  background: linear-gradient(135deg, #fff9f0 70%, #f4e2d8 100%);
 }
 
-/* Sidebar container */
-.sidebar-container {
-  transition: transform 0.3s ease;
-}
-@media (max-width: 768px) {
-  .sidebar-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    transform: translateX(-100%);
-    z-index: 1000;
-  }
-  .sidebar-container.open {
-    transform: translateX(0);
-  }
-}
-
-/* Main dashboard area */
-.dashboard-main {
-  flex: 1;
-  padding: 1.5rem;
-}
-
-/* Toggle button */
-.sidebar-toggle {
-  background: #000;
-  color: #ffd700;
-  border: none;
-  font-size: 22px;
+/* Top navigation bar */
+.dashboard-navbar {
+  display: flex;
+  align-items: center;
+  background: #111;
   padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-.sidebar-toggle:hover {
-  background: #333;
+  border-bottom: 2px solid #d4af37;
+  position: sticky;
+  top: 0;
+  z-index: 900;
 }
 
-/* Titles */
-.dashboard-title {
+.hamburger-btn {
+  background: none;
+  border: none;
   font-size: 26px;
+  cursor: pointer;
+  margin-right: 15px;
   color: #d4af37; /* gold */
-  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 16px; /* mobile friendly */
+  font-weight: normal;
+  color: #fff;
+}
+.dashboard-title span {
+  font-weight: bold;
+  color: #d4af37; /* gold */
+}
+
+/* Main content */
+.dashboard-content {
+  flex: 1;
+  padding: 15px;
 }
 
 .dashboard-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   padding: 1rem;
   border: 1px solid #e0dcdc;
   border-radius: 8px;
-  background-color: #fff;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.investment-card,
-.deposit-list li,
-.referral-list li {
-  margin-bottom: 0.5rem;
-  padding: 0.8rem;
-  border-radius: 5px;
-  background-color: #fef9f3; /* subtle gold */
+.dashboard-section h2 {
+  color: #111;
+  border-left: 5px solid #d4af37;
+  padding-left: 10px;
+  margin-bottom: 15px;
 }
 
-h2 {
-  color: #b08d57;
+.investment-card {
+  background: #fff9f0;
+  border-left: 5px solid #d4af37;
+  padding: 1rem;
+  border-radius: 8px;
+  line-height: 1.6;
 }
 
-.loading {
-  text-align: center;
-  font-size: 18px;
-  color: #555;
+.investment-card p {
+  margin: 5px 0;
+  font-size: 15px;
+  color: #333;
+}
+.investment-card strong {
+  color: #111;
 }
