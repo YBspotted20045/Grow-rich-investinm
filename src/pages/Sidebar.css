@@ -1,35 +1,30 @@
-/* Sidebar container */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -250px; /* hidden on mobile by default */
-  width: 230px;
+  left: -250px;
+  width: 220px;
   height: 100%;
-  background: linear-gradient(180deg, #ffffff, #fffaf2); /* soft white-gold tone */
-  color: #333;
-  padding: 20px 15px;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(180deg, #fff, #fff8f0, #f9f4e8);
+  border-right: 1px solid #eee;
+  padding: 20px;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
   transition: left 0.3s ease-in-out;
   z-index: 1000;
-  border-right: 1px solid #eee6d3; /* light golden border */
 }
 
-/* When sidebar is open */
 .sidebar.open {
   left: 0;
 }
 
-/* Sidebar title */
 .sidebar-title {
-  font-size: 22px;
-  color: #d4af37; /* gold */
+  font-size: 24px;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 35px;
-  font-weight: bold;
-  letter-spacing: 1px;
+  color: #d4af37;
+  margin-bottom: 30px;
 }
 
-/* Menu styles */
+/* Menu */
 .sidebar-menu {
   list-style: none;
   padding: 0;
@@ -37,62 +32,44 @@
 }
 
 .sidebar-menu li {
-  margin: 18px 0;
+  margin: 12px 0;
 }
 
 .sidebar-menu li a {
-  text-decoration: none;
-  color: #333;
-  font-size: 17px;
-  font-weight: 500;
-  transition: all 0.25s ease-in-out;
   display: block;
   padding: 10px 14px;
-  border-radius: 10px; /* smooth pill look */
+  border-radius: 8px;
+  text-decoration: none;
+  color: #222;
+  font-size: 16px;
+  transition: all 0.2s ease-in-out;
 }
 
-/* Active + hover effect */
 .sidebar-menu li.active a,
 .sidebar-menu li a:hover {
+  background: #d4af37;
   color: #fff;
-  background: #d4af37; /* gold highlight */
-  box-shadow: 0 3px 6px rgba(212, 175, 55, 0.4);
+  font-weight: 600;
 }
 
-/* Close button */
+/* Hamburger toggle */
 .sidebar-close {
   background: none;
   border: none;
-  font-size: 20px;
-  color: #555;
+  font-size: 24px;
+  color: #d4af37;
   position: absolute;
   top: 15px;
   right: 15px;
   cursor: pointer;
 }
 
-/* Hamburger button */
-.hamburger {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  font-size: 26px;
-  background: none;
-  border: none;
-  color: #333;
-  cursor: pointer;
-  z-index: 1100;
-}
-
-/* Desktop view: sidebar always open */
+/* Desktop view */
 @media (min-width: 768px) {
   .sidebar {
     left: 0;
   }
   .sidebar-close {
-    display: none;
-  }
-  .hamburger {
     display: none;
   }
 }
