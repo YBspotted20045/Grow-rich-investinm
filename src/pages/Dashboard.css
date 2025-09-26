@@ -43,6 +43,24 @@
   z-index: 1; /* ensures text/cards are above background */
 }
 
+/* Welcome card */
+.welcome-card {
+  background-color: #000; /* black */
+  color: #d4af37; /* gold */
+  padding: 20px 25px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  z-index: 2;
+  position: relative;
+}
+
+.welcome-card span {
+  color: #d4af37;
+}
+
 .dashboard-heading {
   font-size: 22px;
   color: #222;
@@ -119,6 +137,37 @@
 }
 .status-card p.no-investment {
   color: #999;
+}
+
+/* Gold-themed cards */
+.gold-card {
+  background: linear-gradient(
+    135deg,
+    #d4af37 25%,
+    #f5e1a4 25%,
+    #f5e1a4 50%,
+    #d4af37 50%,
+    #d4af37 75%,
+    #f5e1a4 75%,
+    #f5e1a4
+  );
+  background-size: 28.28px 28.28px; /* striped pattern */
+  color: #000;
+}
+
+.gold-card h3,
+.gold-card p {
+  color: #000;
+}
+
+.gold-card:hover {
+  background: #000;
+  color: #d4af37;
+}
+
+.gold-card:hover h3,
+.gold-card:hover p {
+  color: #d4af37;
 }
 
 /* Mobile */
