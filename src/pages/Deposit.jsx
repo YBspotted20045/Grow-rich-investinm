@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Layout from "../components/Layout";
 import API from "./axios";
 import "./Deposit.css";
 
@@ -42,7 +43,7 @@ const Deposit = () => {
   };
 
   return (
-    <div className="deposit-wrapper">
+    <Layout>
       <h1 className="deposit-title">Make a Deposit</h1>
       <p className="deposit-subtitle">Choose an investment amount to proceed:</p>
 
@@ -84,7 +85,7 @@ const Deposit = () => {
       )}
 
       {message && <p className="deposit-message">{message}</p>}
-    </div>
+    </Layout>
   );
 };
 
