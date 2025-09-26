@@ -17,13 +17,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   ];
 
   const handleLogout = () => {
-    // remove token or user info
+    // Clear authentication
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    // redirect to login & prevent back button from returning
+    // Redirect to login and block back navigation
     navigate("/login", { replace: true });
-    window.location.reload(); // ensure fresh state
+    window.location.reload();
   };
 
   return (
@@ -35,7 +35,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Sidebar */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        {/* Close button only on mobile */}
+        {/* Close button (only mobile) */}
         <button className="sidebar-close" onClick={toggleSidebar}>
           ✖
         </button>
@@ -57,7 +57,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
         {/* Logout Button */}
         <div className="sidebar-logout">
-          <button onClick={handleLogout}>Logout</button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </div>
     </>
