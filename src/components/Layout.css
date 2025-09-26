@@ -1,0 +1,132 @@
+/* src/pages/Layout.css */
+
+/* Global wrapper */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #111111;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Sidebar styles */
+.layout .sidebar {
+  width: 240px;
+  background: #111111; /* black */
+  color: #ffffff;
+  padding: 20px 16px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(212, 175, 55, 0.3); /* thin gold straight line */
+}
+
+/* Sidebar title / brand */
+.layout .sidebar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffd700; /* gold */
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+/* Menu */
+.layout .sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.layout .sidebar-menu li {
+  margin: 12px 0;
+}
+
+.layout .sidebar-menu a {
+  text-decoration: none;
+  color: #e6e6e6;
+  font-weight: 500;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.layout .sidebar-menu a:hover,
+.layout .sidebar-menu .active a {
+  background: #ffd700;
+  color: #111111;
+}
+
+/* Logout button */
+.layout .sidebar-logout {
+  margin-top: 20px;
+}
+
+.layout .sidebar-logout button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ffd700;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffd700;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.layout .sidebar-logout button:hover {
+  background: #ffd700;
+  color: #111111;
+}
+
+/* Main content area */
+.layout .content {
+  flex: 1;
+  padding: 24px;
+  position: relative;
+  background: #ffffff;
+}
+
+/* Decorative subtle dots */
+.layout .content::before {
+  content: "";
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d4af37;
+  opacity: 0.1;
+}
+
+.layout .content::after {
+  content: "";
+  position: absolute;
+  bottom: 60px;
+  right: 80px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #111;
+  opacity: 0.08;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    height: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+  .layout .sidebar.open {
+    left: 0;
+  }
+  .layout .content {
+    padding: 16px;
+  }
+}
