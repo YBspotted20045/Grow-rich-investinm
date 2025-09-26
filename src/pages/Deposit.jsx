@@ -1,66 +1,89 @@
 import React, { useState } from "react";
-import axios from "./axios.js";
+import API from "./axios";
 import "./Deposit.css";
 
 const Deposit = () => {
-  const [amount, setAmount] = useState("");
+  const [selectedAmount, setSelectedAmount] = useState(null);
   const [receipt, setReceipt] = useState(null);
   const [message, setMessage] = useState("");
 
-  const handleFileChange = (e) => {
-    setReceipt(e.target.files[0]);
+  const handleAmountClick = (amount) => {
+    setSelectedAmount(amount);
+    setMessage("");
+    setReceipt(null);
   };
 
-  const handleSubmit = async (e) => {
+  const handleUpload = async (e) => {
     e.preventDefault();
-    if (!amount || !receipt) {
-      setMessage("Please provide both amount and receipt.");
+    if (!receipt || !selectedAmount) {
+      setMessage("Please select amount and upload a receipt.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("amount", amount);
     formData.append("receipt", receipt);
+    formData.append("amount", selectedAmount);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post("/deposits/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      const res = await API.post("/deposits/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      setMessage(res.data.message || "Deposit uploaded successfully.");
-      setAmount("");
-      setReceipt(null);
+      if (res.data.success) {
+        setMessage(`Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully.`);
+        setReceipt(null);
+        setSelectedAmount(null);
+      } else {
+        setMessage("Upload failed, try again.");
+      }
     } catch (err) {
-      console.error("Deposit error:", err);
-      setMessage(err.response?.data?.message || "Error uploading deposit.");
+      console.error("Upload error:", err);
+      setMessage("Error uploading receipt. Please try again.");
     }
   };
 
   return (
-    <div className="deposit-container">
-      <h1>Upload Deposit</h1>
-      {message && <p className="message">{message}</p>}
-      <form onSubmit={handleSubmit} className="deposit-form">
-        <label>
-          Amount:
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter deposit amount"
-          />
-        </label>
+    <div className="deposit-wrapper">
+      <h1 className="deposit-title">Make a Deposit</h1>
+      <p className="deposit-subtitle">Choose an investment amount to proceed:</p>
 
-        <label>
-          Upload Receipt:
-          <input type="file" onChange={handleFileChange} accept="image/*" />
-        </label>
+      <div className="deposit-options">
+        {[10000, 20000].map((amount) => (
+          <div
+            key={amount}
+            className={`deposit-card ${selectedAmount === amount ? "selected" : ""}`}
+            onClick={() => handleAmountClick(amount)}
+          >
+            ₦{amount.toLocaleString()}
+          </div>
+        ))}
+      </div>
 
-        <button type="submit">Submit Deposit</button>
-      </form>
+      {selectedAmount && (
+        <div className="deposit-form">
+          <h2>Payment Instructions</h2>
+          <p>
+            Please pay <strong>₦{selectedAmount.toLocaleString()}</strong> to the account below
+            and upload your receipt.
+          </p>
+          <div className="account-box">
+            <p><strong>Bank:</strong> PalmPay</p>
+            <p><strong>Account Number:</strong> 8984550866</p>
+            <p><strong>Account Name:</strong> Nnaji Kelvin Somtochukwu</p>
+          </div>
+
+          <form onSubmit={handleUpload} className="upload-form">
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              onChange={(e) => setReceipt(e.target.files[0])}
+              required
+            />
+            <button type="submit" className="upload-btn">Upload Receipt</button>
+          </form>
+        </div>
+      )}
+
+      {message && <p className="deposit-message">{message}</p>}
     </div>
   );
 };
