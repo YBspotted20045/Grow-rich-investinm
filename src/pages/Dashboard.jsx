@@ -43,36 +43,39 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <h1 className="dashboard-heading">
-        Welcome back, <span>{user ? user.username : "Investor"}</span>
-      </h1>
+      {/* Updated Welcome Card */}
+      <div className="welcome-card">
+        <h1>
+          Welcome back, <span>{user ? user.username : "Investor"}</span>
+        </h1>
+      </div>
 
       <h2 className="overview-title">Your Investment Overview</h2>
 
       {!investment && <p className="no-investment">⚠️ No active investment yet</p>}
 
       <div className="cards-grid">
-        <div className="info-card">
+        <div className="info-card gold-card">
           <h3>Investment Amount</h3>
           <p>₦{inv.amount.toLocaleString()}</p>
         </div>
-        <div className="info-card">
+        <div className="info-card gold-card">
           <h3>Expected Return</h3>
           <p>₦{earn.maxPayout.toLocaleString()}</p>
         </div>
-        <div className="info-card">
+        <div className="info-card gold-card">
           <h3>Accrued Earnings</h3>
           <p>₦{earn.accrued.toLocaleString()}</p>
         </div>
-        <div className="info-card">
+        <div className="info-card gold-card">
           <h3>Available to Withdraw</h3>
           <p>₦{earn.available.toLocaleString()}</p>
         </div>
-        <div className="info-card">
+        <div className="info-card gold-card">
           <h3>Maturity Date</h3>
           <p>{inv.maturityDate ? new Date(inv.maturityDate).toDateString() : "—"}</p>
         </div>
-        <div className="info-card status-card">
+        <div className="info-card status-card gold-card">
           <h3>Status</h3>
           <p className={inv.status.replace(" ", "-")}>{inv.status}</p>
         </div>
