@@ -7,7 +7,8 @@ import Home from "./pages/Home.jsx";
 import Signup from "./pages/Signup.jsx";  
 import Login from "./pages/Login.jsx";  
 import Dashboard from "./pages/Dashboard.jsx";  
-import ProtectedRoute from "./components/ProtectedRoute.jsx"; // 👈 added this  
+import Deposit from "./pages/Deposit.jsx";   // 👈 added this
+import ProtectedRoute from "./components/ProtectedRoute.jsx";  
 
 const root = ReactDOM.createRoot(document.getElementById("root"));  
 
@@ -19,12 +20,21 @@ root.render(
       <Route path="/login" element={<Login />} />  
       <Route path="/signup" element={<Signup />} />  
 
-      {/* Protected route for dashboard */}  
+      {/* Protected routes */}  
       <Route  
         path="/dashboard"  
         element={  
           <ProtectedRoute>  
             <Dashboard />  
+          </ProtectedRoute>  
+        }  
+      />  
+
+      <Route  
+        path="/deposit"  
+        element={  
+          <ProtectedRoute>  
+            <Deposit />  
           </ProtectedRoute>  
         }  
       />  
