@@ -1,3 +1,4 @@
+// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
@@ -8,6 +9,7 @@ const Dashboard = () => {
   const [investment, setInvestment] = useState(null);
   const [earnings, setEarnings] = useState(null);
 
+  // Fetch user info
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -20,6 +22,7 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
+  // Fetch investment + earnings (auto-linked to deposit)
   useEffect(() => {
     const fetchInvestment = async () => {
       try {
@@ -35,7 +38,7 @@ const Dashboard = () => {
     fetchInvestment();
   }, []);
 
-  const defaultData = { amount: 0, status: "no investment", maturityDate: null };
+  const defaultData = { amount: 0, status: "No Investment", maturityDate: null };
   const defaultEarnings = { maxPayout: 0, accrued: 0, available: 0 };
 
   const inv = investment || defaultData;
@@ -43,7 +46,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      {/* Updated Welcome Card */}
+      {/* Welcome Card */}
       <div className="welcome-card">
         <h1>
           Welcome back, <span>{user ? user.username : "Investor"}</span>
@@ -52,32 +55,41 @@ const Dashboard = () => {
 
       <h2 className="overview-title">Your Investment Overview</h2>
 
-      {!investment && <p className="no-investment">⚠️ No active investment yet</p>}
+      {!investment && (
+        <p className="no-investment">⚠️ No active investment yet</p>
+      )}
 
+      {/* Grid of Info Cards */}
       <div className="cards-grid">
-        <div className="info-card gold-card">
+        <div className="info-card black-card">
           <h3>Investment Amount</h3>
           <p>₦{inv.amount.toLocaleString()}</p>
         </div>
-        <div className="info-card gold-card">
+        <div className="info-card black-card">
           <h3>Expected Return</h3>
           <p>₦{earn.maxPayout.toLocaleString()}</p>
         </div>
-        <div className="info-card gold-card">
+        <div className="info-card black-card">
           <h3>Accrued Earnings</h3>
           <p>₦{earn.accrued.toLocaleString()}</p>
         </div>
-        <div className="info-card gold-card">
+        <div className="info-card black-card">
           <h3>Available to Withdraw</h3>
           <p>₦{earn.available.toLocaleString()}</p>
         </div>
-        <div className="info-card gold-card">
+        <div className="info-card black-card">
           <h3>Maturity Date</h3>
-          <p>{inv.maturityDate ? new Date(inv.maturityDate).toDateString() : "—"}</p>
+          <p>
+            {inv.maturityDate
+              ? new Date(inv.maturityDate).toDateString()
+              : "—"}
+          </p>
         </div>
-        <div className="info-card status-card gold-card">
+        <div className="info-card black-card status-card">
           <h3>Status</h3>
-          <p className={inv.status.replace(" ", "-")}>{inv.status}</p>
+          <p className={inv.status.replace(" ", "-").toLowerCase()}>
+            {inv.status}
+          </p>
         </div>
       </div>
     </Layout>
