@@ -2,27 +2,33 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  color: #fff;
+  background: #000; /* black background */
+  min-height: 100vh;
 }
 
 .withdrawal-title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: bold;
   margin-bottom: 20px;
   text-align: center;
+  color: #d4af37; /* gold */
 }
 
 .withdrawal-message {
   text-align: center;
   margin-bottom: 15px;
-  color: #007bff;
+  font-weight: bold;
+  color: #d4af37; /* gold feedback */
 }
 
 .withdrawal-card {
-  background: #fff;
+  background: #111; /* dark card */
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 1px solid #d4af37;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 }
 
 .withdrawal-form {
@@ -31,23 +37,36 @@
   gap: 12px;
 }
 
+.withdrawal-form label {
+  color: #fff;
+  font-weight: 600;
+}
+
 .withdrawal-form input {
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #d4af37;
+  background: #000;
+  color: #fff;
+}
+
+.withdrawal-form input::placeholder {
+  color: #aaa;
 }
 
 .withdrawal-form button {
-  background: #007bff;
-  color: #fff;
+  background: #d4af37;
+  color: #000;
   border: none;
   padding: 12px;
   border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 .withdrawal-form button:hover {
-  background: #0056b3;
+  background: #b9962e; /* darker gold */
 }
 
 .withdrawal-list {
@@ -59,8 +78,9 @@
 .withdrawal-list li {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  color: #fff;
 }
 
 .status {
@@ -73,7 +93,7 @@
 }
 
 .status.approved {
-  color: green;
+  color: #4caf50; /* green */
 }
 
 .status.rejected {
@@ -82,5 +102,5 @@
 
 .no-withdrawals {
   text-align: center;
-  color: #666;
+  color: #aaa;
 }
