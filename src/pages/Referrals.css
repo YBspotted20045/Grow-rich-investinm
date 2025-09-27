@@ -58,3 +58,32 @@
 .referrals-table tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.05);
 }
+.referral-link {
+  color: #d4af37;
+  text-decoration: underline;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.referral-link:hover {
+  color: #ffdf00;
+  text-decoration: none;
+}
+
+.copy-btn {
+  background: #d4af37;
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: 0.3s ease;
+}
+
+.copy-btn:hover {
+  background: #b08d37;
+  transform: scale(1.05);
+}
