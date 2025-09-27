@@ -1,5 +1,6 @@
+// src/pages/Referrals.jsx
 import React, { useEffect, useState } from "react";
-import axios from "./axios.js";
+import API from "./axios";
 import "./Referrals.css";
 
 const Referrals = () => {
@@ -7,11 +8,11 @@ const Referrals = () => {
 
   const fetchReferrals = async () => {
     try {
-      const token = localStorage.getItem("token"); // User token
-      const res = await axios.get("/referrals", {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/referrals", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setReferrals(res.data.referrals);
+      setReferrals(res.data.referrals || []);
     } catch (err) {
       console.error("Fetch referrals error:", err);
     }
@@ -23,32 +24,35 @@ const Referrals = () => {
 
   return (
     <div className="referrals-container">
-      <h1>My Referrals</h1>
+      <h1 className="referrals-title">My Referrals</h1>
+
       {referrals.length === 0 ? (
-        <p>No referrals yet.</p>
+        <p className="no-referrals">⚠️ No referrals yet.</p>
       ) : (
-        <table className="referrals-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Investment Amount</th>
-              <th>Investment Date</th>
-              <th>Maturity Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {referrals.map((ref) => (
-              <tr key={ref._id}>
-                <td>{ref.username}</td>
-                <td>{ref.email}</td>
-                <td>₦{ref.investmentAmount}</td>
-                <td>{new Date(ref.investmentDate).toLocaleDateString()}</td>
-                <td>{new Date(ref.maturityDate).toLocaleDateString()}</td>
+        <div className="referrals-card">
+          <table className="referrals-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Investment Amount</th>
+                <th>Investment Date</th>
+                <th>Maturity Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {referrals.map((ref) => (
+                <tr key={ref._id}>
+                  <td>{ref.username}</td>
+                  <td>{ref.email}</td>
+                  <td>₦{ref.investmentAmount.toLocaleString()}</td>
+                  <td>{new Date(ref.investmentDate).toLocaleDateString()}</td>
+                  <td>{new Date(ref.maturityDate).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
