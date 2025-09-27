@@ -4,7 +4,7 @@ import "./Investment.css";
 
 const Investment = () => {
   const [amount, setAmount] = useState("");
-  const [plan, setPlan] = useState("5000");
+  const [plan, setPlan] = useState("10000"); // default plan
   const [message, setMessage] = useState("");
   const [investments, setInvestments] = useState([]);
 
@@ -27,7 +27,7 @@ const Investment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount) {
-      setMessage("Please enter an amount.");
+      setMessage("⚠️ Please enter an amount.");
       return;
     }
 
@@ -38,49 +38,60 @@ const Investment = () => {
         { amount, plan },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage(res.data.message || "Investment started successfully.");
+      setMessage(res.data.message || "✅ Investment started successfully.");
       setAmount("");
       fetchInvestments();
     } catch (err) {
       console.error("Investment error:", err);
-      setMessage(err.response?.data?.message || "Error starting investment.");
+      setMessage(err.response?.data?.message || "❌ Error starting investment.");
     }
   };
 
   return (
-    <div className="investment-container">
-      <h1>Start a New Investment</h1>
-      {message && <p className="message">{message}</p>}
-      <form onSubmit={handleSubmit} className="investment-form">
-        <label>
-          Investment Plan:
-          <select value={plan} onChange={(e) => setPlan(e.target.value)}>
-            <option value="5000">₦5,000</option>
-            <option value="10000">₦10,000</option>
-            <option value="15000">₦15,000</option>
-          </select>
-        </label>
-        <label>
-          Amount:
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter investment amount"
-          />
-        </label>
-        <button type="submit">Invest Now</button>
-      </form>
+    <div className="investment-wrapper">
+      <h1 className="investment-title">📈 Start a New Investment</h1>
+      {message && <p className="investment-message">{message}</p>}
 
-      <h2>Your Investments</h2>
-      <ul className="investment-list">
-        {investments.map((inv) => (
-          <li key={inv._id}>
-            {inv.amount} - {inv.plan} - {inv.status} -{" "}
-            {new Date(inv.startDate).toLocaleDateString()}
-          </li>
-        ))}
-      </ul>
+      {/* Investment Form Card */}
+      <div className="investment-card">
+        <form onSubmit={handleSubmit} className="investment-form">
+          <label>
+            Investment Plan:
+            <select value={plan} onChange={(e) => setPlan(e.target.value)}>
+              <option value="10000">₦10,000</option>
+              <option value="20000">₦20,000</option>
+            </select>
+          </label>
+          <label>
+            Amount:
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter investment amount"
+            />
+          </label>
+          <button type="submit">Invest Now</button>
+        </form>
+      </div>
+
+      {/* Investment History Card */}
+      <div className="investment-card">
+        <h2>Your Investments</h2>
+        {investments.length === 0 ? (
+          <p className="no-investments">No investments yet.</p>
+        ) : (
+          <ul className="investment-list">
+            {investments.map((inv) => (
+              <li key={inv._id}>
+                <span>₦{inv.amount.toLocaleString()}</span>
+                <span className={`status ${inv.status}`}>{inv.status}</span>
+                <span>{new Date(inv.startDate).toLocaleDateString()}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
