@@ -53,7 +53,7 @@ const Withdrawal = () => {
 
       {message && <p className="withdrawal-message">{message}</p>}
 
-      {/* Card for request */}
+      {/* Request Card */}
       <div className="withdrawal-card">
         <form onSubmit={handleSubmit} className="withdrawal-form">
           <label htmlFor="amount">Amount (₦)</label>
@@ -68,7 +68,7 @@ const Withdrawal = () => {
         </form>
       </div>
 
-      {/* Card for history */}
+      {/* History Card */}
       <div className="withdrawal-card">
         <h2>Your Withdrawals</h2>
         {withdrawals.length === 0 ? (
