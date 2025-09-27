@@ -1,3 +1,4 @@
+// src/pages/Withdrawal.jsx
 import React, { useState, useEffect } from "react";
 import axios from "./axios.js";
 import "./Withdrawal.css";
@@ -26,7 +27,7 @@ const Withdrawal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount) {
-      setMessage("Please enter an amount.");
+      setMessage("⚠️ Please enter an amount.");
       return;
     }
 
@@ -37,41 +38,53 @@ const Withdrawal = () => {
         { amount },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage(res.data.message || "Withdrawal requested successfully.");
+      setMessage(res.data.message || "✅ Withdrawal requested successfully.");
       setAmount("");
       fetchWithdrawals();
     } catch (err) {
       console.error("Withdrawal error:", err);
-      setMessage(err.response?.data?.message || "Error requesting withdrawal.");
+      setMessage(err.response?.data?.message || "❌ Error requesting withdrawal.");
     }
   };
 
   return (
-    <div className="withdrawal-container">
-      <h1>Request Withdrawal</h1>
-      {message && <p className="message">{message}</p>}
-      <form onSubmit={handleSubmit} className="withdrawal-form">
-        <label>
-          Amount:
+    <div className="withdrawal-wrapper">
+      <h1 className="withdrawal-title">💸 Request Withdrawal</h1>
+
+      {message && <p className="withdrawal-message">{message}</p>}
+
+      {/* Card for request */}
+      <div className="withdrawal-card">
+        <form onSubmit={handleSubmit} className="withdrawal-form">
+          <label htmlFor="amount">Amount (₦)</label>
           <input
+            id="amount"
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter withdrawal amount"
           />
-        </label>
+          <button type="submit">Request Withdrawal</button>
+        </form>
+      </div>
 
-        <button type="submit">Request Withdrawal</button>
-      </form>
-
-      <h2>Your Withdrawals</h2>
-      <ul className="withdrawal-list">
-        {withdrawals.map((w) => (
-          <li key={w._id}>
-            {w.amount} - {w.status} - {new Date(w.createdAt).toLocaleDateString()}
-          </li>
-        ))}
-      </ul>
+      {/* Card for history */}
+      <div className="withdrawal-card">
+        <h2>Your Withdrawals</h2>
+        {withdrawals.length === 0 ? (
+          <p className="no-withdrawals">No withdrawals yet.</p>
+        ) : (
+          <ul className="withdrawal-list">
+            {withdrawals.map((w) => (
+              <li key={w._id}>
+                <span>₦{w.amount.toLocaleString()}</span>
+                <span className={`status ${w.status}`}>{w.status}</span>
+                <span>{new Date(w.createdAt).toLocaleDateString()}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
