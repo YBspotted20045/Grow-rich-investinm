@@ -11,7 +11,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Deposit", path: "/deposit" },
     { name: "Withdraw", path: "/withdraw" },
-    { name: "Investment", path: "/investment" },
+    // 🚫 Removed Investment
     { name: "Referrals", path: "/referrals" },
     { name: "Account", path: "/account" },
   ];
