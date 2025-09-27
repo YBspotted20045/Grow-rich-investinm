@@ -9,7 +9,6 @@ import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";  
 import Deposit from "./pages/Deposit.jsx";  
 import Withdraw from "./pages/Withdrawal.jsx";  
-import Investment from "./pages/Investment.jsx";   // 👈 add this
 import ProtectedRoute from "./components/ProtectedRoute.jsx";  
 import Layout from "./components/Layout.jsx";  
 
@@ -52,17 +51,6 @@ root.render(
           <ProtectedRoute>  
             <Layout>  
               <Withdraw />  
-            </Layout>  
-          </ProtectedRoute>  
-        }  
-      />  
-
-      <Route  
-        path="/investment"   // 👈 fixed route
-        element={  
-          <ProtectedRoute>  
-            <Layout>  
-              <Investment />  
             </Layout>  
           </ProtectedRoute>  
         }  
