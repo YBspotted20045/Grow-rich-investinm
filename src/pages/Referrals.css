@@ -1,24 +1,60 @@
 .referrals-container {
   padding: 2rem;
   min-height: 100vh;
-  background-color: #fff9f0; /* light gold */
-  color: #333;
+  background: linear-gradient(135deg, #000 30%, #111 100%);
+  color: #d4af37;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.referrals-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #d4af37;
+  text-transform: uppercase;
+}
+
+.no-referrals {
+  margin-top: 2rem;
+  color: #fff;
+  background: rgba(212, 175, 55, 0.1);
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.referrals-card {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(26, 26, 26, 0.8);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  overflow-x: auto;
 }
 
 .referrals-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 2rem;
 }
 
 .referrals-table th,
 .referrals-table td {
   padding: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(212, 175, 55, 0.3);
   text-align: center;
+  color: #fff;
 }
 
 .referrals-table th {
-  background-color: #b08d57; /* gold */
-  color: white;
+  background: #d4af37;
+  color: #000;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.referrals-table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
 }
