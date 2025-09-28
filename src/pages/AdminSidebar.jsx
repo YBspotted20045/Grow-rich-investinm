@@ -1,32 +1,25 @@
-// src/pages/AdminSidebar.jsx
+// src/components/AdminSidebar.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import "./AdminSidebar.css"; // CSS file for styling
+import { Link } from "react-router-dom";
+import "./AdminSidebar.css";
 
-const AdminSidebar = () => {
-  const location = useLocation();
-
-  const menuItems = [
-    { name: "Dashboard", path: "/admin/dashboard" },
-    { name: "Users", path: "/admin/users" },
-    { name: "Deposits", path: "/admin/deposits" },
-    { name: "Withdrawals", path: "/admin/withdrawals" },
-  ];
-
+const AdminSidebar = ({ isOpen, closeSidebar }) => {
   return (
-    <div className="admin-sidebar">
-      <h2 className="admin-sidebar-title">Admin Panel</h2>
-      <ul className="admin-sidebar-menu">
-        {menuItems.map((item) => (
-          <li
-            key={item.name}
-            className={location.pathname === item.path ? "active" : ""}
-          >
-            <Link to={item.path}>{item.name}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <aside className={`admin-sidebar ${isOpen ? "open" : ""}`}>
+      <button className="close-btn" onClick={closeSidebar}>
+        ✖
+      </button>
+      <h2 className="sidebar-title">Admin Panel</h2>
+      <nav>
+        <ul>
+          <li><Link to="/admin/dashboard" onClick={closeSidebar}>Dashboard</Link></li>
+          <li><Link to="/admin/users" onClick={closeSidebar}>Manage Users</Link></li>
+          <li><Link to="/admin/deposits" onClick={closeSidebar}>Deposits</Link></li>
+          <li><Link to="/admin/withdrawals" onClick={closeSidebar}>Withdrawals</Link></li>
+          <li><Link to="/admin/referrals" onClick={closeSidebar}>Referrals</Link></li>
+        </ul>
+      </nav>
+    </aside>
   );
 };
 
