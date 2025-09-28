@@ -1,24 +1,28 @@
 // src/components/AdminLayout.jsx
 import React, { useState } from "react";
-import AdminSidebar from "../pages/AdminSidebar.jsx";
+import AdminSidebar from "../AdminSidebar.jsx";
 import "./AdminLayout.css";
 
 const AdminLayout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="admin-layout">
-      <AdminSidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      {/* ✅ Mobile hamburger button */}
+      <button
+        className="hamburger-btn"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        ☰
+      </button>
 
-      <main className="admin-content">
-        <header className="admin-header">
-          <button className="admin-toggle-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            ☰
-          </button>
-          <h2>Admin Panel</h2>
-        </header>
-        <div className="admin-main">{children}</div>
-      </main>
+      {/* Sidebar (collapsible) */}
+      <AdminSidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
+
+      {/* Main content */}
+      <div className={`admin-main ${sidebarOpen ? "sidebar-open" : ""}`}>
+        {children}
+      </div>
     </div>
   );
 };
