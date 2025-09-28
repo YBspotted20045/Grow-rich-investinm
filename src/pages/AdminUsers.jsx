@@ -1,4 +1,3 @@
-// src/pages/AdminUsers.jsx
 import React, { useEffect, useState } from "react";
 import axios from "./axios.js";
 import "./AdminUsers.css";
@@ -6,12 +5,14 @@ import "./AdminUsers.css";
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem("token"); // ✅ FIXED
+      const token = localStorage.getItem("token"); // ✅ should be the same one saved at login
       if (!token) {
-        console.error("No token found, please login again.");
+        setError("No token found. Please login again.");
+        setLoading(false);
         return;
       }
 
@@ -22,6 +23,7 @@ const AdminUsers = () => {
       setUsers(res.data);
     } catch (err) {
       console.error("Fetch users error:", err);
+      setError(err.response?.data?.message || "Failed to fetch users.");
     } finally {
       setLoading(false);
     }
@@ -29,7 +31,7 @@ const AdminUsers = () => {
 
   const toggleBan = async (userId, isBanned) => {
     try {
-      const token = localStorage.getItem("token"); // ✅ FIXED
+      const token = localStorage.getItem("token");
       if (!token) return;
 
       await axios.put(
@@ -41,6 +43,7 @@ const AdminUsers = () => {
       fetchUsers(); // refresh list
     } catch (err) {
       console.error("Toggle ban error:", err);
+      setError("Failed to update user status.");
     }
   };
 
@@ -49,6 +52,7 @@ const AdminUsers = () => {
   }, []);
 
   if (loading) return <p>Loading users...</p>;
+  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
   return (
     <div className="admin-users-container">
