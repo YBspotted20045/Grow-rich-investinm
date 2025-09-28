@@ -1,6 +1,6 @@
 // src/components/AdminLayout.jsx
 import React, { useState } from "react";
-import AdminSidebar from "../AdminSidebar.jsx";
+import AdminSidebar from "../pages/AdminSidebar.jsx";  // ✅ Corrected path
 import "./AdminLayout.css";
 
 const AdminLayout = ({ children }) => {
@@ -17,7 +17,10 @@ const AdminLayout = ({ children }) => {
       </button>
 
       {/* Sidebar (collapsible) */}
-      <AdminSidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
+      <AdminSidebar
+        isOpen={sidebarOpen}
+        closeSidebar={() => setSidebarOpen(false)}
+      />
 
       {/* Main content */}
       <div className={`admin-main ${sidebarOpen ? "sidebar-open" : ""}`}>
