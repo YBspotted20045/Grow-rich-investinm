@@ -9,7 +9,9 @@ import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Deposit from "./pages/Deposit.jsx";
 import Withdraw from "./pages/Withdrawal.jsx";
-import Referrals from "./pages/Referrals.jsx";  // ✅ import referrals page
+import Referrals from "./pages/Referrals.jsx";
+import Account from "./pages/Account.jsx";   // ✅ import account page
+
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 
@@ -57,13 +59,24 @@ root.render(
         }
       />
 
-      {/* ✅ New Referrals route */}
       <Route
         path="/referrals"
         element={
           <ProtectedRoute>
             <Layout>
               <Referrals />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ✅ New Account route */}
+      <Route
+        path="/account"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Account />
             </Layout>
           </ProtectedRoute>
         }
