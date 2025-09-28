@@ -1,30 +1,66 @@
 .admin-dashboard-container {
-  padding: 2rem;
-  min-height: 100vh;
-  background-color: #fff9f0; /* light gold */
-  color: #333;
+  padding: 20px;
 }
 
-.stats-cards {
-  display: flex;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.card {
-  background-color: #b08d57; /* gold */
-  color: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  flex: 1;
+.admin-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
   text-align: center;
 }
 
+/* ✅ Responsive card grid */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
 .card h2 {
-  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .card p {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: bold;
+  color: #0a7cff;
+}
+
+/* ✅ Mobile adjustments */
+@media (max-width: 768px) {
+  .admin-title {
+    font-size: 1.5rem;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+  }
+
+  .card p {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard-container {
+    padding: 10px;
+  }
+
+  .stats-cards {
+    grid-template-columns: 1fr; /* stack on small phones */
+  }
 }
