@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "./axios.js";
 import "./Signup.css"; // CSS specific to this page
 
@@ -26,6 +27,17 @@ const Signup = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const location = useLocation();
+
+  // ✅ Auto-fill referral code from URL (if any)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const refCode = params.get("ref");
+    if (refCode) {
+      setReferral(refCode);
+    }
+  }, [location]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -163,21 +175,16 @@ const Signup = () => {
                   <li>
                     Your investment may generate profits, but{" "}
                     <strong>only while the platform is active and running</strong>.
-                    If the website stops operating, your investment and potential
-                    profits may be lost.
                   </li>
                   <li>
                     GrowRich Investments does not guarantee continuous operation.
-                    The website <strong>may close or shut down at any time</strong>{" "}
-                    without notice.
+                    The website <strong>may close at any time</strong> without notice.
                   </li>
                   <li>
-                    Any profits are limited to the time the platform remains
-                    functional and may change or stop at any time.
+                    Profits are limited to the time the platform remains functional.
                   </li>
                   <li>
-                    GrowRich Investments is <strong>not a bank or financial institution</strong>;
-                    it is an online platform for investments at your own risk.
+                    GrowRich Investments is <strong>not a bank or financial institution</strong>.
                   </li>
                   <li>
                     By signing up, you confirm that you understand the risks and
