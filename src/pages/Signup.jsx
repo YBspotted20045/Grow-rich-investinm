@@ -64,7 +64,7 @@ const Signup = () => {
         email,
         password,
         state,
-        referral,
+        referralCode: referral, // ✅ FIXED: must match backend
       });
       setSuccess("Signup successful! Please login.");
       setFullName("");
