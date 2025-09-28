@@ -11,10 +11,13 @@ import Deposit from "./pages/Deposit.jsx";
 import Withdraw from "./pages/Withdrawal.jsx";
 import Referrals from "./pages/Referrals.jsx";
 import Account from "./pages/Account.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx"; // ✅ import admin dashboard
+
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminUsers from "./pages/AdminUsers.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
+import AdminLayout from "./components/AdminLayout.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -82,12 +85,25 @@ root.render(
         }
       />
 
-      {/* ✅ Admin-only route */}
+      {/* ✅ Admin-only routes */}
       <Route
         path="/admin-dashboard"
         element={
-          <ProtectedRoute>
-            <AdminDashboard />
+          <ProtectedRoute adminOnly={true}>
+            <AdminLayout>
+              <AdminDashboard />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminLayout>
+              <AdminUsers />
+            </AdminLayout>
           </ProtectedRoute>
         }
       />
