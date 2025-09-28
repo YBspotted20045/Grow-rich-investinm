@@ -1,7 +1,7 @@
 // src/pages/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
-import axios from "./axios.js";
-import AdminLayout from "../components/AdminLayout.jsx"; // ✅ Layout wrapper
+import axios from "../axios.js";
+import AdminLayout from "../components/AdminLayout.jsx";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
@@ -11,10 +11,10 @@ const AdminDashboard = () => {
     totalWithdrawals: 0,
   });
 
-  // ✅ Fetch stats from backend
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token"); // fallback
+      const token =
+        localStorage.getItem("adminToken") || localStorage.getItem("token");
       const res = await axios.get("/admin/stats", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <AdminLayout> {/* ✅ Sidebar + header wrapper */}
+    <AdminLayout>
       <div className="admin-dashboard-container">
         <h1 className="admin-title">Admin Dashboard</h1>
 
