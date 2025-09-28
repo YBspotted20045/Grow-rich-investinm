@@ -10,7 +10,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Deposit from "./pages/Deposit.jsx";
 import Withdraw from "./pages/Withdrawal.jsx";
 import Referrals from "./pages/Referrals.jsx";
-import Account from "./pages/Account.jsx";   // ✅ import account page
+import Account from "./pages/Account.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx"; // ✅ import admin dashboard
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
@@ -25,7 +26,7 @@ root.render(
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Protected routes inside Layout */}
+      {/* User protected routes */}
       <Route
         path="/dashboard"
         element={
@@ -70,7 +71,6 @@ root.render(
         }
       />
 
-      {/* ✅ New Account route */}
       <Route
         path="/account"
         element={
@@ -78,6 +78,16 @@ root.render(
             <Layout>
               <Account />
             </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ✅ Admin-only route */}
+      <Route
+        path="/admin-dashboard"
+        element={
+          <ProtectedRoute>
+            <AdminDashboard />
           </ProtectedRoute>
         }
       />
