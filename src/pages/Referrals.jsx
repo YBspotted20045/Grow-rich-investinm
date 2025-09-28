@@ -19,7 +19,10 @@ const Referrals = () => {
       setReferrals(res.data.referrals || []);
       if (res.data.referralCode) {
         setReferralCode(res.data.referralCode);
-        setReferralLink(`https://yourapp.com/signup?ref=${res.data.referralCode}`);
+
+        // 🔥 Use your live domain here
+        const baseUrl = "https://grow-rich-investinm.onrender.com";
+        setReferralLink(`${baseUrl}/signup?ref=${res.data.referralCode}`);
       }
     } catch (err) {
       console.error("Fetch referrals error:", err);
