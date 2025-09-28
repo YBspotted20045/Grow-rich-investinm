@@ -22,8 +22,17 @@ const Login = () => {
     try {
       setLoading(true);
       const { data } = await axios.post("/auth/login", { email, password });
+
+      // ✅ Save token + user
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // ✅ Redirect based on role
+      if (data.user.isAdmin) {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed.");
     } finally {
