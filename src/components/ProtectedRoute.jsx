@@ -3,24 +3,20 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo")); // user object from login
-  const adminToken = localStorage.getItem("adminToken"); // separate admin token
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const adminInfo = JSON.parse(localStorage.getItem("adminInfo"));
+  const token = localStorage.getItem("token");
+  const adminToken = localStorage.getItem("adminToken");
 
-  // If no user at all → redirect to login
-  if (!userInfo && !adminToken) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // ✅ Handle admin-only pages
+  // If route requires admin
   if (adminOnly) {
-    // If no admin token, block access
-    if (!adminToken) {
-      return <Navigate to="/dashboard" replace />;
+    if (!adminToken || !adminInfo) {
+      return <Navigate to="/login" replace />;
     }
   } else {
-    // ✅ Normal user pages: if this is an admin login, redirect to admin dashboard
-    if (adminToken) {
-      return <Navigate to="/admin-dashboard" replace />;
+    // If normal user route
+    if (!token || !userInfo) {
+      return <Navigate to="/login" replace />;
     }
   }
 
