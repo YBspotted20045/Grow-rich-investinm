@@ -1,21 +1,33 @@
 // src/pages/AdminLogin.jsx
 import React, { useState } from "react";
 import axios from "./axios.js";
-import "./AdminLogin.css"; // CSS specific to this page
+import "./AdminLogin.css";
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
       const { data } = await axios.post("/auth/admin/login", { email, password });
-      // Save token or handle login
-      localStorage.setItem("adminToken", data.token);
-      window.location.href = "/admin/dashboard";
+
+      // ✅ Save token under "token"
+      localStorage.setItem("token", data.token);
+
+      // ✅ Save user with admin flag
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ email: data.email, isAdmin: true })
+      );
+
+      // ✅ Redirect to admin dashboard
+      navigate("/admin-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
@@ -35,6 +47,7 @@ const AdminLogin = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+
           <label>Password</label>
           <input
             type="password"
@@ -43,6 +56,7 @@ const AdminLogin = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
           <button type="submit">Login</button>
         </form>
       </div>
