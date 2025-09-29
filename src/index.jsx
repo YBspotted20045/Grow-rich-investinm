@@ -14,6 +14,7 @@ import Account from "./pages/Account.jsx";
 
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminUsers from "./pages/AdminUsers.jsx";
+import AdminDeposits from "./pages/AdminDeposits.jsx"; // ✅ add this
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
@@ -103,6 +104,17 @@ root.render(
           <ProtectedRoute adminOnly={true}>
             <AdminLayout>
               <AdminUsers />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/deposits"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminLayout>
+              <AdminDeposits />
             </AdminLayout>
           </ProtectedRoute>
         }
