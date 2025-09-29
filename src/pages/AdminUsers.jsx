@@ -1,3 +1,4 @@
+// src/pages/AdminUsers.jsx
 import React, { useEffect, useState } from "react";
 import axios from "./axios.js";
 import "./AdminUsers.css";
@@ -20,7 +21,8 @@ const AdminUsers = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setUsers(res.data);
+      // ✅ Backend returns { success: true, users }, so pick res.data.users
+      setUsers(res.data.users || []);
     } catch (err) {
       console.error("Fetch users error:", err);
       setError(err.response?.data?.message || "Failed to fetch users.");
@@ -58,7 +60,7 @@ const AdminUsers = () => {
     <div className="admin-users-container">
       <h1>Manage Users</h1>
 
-      {users.length === 0 ? (
+      {Array.isArray(users) && users.length === 0 ? (
         <p>No users found.</p>
       ) : (
         <table className="users-table">
@@ -72,22 +74,23 @@ const AdminUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td>{user.fullName}</td>
-                <td>{user.email}</td>
-                <td>₦{user.investmentAmount || 0}</td>
-                <td>{user.isBanned ? "Banned" : "Active"}</td>
-                <td>
-                  <button
-                    onClick={() => toggleBan(user._id, user.isBanned)}
-                    className={user.isBanned ? "unban-btn" : "ban-btn"}
-                  >
-                    {user.isBanned ? "Unban" : "Ban"}
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {Array.isArray(users) &&
+              users.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.fullName || "N/A"}</td>
+                  <td>{user.email}</td>
+                  <td>₦{user.investmentAmount || 0}</td>
+                  <td>{user.isBanned ? "Banned" : "Active"}</td>
+                  <td>
+                    <button
+                      onClick={() => toggleBan(user._id, user.isBanned)}
+                      className={user.isBanned ? "unban-btn" : "ban-btn"}
+                    >
+                      {user.isBanned ? "Unban" : "Ban"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       )}
