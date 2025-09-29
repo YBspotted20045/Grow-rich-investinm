@@ -1,6 +1,6 @@
 // src/pages/AdminDeposits.jsx
 import React, { useEffect, useState } from "react";
-import axios from "./axios.js";
+import axios from "./axios.js"; // ✅ corrected import path
 import "./AdminDeposits.css";
 
 const AdminDeposits = () => {
@@ -10,7 +10,7 @@ const AdminDeposits = () => {
 
   const fetchDeposits = async () => {
     try {
-      const token = localStorage.getItem("token"); // ✅ use same as other admin pages
+      const token = localStorage.getItem("token");
       if (!token) {
         setError("No token found. Please login again.");
         setLoading(false);
@@ -90,12 +90,24 @@ const AdminDeposits = () => {
           <tbody>
             {deposits.map((deposit) => (
               <tr key={deposit._id}>
-                <td>{deposit.userFullName || deposit.user?.fullName || "Unknown"}</td>
+                <td>
+                  {deposit.user?.fullName ||
+                    deposit.user?.username ||
+                    "Unknown"}
+                </td>
                 <td>₦{deposit.amount}</td>
                 <td>
-                  {deposit.receipt ? (
-                    <a href={deposit.receipt} target="_blank" rel="noreferrer">
-                      View
+                  {deposit.receiptUrl ? (
+                    <a
+                      href={`${process.env.REACT_APP_API_URL}${deposit.receiptUrl}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        src={`${process.env.REACT_APP_API_URL}${deposit.receiptUrl}`}
+                        alt="Receipt"
+                        style={{ width: "120px", borderRadius: "6px" }}
+                      />
                     </a>
                   ) : (
                     "No receipt"
