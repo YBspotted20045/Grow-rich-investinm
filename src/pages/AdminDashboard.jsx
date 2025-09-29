@@ -8,7 +8,9 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalDeposits: 0,
-    totalWithdrawals: 0,
+    pendingDeposits: 0,
+    totalInvestments: 0,
+    withdrawals: 0,
   });
 
   const [loading, setLoading] = useState(true);
@@ -19,15 +21,16 @@ const AdminDashboard = () => {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token"); // ✅ only use token
+      const token = localStorage.getItem("token"); // ✅ keep consistent with login
       const res = await axios.get("/admin/stats", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setStats(res.data);
+      // ✅ Use res.data.stats, not res.data
+      setStats(res.data.stats);
     } catch (err) {
       console.error("Fetch admin stats error:", err);
-      setError("Failed to fetch dashboard stats.");
+      setError(err.response?.data?.message || "Failed to fetch dashboard stats.");
     } finally {
       setLoading(false);
     }
@@ -59,8 +62,18 @@ const AdminDashboard = () => {
             </div>
 
             <div className="card">
+              <h2>Pending Deposits</h2>
+              <p>{stats.pendingDeposits}</p>
+            </div>
+
+            <div className="card">
+              <h2>Total Investments</h2>
+              <p>{stats.totalInvestments}</p>
+            </div>
+
+            <div className="card">
               <h2>Total Withdrawals</h2>
-              <p>₦{stats.totalWithdrawals}</p>
+              <p>₦{stats.withdrawals}</p>
             </div>
           </div>
         )}
