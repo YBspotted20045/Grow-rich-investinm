@@ -1,6 +1,6 @@
 // src/pages/AdminDeposits.jsx
 import React, { useEffect, useState } from "react";
-import axios from "./axios.js"; // ✅ corrected import path
+import axios from "./axios.js";
 import "./AdminDeposits.css";
 
 const AdminDeposits = () => {
@@ -21,10 +21,7 @@ const AdminDeposits = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const depositsData = Array.isArray(res.data)
-        ? res.data
-        : res.data.deposits || [];
-
+      const depositsData = res.data?.deposits || [];
       setDeposits(depositsData);
     } catch (err) {
       console.error("Fetch deposits error:", err);
@@ -91,8 +88,8 @@ const AdminDeposits = () => {
             {deposits.map((deposit) => (
               <tr key={deposit._id}>
                 <td>
-                  {deposit.user?.fullName ||
-                    deposit.user?.username ||
+                  {deposit.userId?.username ||
+                    deposit.userId?.email ||
                     "Unknown"}
                 </td>
                 <td>₦{deposit.amount}</td>
