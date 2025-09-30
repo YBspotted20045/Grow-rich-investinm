@@ -1,6 +1,6 @@
 // src/pages/Referrals.jsx
 import React, { useEffect, useState } from "react";
-import axios from "./axios.js";
+import API from "../axios"; // ✅ use your central axios instance
 import "./Referrals.css";
 
 const Referrals = () => {
@@ -12,7 +12,7 @@ const Referrals = () => {
   const fetchReferrals = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("/referrals", {
+      const res = await API.get("/referrals", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -39,6 +39,13 @@ const Referrals = () => {
     alert(`${label} copied!`);
   };
 
+  // ✅ Safe date formatter (prevents 1970 bug)
+  const formatDate = (date) => {
+    if (!date) return "—";
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? "—" : d.toLocaleDateString();
+  };
+
   return (
     <div className="referrals-container">
       <h1 className="referrals-title">My Referrals</h1>
@@ -46,7 +53,9 @@ const Referrals = () => {
       {/* ✅ Referral info card */}
       {referralCode && (
         <div className="referrals-card" style={{ marginBottom: "2rem" }}>
-          <p><strong>Your Referral Code:</strong> {referralCode}</p>
+          <p>
+            <strong>Your Referral Code:</strong> {referralCode}
+          </p>
           <p>
             <strong>Your Referral Link:</strong>{" "}
             <a
@@ -59,10 +68,16 @@ const Referrals = () => {
             </a>
           </p>
           <div style={{ marginTop: "1rem", display: "flex", gap: "10px" }}>
-            <button onClick={() => copyText(referralCode, "Referral code")} className="copy-btn">
+            <button
+              onClick={() => copyText(referralCode, "Referral code")}
+              className="copy-btn"
+            >
               Copy Code
             </button>
-            <button onClick={() => copyText(referralLink, "Referral link")} className="copy-btn">
+            <button
+              onClick={() => copyText(referralLink, "Referral link")}
+              className="copy-btn"
+            >
               Copy Link
             </button>
           </div>
@@ -88,9 +103,9 @@ const Referrals = () => {
                 <tr key={ref._id}>
                   <td>{ref.username}</td>
                   <td>{ref.email}</td>
-                  <td>₦{ref.investmentAmount}</td>
-                  <td>{new Date(ref.investmentDate).toLocaleDateString()}</td>
-                  <td>{new Date(ref.maturityDate).toLocaleDateString()}</td>
+                  <td>₦{ref.investmentAmount || 0}</td>
+                  <td>{formatDate(ref.investmentDate)}</td>
+                  <td>{formatDate(ref.maturityDate)}</td>
                 </tr>
               ))}
             </tbody>
