@@ -53,3 +53,24 @@
   font-size: 14px;
   color: #333;
 }
+/* Make text darker */
+.referrals-table td,
+.referrals-table th {
+  color: #222; /* Dark gray or change to #000 for pure black */
+  font-weight: 500;
+  padding: 10px;
+}
+
+/* Optional: improve visibility of "No referrals" */
+.referrals-table td:empty::before {
+  content: "—";
+  color: #999;
+}
+
+/* Table borders for clarity */
+.referrals-table, 
+.referrals-table th, 
+.referrals-table td {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+}
