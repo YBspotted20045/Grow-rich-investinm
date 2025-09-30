@@ -1,30 +1,14 @@
-// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
   const [investment, setInvestment] = useState(null);
   const [earnings, setEarnings] = useState(null);
 
-  // Fetch user info
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await API.get("/users/me");
-        if (res.data.success) setUser(res.data.user);
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      }
-    };
-    fetchUser();
-  }, []);
-
-  // Fetch investment + earnings (auto-linked to deposit)
-  useEffect(() => {
-    const fetchInvestment = async () => {
+    const fetchDashboard = async () => {
       try {
         const res = await API.get("/investments/me");
         if (res.data.success) {
@@ -32,64 +16,50 @@ const Dashboard = () => {
           setEarnings(res.data.earnings);
         }
       } catch (err) {
-        console.error("Error fetching investment:", err);
+        console.error("Error fetching investment data:", err);
       }
     };
-    fetchInvestment();
+    fetchDashboard();
   }, []);
 
-  const defaultData = { amount: 0, status: "No Investment", maturityDate: null };
-  const defaultEarnings = { maxPayout: 0, accrued: 0, available: 0 };
+  if (!investment) {
+    return (
+      <Layout>
+        <h2>Your Investment Overview</h2>
+        <p>⚠️ No active investment yet</p>
+      </Layout>
+    );
+  }
 
-  const inv = investment || defaultData;
-  const earn = earnings || defaultEarnings;
+  const withdrawalEligible = earnings?.available > 0;
 
   return (
     <Layout>
-      {/* Welcome Card */}
-      <div className="welcome-card">
-        <h1>
-          Welcome back, <span>{user ? user.username : "Investor"}</span>
-        </h1>
-      </div>
+      <h2>Your Investment Overview</h2>
 
-      <h2 className="overview-title">Your Investment Overview</h2>
-
-      {!investment && (
-        <p className="no-investment">⚠️ No active investment yet</p>
-      )}
-
-      {/* Grid of Info Cards */}
       <div className="cards-grid">
-        <div className="info-card black-card">
-          <h3>Investment Amount</h3>
-          <p>₦{inv.amount.toLocaleString()}</p>
+        <div className="info-card">
+          <h3>Amount Invested</h3>
+          <p>₦{investment.amount.toLocaleString()}</p>
         </div>
-        <div className="info-card black-card">
+
+        <div className="info-card">
           <h3>Expected Return</h3>
-          <p>₦{earn.maxPayout.toLocaleString()}</p>
+          <p>₦{earnings?.maxPayout.toLocaleString()}</p>
         </div>
-        <div className="info-card black-card">
-          <h3>Accrued Earnings</h3>
-          <p>₦{earn.accrued.toLocaleString()}</p>
-        </div>
-        <div className="info-card black-card">
-          <h3>Available to Withdraw</h3>
-          <p>₦{earn.available.toLocaleString()}</p>
-        </div>
-        <div className="info-card black-card">
+
+        <div className="info-card">
           <h3>Maturity Date</h3>
           <p>
-            {inv.maturityDate
-              ? new Date(inv.maturityDate).toDateString()
+            {investment.maturityDate
+              ? new Date(investment.maturityDate).toDateString()
               : "—"}
           </p>
         </div>
-        <div className="info-card black-card status-card">
-          <h3>Status</h3>
-          <p className={inv.status.replace(" ", "-").toLowerCase()}>
-            {inv.status}
-          </p>
+
+        <div className="info-card">
+          <h3>Withdrawal Eligibility</h3>
+          <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
         </div>
       </div>
     </Layout>
