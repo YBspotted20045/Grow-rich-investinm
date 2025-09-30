@@ -8,8 +8,7 @@ const AdminDeposits = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔗 Correct backend URL
-  const API_BASE = "https://grow-0nfm.onrender.com";
+  const API_BASE = "https://grow-0nfm.onrender.com"; // your backend
 
   const fetchDeposits = async () => {
     try {
@@ -20,12 +19,11 @@ const AdminDeposits = () => {
         return;
       }
 
-      const res = await axios.get("/admin/deposits", {
+      const res = await axios.get("/deposits/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const depositsData = res.data?.deposits || [];
-      setDeposits(depositsData);
+      setDeposits(res.data || []);
     } catch (err) {
       console.error("Fetch deposits error:", err);
       setError(err.response?.data?.message || "Failed to fetch deposits.");
@@ -38,8 +36,8 @@ const AdminDeposits = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `/admin/deposits/${depositId}/approve`,
-        {},
+        `/deposits/${depositId}/status`,
+        { status: "approved" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchDeposits();
@@ -53,8 +51,8 @@ const AdminDeposits = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `/admin/deposits/${depositId}/reject`,
-        {},
+        `/deposits/${depositId}/status`,
+        { status: "rejected" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchDeposits();
