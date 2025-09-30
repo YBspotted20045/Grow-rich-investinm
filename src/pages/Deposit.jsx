@@ -26,26 +26,40 @@ const Deposit = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("receipt", receipt);
-    formData.append("amount", selectedAmount);
-
     try {
-      const res = await API.post("/deposits/upload", formData, {
+      // Step 1: Start investment and get investmentId
+      const investRes = await API.post("/investments/start", {
+        amount: selectedAmount,
+        plan: "default", // you can change plan logic if needed
+      });
+
+      if (!investRes.data.success) {
+        setError("Failed to create investment. Try again.");
+        return;
+      }
+
+      const investmentId = investRes.data.investment._id;
+
+      // Step 2: Upload deposit linked to this investment
+      const formData = new FormData();
+      formData.append("receipt", receipt);
+      formData.append("amount", selectedAmount);
+      formData.append("investmentId", investmentId);
+
+      const depositRes = await API.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (res.data.success) {
-        // ✅ use backend’s message
-        setMessage(res.data.message || `Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully.`);
+      if (depositRes.data.success) {
+        setMessage(depositRes.data.message || `Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully.`);
         setReceipt(null);
         setSelectedAmount(null);
       } else {
         setError("Upload failed, try again.");
       }
     } catch (err) {
-      console.error("Upload error:", err);
-      setError(err.response?.data?.message || "❌ Error uploading receipt. Please try again.");
+      console.error("Deposit error:", err);
+      setError(err.response?.data?.message || "❌ Error processing deposit. Please try again.");
     }
   };
 
