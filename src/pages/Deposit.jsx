@@ -7,17 +7,22 @@ const Deposit = () => {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [receipt, setReceipt] = useState(null);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleAmountClick = (amount) => {
     setSelectedAmount(amount);
     setMessage("");
+    setError("");
     setReceipt(null);
   };
 
   const handleUpload = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setError("");
+
     if (!receipt || !selectedAmount) {
-      setMessage("Please select amount and upload a receipt.");
+      setError("⚠️ Please select an amount and upload a receipt.");
       return;
     }
 
@@ -29,16 +34,18 @@ const Deposit = () => {
       const res = await API.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       if (res.data.success) {
-        setMessage(`Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully.`);
+        // ✅ use backend’s message
+        setMessage(res.data.message || `Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully.`);
         setReceipt(null);
         setSelectedAmount(null);
       } else {
-        setMessage("Upload failed, try again.");
+        setError("Upload failed, try again.");
       }
     } catch (err) {
       console.error("Upload error:", err);
-      setMessage("Error uploading receipt. Please try again.");
+      setError(err.response?.data?.message || "❌ Error uploading receipt. Please try again.");
     }
   };
 
@@ -84,7 +91,8 @@ const Deposit = () => {
         </div>
       )}
 
-      {message && <p className="deposit-message">{message}</p>}
+      {message && <p className="deposit-message" style={{ color: "green" }}>{message}</p>}
+      {error && <p className="deposit-message" style={{ color: "red" }}>{error}</p>}
     </Layout>
   );
 };
