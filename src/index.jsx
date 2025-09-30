@@ -15,7 +15,8 @@ import Account from "./pages/Account.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminDeposits from "./pages/AdminDeposits.jsx";
-import AdminWithdrawals from "./pages/AdminWithdrawals.jsx"; // ✅ added this
+import AdminWithdrawals from "./pages/AdminWithdrawals.jsx";
+import AdminReferrals from "./pages/AdminReferrals.jsx"; // ✅ newly added
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
@@ -121,13 +122,24 @@ root.render(
         }
       />
 
-      {/* ✅ New Admin Withdrawals route */}
       <Route
         path="/admin/withdrawals"
         element={
           <ProtectedRoute adminOnly={true}>
             <AdminLayout>
               <AdminWithdrawals />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ✅ New Admin Referrals route */}
+      <Route
+        path="/admin/referrals"
+        element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminLayout>
+              <AdminReferrals />
             </AdminLayout>
           </ProtectedRoute>
         }
