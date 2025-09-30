@@ -8,6 +8,9 @@ const AdminDeposits = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // 🔗 Correct backend URL
+  const API_BASE = "https://grow-0nfm.onrender.com";
+
   const fetchDeposits = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -87,21 +90,17 @@ const AdminDeposits = () => {
           <tbody>
             {deposits.map((deposit) => (
               <tr key={deposit._id}>
-                <td>
-                  {deposit.userId?.username ||
-                    deposit.userId?.email ||
-                    "Unknown"}
-                </td>
+                <td>{deposit.userId?.username || deposit.userId?.email || "Unknown"}</td>
                 <td>₦{deposit.amount}</td>
                 <td>
                   {deposit.receiptUrl ? (
                     <a
-                      href={`${process.env.REACT_APP_API_URL}${deposit.receiptUrl}`}
+                      href={`${API_BASE}${deposit.receiptUrl}`}
                       target="_blank"
                       rel="noreferrer"
                     >
                       <img
-                        src={`${process.env.REACT_APP_API_URL}${deposit.receiptUrl}`}
+                        src={`${API_BASE}${deposit.receiptUrl}`}
                         alt="Receipt"
                         style={{ width: "120px", borderRadius: "6px" }}
                       />
