@@ -1,6 +1,6 @@
 // src/pages/Referrals.jsx
 import React, { useEffect, useState } from "react";
-import API from "../axios"; // ✅ use your central axios instance
+import API from "./axios"; // ✅ use your central axios instance
 import "./Referrals.css";
 
 const Referrals = () => {
