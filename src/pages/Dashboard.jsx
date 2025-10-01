@@ -1,69 +1,110 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
-import "./Dashboard.css";
+import "./Deposit.css";
 
-const Dashboard = () => {
-  const [investment, setInvestment] = useState(null);
-  const [earnings, setEarnings] = useState(null);
+const Deposit = () => {
+  const [selectedAmount, setSelectedAmount] = useState(null);
+  const [receipt, setReceipt] = useState(null);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const res = await API.get("/investments/me");
-        if (res.data.success) {
-          setInvestment(res.data.investment);
-          setEarnings(res.data.earnings);
-        }
-      } catch (err) {
-        console.error("Error fetching investment data:", err);
-      }
-    };
-    fetchDashboard();
-  }, []);
+  const handleAmountClick = (amount) => {
+    setSelectedAmount(amount);
+    setMessage("");
+    setError("");
+    setReceipt(null);
+  };
 
-  if (!investment) {
-    return (
-      <Layout>
-        <h2>Your Investment Overview</h2>
-        <p>⚠️ No active investment yet</p>
-      </Layout>
-    );
-  }
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
+    setLoading(true);
 
-  const withdrawalEligible = earnings?.available > 0;
+    if (!receipt || !selectedAmount) {
+      setError("⚠️ Please select an amount and upload a receipt.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("amount", selectedAmount);
+      formData.append("receipt", receipt);
+
+      const res = await API.post("/deposits/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setMessage(
+        res.data.message ||
+          `✅ Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully. Pending admin approval.`
+      );
+      setReceipt(null);
+      setSelectedAmount(null);
+    } catch (err) {
+      console.error("Deposit upload error:", err);
+      setError(
+        err.response?.data?.message ||
+          "❌ Error processing deposit. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Layout>
-      <h2>Your Investment Overview</h2>
+      <h1 className="deposit-title">Make a Deposit</h1>
+      <p className="deposit-subtitle">Choose an investment amount to proceed:</p>
 
-      <div className="cards-grid">
-        <div className="info-card">
-          <h3>Amount Invested</h3>
-          <p>₦{investment.amount.toLocaleString()}</p>
-        </div>
-
-        <div className="info-card">
-          <h3>Expected Return</h3>
-          <p>₦{earnings?.maxPayout.toLocaleString()}</p>
-        </div>
-
-        <div className="info-card">
-          <h3>Maturity Date</h3>
-          <p>
-            {investment.maturityDate
-              ? new Date(investment.maturityDate).toDateString()
-              : "—"}
-          </p>
-        </div>
-
-        <div className="info-card">
-          <h3>Withdrawal Eligibility</h3>
-          <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
-        </div>
+      <div className="deposit-options">
+        {[10000, 20000].map((amount) => (
+          <div
+            key={amount}
+            className={`deposit-card ${
+              selectedAmount === amount ? "selected" : ""
+            }`}
+            onClick={() => handleAmountClick(amount)}
+          >
+            ₦{amount.toLocaleString()}
+          </div>
+        ))}
       </div>
+
+      {selectedAmount && (
+        <div className="deposit-form">
+          <h2>Payment Instructions</h2>
+          <p>
+            Please pay <strong>₦{selectedAmount.toLocaleString()}</strong> to the
+            account below and upload your receipt.
+          </p>
+          <div className="account-box">
+            <p><strong>Bank:</strong> PalmPay</p>
+            <p><strong>Account Number:</strong> 8984550866</p>
+            <p><strong>Account Name:</strong> Nnaji Kelvin Somtochukwu</p>
+          </div>
+
+          <form onSubmit={handleUpload} className="upload-form">
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              onChange={(e) => setReceipt(e.target.files[0])}
+              required
+            />
+            <button type="submit" className="upload-btn" disabled={loading}>
+              {loading ? <span className="spinner"></span> : "Upload Receipt"}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {message && <p className="deposit-message" style={{ color: "green" }}>{message}</p>}
+      {error && <p className="deposit-message" style={{ color: "red" }}>{error}</p>}
     </Layout>
   );
 };
 
-export default Dashboard;
+export default Deposit;
