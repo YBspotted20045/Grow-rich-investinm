@@ -1,76 +1,44 @@
 import React, { useState } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
-import "./Deposit.css";
+import "./Dashboard.css";
 
 const Deposit = () => {
-  const [selectedAmount, setSelectedAmount] = useState(null);
+  const [amount, setAmount] = useState("");
   const [receipt, setReceipt] = useState(null);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
-  const handleAmountClick = (amount) => {
-    setSelectedAmount(amount);
-    setMessage("");
-    setError("");
-    setReceipt(null);
+  const handleFileChange = (e) => {
+    setReceipt(e.target.files[0]);
   };
 
-  const handleUpload = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
     setLoading(true);
-
-    if (!receipt || !selectedAmount) {
-      setError("⚠️ Please select an amount and upload a receipt.");
-      setLoading(false);
-      return;
-    }
+    setMessage(null);
+    setError(null);
 
     try {
-      // Step 1: Start investment
-      const investRes = await API.post("/investments/start", {
-        amount: selectedAmount,
-        plan: "default",
-      });
-
-      if (!investRes.data.success) {
-        setError("Failed to create investment. Try again.");
-        setLoading(false);
-        return;
-      }
-
-      const investmentId = investRes.data.investment._id;
-
-      // Step 2: Upload deposit receipt
       const formData = new FormData();
+      formData.append("amount", amount);
       formData.append("receipt", receipt);
-      formData.append("amount", selectedAmount);
-      formData.append("investmentId", investmentId);
 
-      const depositRes = await API.post("/deposits/upload", formData, {
+      const res = await API.post("/deposits/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (depositRes.data.deposit) {
-        setMessage(
-          depositRes.data.message ||
-            `✅ Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully. Pending admin approval.`
-        );
+      if (res.data.success) {
+        setMessage(res.data.message || "Deposit uploaded successfully!");
+        setAmount("");
         setReceipt(null);
-        setSelectedAmount(null);
-        e.target.reset(); // reset form input field
       } else {
-        setError("Upload failed, try again.");
+        setError(res.data.message || "Something went wrong");
       }
     } catch (err) {
       console.error("Deposit error:", err);
-      setError(
-        err.response?.data?.message ||
-          "❌ Error processing deposit. Please try again."
-      );
+      setError("❌ Error processing deposit. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -78,56 +46,52 @@ const Deposit = () => {
 
   return (
     <Layout>
-      <h1 className="deposit-title">Make a Deposit</h1>
-      <p className="deposit-subtitle">Choose an investment amount to proceed:</p>
+      <h2>Make a Deposit</h2>
+      <p>Choose an investment amount to proceed:</p>
 
-      <div className="deposit-options">
-        {[10000, 20000].map((amount) => (
-          <div
-            key={amount}
-            className={`deposit-card ${
-              selectedAmount === amount ? "selected" : ""
-            }`}
-            onClick={() => handleAmountClick(amount)}
+      {/* Only 10k and 20k options */}
+      <div className="cards-grid">
+        {[10000, 20000].map((amt) => (
+          <button
+            key={amt}
+            className={`info-card ${amount === String(amt) ? "selected" : ""}`}
+            onClick={() => setAmount(String(amt))}
           >
-            ₦{amount.toLocaleString()}
-          </div>
+            ₦{amt.toLocaleString()}
+          </button>
         ))}
       </div>
 
-      {selectedAmount && (
-        <div className="deposit-form">
-          <h2>Payment Instructions</h2>
+      {/* Payment instructions */}
+      {amount && (
+        <div className="info-card mt-4">
+          <h3>Payment Instructions</h3>
           <p>
-            Please pay <strong>₦{selectedAmount.toLocaleString()}</strong> to the
+            Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to the
             account below and upload your receipt.
           </p>
-          <div className="account-box">
-            <p><strong>Bank:</strong> PalmPay</p>
-            <p><strong>Account Number:</strong> 8984550866</p>
-            <p><strong>Account Name:</strong> Nnaji Kelvin Somtochukwu</p>
-          </div>
-
-          <form onSubmit={handleUpload} className="upload-form">
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              onChange={(e) => setReceipt(e.target.files[0])}
-              required
-            />
-            <button type="submit" className="upload-btn" disabled={loading}>
-              {loading ? <span className="spinner"></span> : "Upload Receipt"}
-            </button>
-          </form>
+          <p><strong>Bank:</strong> PalmPay</p>
+          <p><strong>Account Number:</strong> 8984550866</p>
+          <p><strong>Account Name:</strong> Nnaji Kelvin Somtochukwu</p>
         </div>
       )}
 
-      {message && (
-        <p className="deposit-message" style={{ color: "green" }}>{message}</p>
-      )}
-      {error && (
-        <p className="deposit-message" style={{ color: "red" }}>{error}</p>
-      )}
+      {/* Deposit form */}
+      <form onSubmit={handleSubmit} className="mt-4">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          required
+        />
+        <button type="submit" disabled={loading || !amount || !receipt}>
+          {loading ? "Uploading..." : "Upload Receipt"}
+        </button>
+      </form>
+
+      {/* Feedback messages */}
+      {message && <p style={{ color: "green" }}>✅ {message}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </Layout>
   );
 };
