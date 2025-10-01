@@ -8,7 +8,7 @@ const Deposit = () => {
   const [receipt, setReceipt] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // <-- NEW
+  const [loading, setLoading] = useState(false);
 
   const handleAmountClick = (amount) => {
     setSelectedAmount(amount);
@@ -21,7 +21,7 @@ const Deposit = () => {
     e.preventDefault();
     setMessage("");
     setError("");
-    setLoading(true); // start loading
+    setLoading(true);
 
     if (!receipt || !selectedAmount) {
       setError("⚠️ Please select an amount and upload a receipt.");
@@ -44,7 +44,7 @@ const Deposit = () => {
 
       const investmentId = investRes.data.investment._id;
 
-      // Step 2: Upload deposit
+      // Step 2: Upload deposit receipt
       const formData = new FormData();
       formData.append("receipt", receipt);
       formData.append("amount", selectedAmount);
@@ -54,13 +54,14 @@ const Deposit = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (depositRes.data.success) {
+      if (depositRes.data.deposit) {
         setMessage(
           depositRes.data.message ||
             `✅ Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully. Pending admin approval.`
         );
         setReceipt(null);
         setSelectedAmount(null);
+        e.target.reset(); // reset form input field
       } else {
         setError("Upload failed, try again.");
       }
@@ -71,7 +72,7 @@ const Deposit = () => {
           "❌ Error processing deposit. Please try again."
       );
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
   };
 
@@ -115,11 +116,7 @@ const Deposit = () => {
               required
             />
             <button type="submit" className="upload-btn" disabled={loading}>
-              {loading ? (
-                <span className="spinner"></span>
-              ) : (
-                "Upload Receipt"
-              )}
+              {loading ? <span className="spinner"></span> : "Upload Receipt"}
             </button>
           </form>
         </div>
