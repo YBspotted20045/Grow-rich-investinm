@@ -8,6 +8,7 @@ const Deposit = () => {
   const [receipt, setReceipt] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // <-- NEW
 
   const handleAmountClick = (amount) => {
     setSelectedAmount(amount);
@@ -20,27 +21,30 @@ const Deposit = () => {
     e.preventDefault();
     setMessage("");
     setError("");
+    setLoading(true); // start loading
 
     if (!receipt || !selectedAmount) {
       setError("⚠️ Please select an amount and upload a receipt.");
+      setLoading(false);
       return;
     }
 
     try {
-      // Step 1: Start investment and get investmentId
+      // Step 1: Start investment
       const investRes = await API.post("/investments/start", {
         amount: selectedAmount,
-        plan: "default", // you can change plan logic if needed
+        plan: "default",
       });
 
       if (!investRes.data.success) {
         setError("Failed to create investment. Try again.");
+        setLoading(false);
         return;
       }
 
       const investmentId = investRes.data.investment._id;
 
-      // Step 2: Upload deposit linked to this investment
+      // Step 2: Upload deposit
       const formData = new FormData();
       formData.append("receipt", receipt);
       formData.append("amount", selectedAmount);
@@ -51,7 +55,10 @@ const Deposit = () => {
       });
 
       if (depositRes.data.success) {
-        setMessage(depositRes.data.message || `Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully.`);
+        setMessage(
+          depositRes.data.message ||
+            `✅ Receipt for ₦${selectedAmount.toLocaleString()} uploaded successfully. Pending admin approval.`
+        );
         setReceipt(null);
         setSelectedAmount(null);
       } else {
@@ -59,7 +66,12 @@ const Deposit = () => {
       }
     } catch (err) {
       console.error("Deposit error:", err);
-      setError(err.response?.data?.message || "❌ Error processing deposit. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "❌ Error processing deposit. Please try again."
+      );
+    } finally {
+      setLoading(false); // stop loading
     }
   };
 
@@ -72,7 +84,9 @@ const Deposit = () => {
         {[10000, 20000].map((amount) => (
           <div
             key={amount}
-            className={`deposit-card ${selectedAmount === amount ? "selected" : ""}`}
+            className={`deposit-card ${
+              selectedAmount === amount ? "selected" : ""
+            }`}
             onClick={() => handleAmountClick(amount)}
           >
             ₦{amount.toLocaleString()}
@@ -84,8 +98,8 @@ const Deposit = () => {
         <div className="deposit-form">
           <h2>Payment Instructions</h2>
           <p>
-            Please pay <strong>₦{selectedAmount.toLocaleString()}</strong> to the account below
-            and upload your receipt.
+            Please pay <strong>₦{selectedAmount.toLocaleString()}</strong> to the
+            account below and upload your receipt.
           </p>
           <div className="account-box">
             <p><strong>Bank:</strong> PalmPay</p>
@@ -100,13 +114,23 @@ const Deposit = () => {
               onChange={(e) => setReceipt(e.target.files[0])}
               required
             />
-            <button type="submit" className="upload-btn">Upload Receipt</button>
+            <button type="submit" className="upload-btn" disabled={loading}>
+              {loading ? (
+                <span className="spinner"></span>
+              ) : (
+                "Upload Receipt"
+              )}
+            </button>
           </form>
         </div>
       )}
 
-      {message && <p className="deposit-message" style={{ color: "green" }}>{message}</p>}
-      {error && <p className="deposit-message" style={{ color: "red" }}>{error}</p>}
+      {message && (
+        <p className="deposit-message" style={{ color: "green" }}>{message}</p>
+      )}
+      {error && (
+        <p className="deposit-message" style={{ color: "red" }}>{error}</p>
+      )}
     </Layout>
   );
 };
