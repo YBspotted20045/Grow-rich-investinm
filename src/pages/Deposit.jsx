@@ -35,17 +35,23 @@ const Deposit = () => {
       }
 
       const res = await API.post("/deposits/upload", formData, {
-        headers: { 
+        headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, // ✅ add token
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (res.data.success) {
         setMessage(res.data.message || "Deposit uploaded successfully!");
+        setError(null);
+
+        // clear input
         setAmount("");
         setReceipt(null);
-        if (fileInputRef.current) fileInputRef.current.value = ""; // ✅ clear input
+        if (fileInputRef.current) fileInputRef.current.value = "";
+
+        // auto-hide success after 5s
+        setTimeout(() => setMessage(null), 5000);
       } else {
         setError(res.data.message || "Something went wrong");
       }
@@ -83,7 +89,8 @@ const Deposit = () => {
         <div className="info-card mt-4">
           <h3>Payment Instructions</h3>
           <p>
-            Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to the account below and upload your receipt.
+            Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to
+            the account below and upload your receipt.
           </p>
           <p><strong>Bank:</strong> PalmPay</p>
           <p><strong>Account Number:</strong> 8984550866</p>
@@ -104,8 +111,8 @@ const Deposit = () => {
         </button>
       </form>
 
-      {message && <p style={{ color: "green" }}>✅ {message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {message && <p style={{ color: "green", marginTop: "10px" }}>✅ {message}</p>}
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
     </Layout>
   );
 };
