@@ -27,8 +27,18 @@ const Deposit = () => {
       formData.append("amount", amount);
       formData.append("receipt", receipt);
 
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No token found. Please login again.");
+        setLoading(false);
+        return;
+      }
+
       const res = await API.post("/deposits/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // ✅ add token
+        },
       });
 
       if (res.data.success) {
@@ -86,7 +96,7 @@ const Deposit = () => {
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          ref={fileInputRef} // ✅ allow clearing
+          ref={fileInputRef}
           required
         />
         <button type="submit" disabled={loading || !amount || !receipt}>
