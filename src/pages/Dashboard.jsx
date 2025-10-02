@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
-import API from "./axios";
+import API from "./axios"; // ✅ fixed import
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -10,7 +10,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await API.get("/investments/me");
+        const res = await API.get("/investments/me"); // ✅ backend must provide this
         if (res.data.success) {
           setInvestment(res.data.investment || null);
           setEarnings(res.data.earnings || null);
