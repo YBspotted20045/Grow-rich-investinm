@@ -10,15 +10,39 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await API.get("/investments/me"); // ✅ backend must provide this
+        // 🔹 Updated API route to fetch deposits
+        const res = await API.get("/deposits/my"); // make sure backend has this route
+
         if (res.data.success) {
-          setInvestment(res.data.investment || null);
-          setEarnings(res.data.earnings || null);
+          const deposits = res.data.deposits || [];
+
+          // 🔹 Pick the last approved deposit
+          const activeDeposit = deposits.find(dep => dep.status === "approved");
+
+          if (activeDeposit) {
+            setInvestment({
+              amount: activeDeposit.amount,
+              status: activeDeposit.status,
+              maturityDate: activeDeposit.approvedAt
+                ? new Date(new Date(activeDeposit.approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000) // 14-day maturity
+                : null,
+            });
+
+            // 🔹 Set earnings based on deposit, adapt as needed
+            setEarnings({
+              available: activeDeposit.earningsAvailable || 0,
+              maxPayout: activeDeposit.maxPayout || 0,
+            });
+          } else {
+            setInvestment(null);
+            setEarnings(null);
+          }
         }
       } catch (err) {
-        console.error("Error fetching investment data:", err);
+        console.error("Error fetching deposit data:", err);
       }
     };
+
     fetchDashboard();
   }, []);
 
