@@ -1,3 +1,4 @@
+// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
@@ -5,15 +6,13 @@ import "./Dashboard.css";
 
 const Dashboard = () => {
   const [deposit, setDeposit] = useState(null);
+  const [approvedReferrals, setApprovedReferrals] = useState(0);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
   const fetchDeposits = async () => {
     try {
-      setLoading(true);
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-
       const res = await API.get("/deposits/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -24,27 +23,42 @@ const Dashboard = () => {
           .filter((d) => d.status === "approved")
           .sort((a, b) => new Date(b.approvedAt) - new Date(a.approvedAt))[0];
 
-        if (latestApproved) {
-          setDeposit(latestApproved);
-          setMessage("✅ Deposit approved successfully!");
-        } else {
-          setDeposit(null);
-          setMessage("⚠️ No approved deposit yet.");
-        }
-      } else {
-        setMessage("❌ Failed to load deposits.");
+        setDeposit(latestApproved || null);
+        setMessage(
+          latestApproved
+            ? "✅ Deposit approved successfully!"
+            : "⚠️ No approved deposit yet."
+        );
       }
     } catch (err) {
       console.error("Error fetching deposits:", err);
       setMessage("⚠️ Error loading your dashboard.");
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const fetchReferrals = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/referrals", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setApprovedReferrals(res.data.approvedReferralCount || 0);
+    } catch (err) {
+      console.error("Error fetching referrals:", err);
     }
   };
 
   useEffect(() => {
-    fetchDeposits();
-    const interval = setInterval(fetchDeposits, 20000);
+    const loadData = async () => {
+      setLoading(true);
+      await fetchDeposits();
+      await fetchReferrals();
+      setLoading(false);
+    };
+    loadData();
+
+    // Auto-refresh every 20s
+    const interval = setInterval(loadData, 20000);
     return () => clearInterval(interval);
   }, []);
 
@@ -65,15 +79,17 @@ const Dashboard = () => {
     );
   }
 
-  // ✅ Calculate 14-day maturity date
-  const approvalDate = deposit.approvedAt ? new Date(deposit.approvedAt) : null;
-  const maturityDate = approvalDate
-    ? new Date(approvalDate.getTime() + 14 * 24 * 60 * 60 * 1000)
+  // ✅ Calculate 14-day maturity
+  const maturityDate = deposit.approvedAt
+    ? new Date(new Date(deposit.approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
     : null;
 
   // ✅ Expected return = double the deposit
   const expectedReturn = deposit.amount * 2;
-  const withdrawalEligible = maturityDate && new Date() >= maturityDate;
+
+  // ✅ Check eligibility logic
+  const matured = new Date() >= maturityDate;
+  const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
     <Layout>
@@ -93,12 +109,17 @@ const Dashboard = () => {
 
         <div className="info-card">
           <h3>Approval Date</h3>
-          <p>{approvalDate ? approvalDate.toDateString() : "—"}</p>
+          <p>{new Date(deposit.approvedAt).toDateString()}</p>
         </div>
 
         <div className="info-card">
           <h3>Maturity Date</h3>
           <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+        </div>
+
+        <div className="info-card">
+          <h3>Referral Requirement</h3>
+          <p>{approvedReferrals}/2 referrals have deposited</p>
         </div>
 
         <div className="info-card">
