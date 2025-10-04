@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
@@ -21,7 +20,6 @@ const Dashboard = () => {
 
       if (res.data.success) {
         const deposits = res.data.deposits || [];
-        // ✅ Get the most recently approved deposit
         const latestApproved = deposits
           .filter((d) => d.status === "approved")
           .sort((a, b) => new Date(b.approvedAt) - new Date(a.approvedAt))[0];
@@ -46,8 +44,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDeposits();
-
-    // ✅ Auto-refresh every 20 seconds for live updates
     const interval = setInterval(fetchDeposits, 20000);
     return () => clearInterval(interval);
   }, []);
@@ -70,13 +66,14 @@ const Dashboard = () => {
   }
 
   // ✅ Calculate 14-day maturity date
-  const maturityDate = deposit.approvedAt
-    ? new Date(new Date(deposit.approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
+  const approvalDate = deposit.approvedAt ? new Date(deposit.approvedAt) : null;
+  const maturityDate = approvalDate
+    ? new Date(approvalDate.getTime() + 14 * 24 * 60 * 60 * 1000)
     : null;
 
-  // ✅ Calculate example earnings (you can adjust logic)
-  const expectedReturn = deposit.amount * 1.5; // 50% profit after 14 days
-  const withdrawalEligible = new Date() >= maturityDate;
+  // ✅ Expected return = double the deposit
+  const expectedReturn = deposit.amount * 2;
+  const withdrawalEligible = maturityDate && new Date() >= maturityDate;
 
   return (
     <Layout>
@@ -96,7 +93,7 @@ const Dashboard = () => {
 
         <div className="info-card">
           <h3>Approval Date</h3>
-          <p>{new Date(deposit.approvedAt).toDateString()}</p>
+          <p>{approvalDate ? approvalDate.toDateString() : "—"}</p>
         </div>
 
         <div className="info-card">
