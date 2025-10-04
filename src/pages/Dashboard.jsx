@@ -29,6 +29,8 @@ const Dashboard = () => {
             ? "✅ Deposit approved successfully!"
             : "⚠️ No approved deposit yet."
         );
+      } else {
+        setMessage("❌ Failed to load deposits.");
       }
     } catch (err) {
       console.error("Error fetching deposits:", err);
@@ -57,7 +59,6 @@ const Dashboard = () => {
     };
     loadData();
 
-    // Auto-refresh every 20s
     const interval = setInterval(loadData, 20000);
     return () => clearInterval(interval);
   }, []);
@@ -70,25 +71,18 @@ const Dashboard = () => {
     );
   }
 
-  if (!deposit) {
-    return (
-      <Layout>
-        <h2>Your Investment Overview</h2>
-        <p>{message}</p>
-      </Layout>
-    );
-  }
-
-  // ✅ Calculate 14-day maturity
-  const maturityDate = deposit.approvedAt
-    ? new Date(new Date(deposit.approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
+  // If user has no deposit, we’ll show default placeholders
+  const amount = deposit?.amount || 0;
+  const approvedAt = deposit?.approvedAt || null;
+  const maturityDate = approvedAt
+    ? new Date(new Date(approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
     : null;
 
-  // ✅ Expected return = double the deposit
-  const expectedReturn = deposit.amount * 2;
+  // Expected return = double deposit
+  const expectedReturn = amount * 2;
 
-  // ✅ Check eligibility logic
-  const matured = new Date() >= maturityDate;
+  // Eligibility rules
+  const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
@@ -99,7 +93,7 @@ const Dashboard = () => {
       <div className="cards-grid">
         <div className="info-card">
           <h3>Amount Deposited</h3>
-          <p>₦{deposit.amount?.toLocaleString()}</p>
+          <p>₦{amount.toLocaleString()}</p>
         </div>
 
         <div className="info-card">
@@ -109,7 +103,7 @@ const Dashboard = () => {
 
         <div className="info-card">
           <h3>Approval Date</h3>
-          <p>{new Date(deposit.approvedAt).toDateString()}</p>
+          <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
         </div>
 
         <div className="info-card">
