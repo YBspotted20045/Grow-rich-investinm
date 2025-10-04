@@ -1,84 +1,107 @@
+// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
-import API from "./axios"; // ✅ fixed import
+import API from "./axios";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-  const [investment, setInvestment] = useState(null);
-  const [earnings, setEarnings] = useState(null);
+  const [deposit, setDeposit] = useState(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const fetchDeposits = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      const res = await API.get("/deposits/my", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        const deposits = res.data.deposits || [];
+        // ✅ Get the most recently approved deposit
+        const latestApproved = deposits
+          .filter((d) => d.status === "approved")
+          .sort((a, b) => new Date(b.approvedAt) - new Date(a.approvedAt))[0];
+
+        if (latestApproved) {
+          setDeposit(latestApproved);
+          setMessage("✅ Deposit approved successfully!");
+        } else {
+          setDeposit(null);
+          setMessage("⚠️ No approved deposit yet.");
+        }
+      } else {
+        setMessage("❌ Failed to load deposits.");
+      }
+    } catch (err) {
+      console.error("Error fetching deposits:", err);
+      setMessage("⚠️ Error loading your dashboard.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        // 🔹 Updated API route to fetch deposits
-        const res = await API.get("/deposits/my"); // make sure backend has this route
+    fetchDeposits();
 
-        if (res.data.success) {
-          const deposits = res.data.deposits || [];
-
-          // 🔹 Pick the last approved deposit
-          const activeDeposit = deposits.find(dep => dep.status === "approved");
-
-          if (activeDeposit) {
-            setInvestment({
-              amount: activeDeposit.amount,
-              status: activeDeposit.status,
-              maturityDate: activeDeposit.approvedAt
-                ? new Date(new Date(activeDeposit.approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000) // 14-day maturity
-                : null,
-            });
-
-            // 🔹 Set earnings based on deposit, adapt as needed
-            setEarnings({
-              available: activeDeposit.earningsAvailable || 0,
-              maxPayout: activeDeposit.maxPayout || 0,
-            });
-          } else {
-            setInvestment(null);
-            setEarnings(null);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching deposit data:", err);
-      }
-    };
-
-    fetchDashboard();
+    // ✅ Auto-refresh every 20 seconds for live updates
+    const interval = setInterval(fetchDeposits, 20000);
+    return () => clearInterval(interval);
   }, []);
 
-  if (!investment) {
+  if (loading) {
     return (
       <Layout>
-        <h2>Your Investment Overview</h2>
-        <p>⚠️ No active investment yet</p>
+        <p>Loading your dashboard...</p>
       </Layout>
     );
   }
 
-  const withdrawalEligible = earnings?.available > 0;
+  if (!deposit) {
+    return (
+      <Layout>
+        <h2>Your Investment Overview</h2>
+        <p>{message}</p>
+      </Layout>
+    );
+  }
+
+  // ✅ Calculate 14-day maturity date
+  const maturityDate = deposit.approvedAt
+    ? new Date(new Date(deposit.approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
+    : null;
+
+  // ✅ Calculate example earnings (you can adjust logic)
+  const expectedReturn = deposit.amount * 1.5; // 50% profit after 14 days
+  const withdrawalEligible = new Date() >= maturityDate;
 
   return (
     <Layout>
       <h2>Your Investment Overview</h2>
+      <p className="success-message">{message}</p>
 
       <div className="cards-grid">
         <div className="info-card">
-          <h3>Amount Invested</h3>
-          <p>₦{investment.amount?.toLocaleString()}</p>
+          <h3>Amount Deposited</h3>
+          <p>₦{deposit.amount?.toLocaleString()}</p>
         </div>
 
         <div className="info-card">
           <h3>Expected Return</h3>
-          <p>₦{earnings?.maxPayout?.toLocaleString()}</p>
+          <p>₦{expectedReturn.toLocaleString()}</p>
+        </div>
+
+        <div className="info-card">
+          <h3>Approval Date</h3>
+          <p>{new Date(deposit.approvedAt).toDateString()}</p>
         </div>
 
         <div className="info-card">
           <h3>Maturity Date</h3>
-          <p>
-            {investment.maturityDate
-              ? new Date(investment.maturityDate).toDateString()
-              : "—"}
-          </p>
+          <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
         </div>
 
         <div className="info-card">
