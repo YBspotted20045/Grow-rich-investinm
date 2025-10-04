@@ -10,12 +10,13 @@ const AdminDashboard = () => {
     totalDeposits: 0,
     pendingDeposits: 0,
     totalWithdrawals: 0,
+    totalInvestments: 0,
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ Function to fetch admin stats
+  // ✅ Fetch admin stats
   const fetchStats = async () => {
     try {
       setLoading(true);
@@ -28,11 +29,31 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // ✅ Backend sends stats as object — directly set
-      if (res.data) setStats(res.data);
+      // ✅ Handle both possible formats (flat or nested)
+      const data = res.data.stats
+        ? res.data.stats
+        : {
+            totalUsers: res.data.totalUsers,
+            totalDeposits: res.data.totalDeposits,
+            pendingDeposits: res.data.pendingDeposits,
+            totalWithdrawals: res.data.totalWithdrawals,
+            totalInvestments: res.data.totalInvestments,
+          };
+
+      setStats({
+        totalUsers: data.totalUsers || 0,
+        totalDeposits: data.totalDeposits || 0,
+        pendingDeposits: data.pendingDeposits || 0,
+        totalWithdrawals: data.totalWithdrawals || 0,
+        totalInvestments: data.totalInvestments || 0,
+      });
     } catch (err) {
       console.error("Fetch admin stats error:", err);
-      setError(err.response?.data?.message || err.message || "Failed to fetch dashboard stats.");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch dashboard stats."
+      );
     } finally {
       setLoading(false);
     }
@@ -40,9 +61,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchStats();
-
-    // ✅ Auto-refresh dashboard every 20 seconds for real-time update
-    const interval = setInterval(fetchStats, 20000);
+    const interval = setInterval(fetchStats, 20000); // auto-refresh
     return () => clearInterval(interval);
   }, []);
 
@@ -59,24 +78,33 @@ const AdminDashboard = () => {
           <div className="stats-cards">
             <div className="card">
               <h2>Total Users</h2>
-              <p>{stats.totalUsers ?? 0}</p>
+              <p>{stats.totalUsers}</p>
             </div>
 
             <div className="card">
               <h2>Total Deposits</h2>
-              <p>{stats.totalDeposits ?? 0}</p>
+              <p>{stats.totalDeposits}</p>
             </div>
 
             <div className="card">
               <h2>Pending Deposits</h2>
-              <p style={{ color: stats.pendingDeposits > 0 ? "orange" : "green" }}>
-                {stats.pendingDeposits ?? 0}
+              <p
+                style={{
+                  color: stats.pendingDeposits > 0 ? "orange" : "green",
+                }}
+              >
+                {stats.pendingDeposits}
               </p>
             </div>
 
             <div className="card">
               <h2>Total Withdrawals</h2>
-              <p>{stats.totalWithdrawals ?? 0}</p>
+              <p>{stats.totalWithdrawals}</p>
+            </div>
+
+            <div className="card">
+              <h2>Total Investments</h2>
+              <p>{stats.totalInvestments}</p>
             </div>
           </div>
         )}
