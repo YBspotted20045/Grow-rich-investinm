@@ -1,4 +1,3 @@
-// src/pages/AdminReferrals.jsx
 import React, { useEffect, useState } from "react";
 import API from "./axios"; // ✅ centralized axios instance
 import "./AdminReferrals.css";
@@ -20,7 +19,7 @@ const AdminReferrals = () => {
         return;
       }
 
-      // ✅ API endpoint to get all referral data (admin-only)
+      // ✅ API call to admin referrals endpoint
       const res = await API.get("/admin/referrals", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -58,8 +57,10 @@ const AdminReferrals = () => {
               <th>#</th>
               <th>User</th>
               <th>Email</th>
-              <th>Referrals</th>
-              <th>Approved Referrals</th>
+              <th>Total Referrals</th>
+              <th>Referrals (Status)</th>
+              <th>Deposited Referrals</th>
+              <th>Withdraw Eligibility</th>
             </tr>
           </thead>
           <tbody>
@@ -68,16 +69,19 @@ const AdminReferrals = () => {
                 <td>{index + 1}</td>
                 <td>{ref.username}</td>
                 <td>{ref.email}</td>
+                <td>{ref.totalReferrals}</td>
                 <td>
                   {ref.referrals?.length > 0 ? (
                     <ul>
                       {ref.referrals.map((r, i) => (
                         <li key={i}>
                           {r.username} ({r.email}) —{" "}
-                          <strong>
-                            {r.hasDeposited
-                              ? "✅ Deposited"
-                              : "❌ Not Deposited"}
+                          <strong
+                            style={{
+                              color: r.hasDeposited ? "green" : "red",
+                            }}
+                          >
+                            {r.hasDeposited ? "Deposited ✅" : "Not Deposited ❌"}
                           </strong>
                         </li>
                       ))}
@@ -86,10 +90,19 @@ const AdminReferrals = () => {
                     "No referrals"
                   )}
                 </td>
-                <td>
-                  <strong>
-                    {ref.referrals?.filter((r) => r.hasDeposited).length || 0}
-                  </strong>
+                <td style={{ textAlign: "center" }}>
+                  <strong>{ref.depositedReferrals || 0}</strong>
+                </td>
+                <td style={{ textAlign: "center" }}>
+                  {ref.eligibleToWithdraw ? (
+                    <span style={{ color: "green", fontWeight: "bold" }}>
+                      ✅ Eligible
+                    </span>
+                  ) : (
+                    <span style={{ color: "red", fontWeight: "bold" }}>
+                      ❌ Not Eligible
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
