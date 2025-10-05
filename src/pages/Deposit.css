@@ -1,93 +1,106 @@
-/* Deposit.css */
+/* Deposit.css — GrowRich Golden-Black Theme */
 
 .deposit-container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #000;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
   color: #fff;
   text-align: center;
 }
 
+/* Header */
 .deposit-container h2 {
-  font-size: 1.8rem;
-  color: #00ff9d;
+  font-size: 1.9rem;
+  color: gold;
   margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .deposit-container p {
   color: #ccc;
+  margin-bottom: 10px;
 }
 
+/* Cards (Amount Selection) */
 .cards-grid {
   display: flex;
   justify-content: center;
   gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .info-card {
-  background: rgba(0, 255, 157, 0.05);
-  border: 1px solid #00ff9d33;
+  background: #111;
+  border: 1px solid gold;
   border-radius: 10px;
   padding: 15px 20px;
   color: #fff;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .info-card:hover {
-  background: rgba(0, 255, 157, 0.1);
+  background: #222;
   transform: translateY(-2px);
 }
 
 .info-card.selected {
-  background: rgba(0, 255, 157, 0.15);
-  border: 1px solid #00ff9d;
+  background: gold;
+  color: #000;
+  font-weight: bold;
 }
 
-.mt-4 {
-  margin-top: 20px;
-}
-
+/* Forms */
 form {
   margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 input[type="file"] {
   background: #111;
-  border: 1px solid #00ff9d33;
+  border: 1px solid gold;
   border-radius: 8px;
   padding: 10px;
-  color: #ccc;
-  cursor: pointer;
+  color: #fff;
   width: 100%;
+  max-width: 400px;
+  cursor: pointer;
+  text-align: center;
 }
 
 button {
-  background: linear-gradient(90deg, #00ff9d, #00b873);
+  background: gold;
   color: #000;
   font-weight: bold;
   padding: 10px 18px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 12px;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background: linear-gradient(90deg, #00b873, #00ff9d);
-  transform: scale(1.03);
+  background: #ffcf40;
+  transform: scale(1.05);
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* ✅ Messages */
+/* Messages */
 .success-message {
-  color: #00ff9d;
+  color: gold;
   font-weight: 500;
   animation: fadeIn 0.4s ease;
 }
@@ -98,8 +111,8 @@ button:disabled {
   animation: fadeIn 0.4s ease;
 }
 
-/* ✅ Animated Uploading Effect */
-.success-message:contains("Uploading") {
+/* Animated “Uploading…” effect */
+.uploading {
   animation: pulse 1s infinite ease-in-out;
 }
 
@@ -118,13 +131,13 @@ button:disabled {
 /* Deposit History */
 .deposit-history {
   margin-top: 40px;
-  text-align: left;
+  text-align: center;
 }
 
 .deposit-history h3 {
-  text-align: center;
-  color: #00ff9d;
-  margin-bottom: 10px;
+  color: gold;
+  margin-bottom: 15px;
+  text-transform: uppercase;
 }
 
 .deposit-table {
@@ -133,18 +146,19 @@ button:disabled {
   background: #0a0a0a;
   border-radius: 10px;
   overflow: hidden;
+  color: #fff;
 }
 
 .deposit-table th,
 .deposit-table td {
-  padding: 10px 15px;
+  padding: 12px 15px;
   border-bottom: 1px solid #222;
   text-align: center;
 }
 
 .deposit-table th {
-  background: #00ff9d11;
-  color: #00ff9d;
+  background: rgba(255, 215, 0, 0.1);
+  color: gold;
 }
 
 .deposit-table tr:hover {
@@ -161,4 +175,4 @@ button:disabled {
     opacity: 1;
     transform: translateY(0);
   }
-  }
+}
