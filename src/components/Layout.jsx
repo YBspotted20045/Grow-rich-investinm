@@ -1,7 +1,7 @@
 // src/components/Layout.jsx
 import React, { useState } from "react";
 import Sidebar from "../pages/Sidebar.jsx";
-import "./Sidebar.css";
+import "../pages/Sidebar.css"; // fixed path
 
 const Layout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
