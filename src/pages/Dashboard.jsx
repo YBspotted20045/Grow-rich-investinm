@@ -59,66 +59,67 @@ const Dashboard = () => {
     };
     loadData();
 
-    const interval = setInterval(loadData, 20000);
+    // Refresh every 5 minutes (300000 ms)
+    const interval = setInterval(loadData, 300000);
     return () => clearInterval(interval);
   }, []);
 
   if (loading) {
     return (
       <Layout>
-        <p>Loading your dashboard...</p>
+        <div className="dashboard-center">
+          <p>Loading your dashboard...</p>
+        </div>
       </Layout>
     );
   }
 
-  // If user has no deposit, we’ll show default placeholders
   const amount = deposit?.amount || 0;
   const approvedAt = deposit?.approvedAt || null;
   const maturityDate = approvedAt
     ? new Date(new Date(approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
     : null;
 
-  // Expected return = double deposit
   const expectedReturn = amount * 2;
-
-  // Eligibility rules
   const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
     <Layout>
-      <h2>Your Investment Overview</h2>
-      <p className="success-message">{message}</p>
+      <div className="dashboard-center">
+        <h2>Your Investment Overview</h2>
+        <p className="success-message">{message}</p>
 
-      <div className="cards-grid">
-        <div className="info-card">
-          <h3>Amount Deposited</h3>
-          <p>₦{amount.toLocaleString()}</p>
-        </div>
+        <div className="cards-grid">
+          <div className="info-card">
+            <h3>Amount Deposited</h3>
+            <p>₦{amount.toLocaleString()}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Expected Return</h3>
-          <p>₦{expectedReturn.toLocaleString()}</p>
-        </div>
+          <div className="info-card">
+            <h3>Expected Return</h3>
+            <p>₦{expectedReturn.toLocaleString()}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Approval Date</h3>
-          <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
-        </div>
+          <div className="info-card">
+            <h3>Approval Date</h3>
+            <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Maturity Date</h3>
-          <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
-        </div>
+          <div className="info-card">
+            <h3>Maturity Date</h3>
+            <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Referral Requirement</h3>
-          <p>{approvedReferrals}/2 referrals have deposited</p>
-        </div>
+          <div className="info-card">
+            <h3>Referral Requirement</h3>
+            <p>{approvedReferrals}/2 referrals have deposited</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Withdrawal Eligibility</h3>
-          <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
+          <div className="info-card">
+            <h3>Withdrawal Eligibility</h3>
+            <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
+          </div>
         </div>
       </div>
     </Layout>
