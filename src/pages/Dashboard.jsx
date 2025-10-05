@@ -58,7 +58,6 @@ const Dashboard = () => {
     };
     loadData();
 
-    // Refresh every 5 minutes
     const interval = setInterval(loadData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
@@ -84,11 +83,19 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="dashboard-container vertical">
+      <div className="dashboard-container">
         <h2 className="dashboard-title">Your Investment Overview</h2>
-        <p className="status-message">{message}</p>
 
         <div className="vertical-cards">
+          {/* ✅ Status message as a card */}
+          <div
+            className={`info-card status-card ${
+              message.includes("approved") ? "success" : "warning"
+            }`}
+          >
+            <p>{message}</p>
+          </div>
+
           <div className="info-card">
             <h3>Amount Deposited</h3>
             <p>₦{amount.toLocaleString()}</p>
