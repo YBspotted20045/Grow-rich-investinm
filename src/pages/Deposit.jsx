@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
-import "./Dashboard.css";
+import "./Deposit.css";
 
 const Deposit = () => {
   const [amount, setAmount] = useState("");
@@ -12,17 +12,16 @@ const Deposit = () => {
   const [deposits, setDeposits] = useState([]);
   const fileInputRef = useRef(null);
 
-  // ────────────────────────────────
-  // Fetch all user deposits on mount
-  // ────────────────────────────────
+  // ✅ Fetch user deposits (correct route)
   const fetchDeposits = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await API.get("/deposits/me", {
+      const res = await API.get("/deposits/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (res.data.success) {
         setDeposits(res.data.deposits || []);
       }
@@ -35,20 +34,16 @@ const Deposit = () => {
     fetchDeposits();
   }, []);
 
-  // ────────────────────────────────
-  // Handle File Upload
-  // ────────────────────────────────
+  // ✅ Handle file selection
   const handleFileChange = (e) => {
     setReceipt(e.target.files[0]);
   };
 
-  // ────────────────────────────────
-  // Submit Deposit
-  // ────────────────────────────────
+  // ✅ Handle upload
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
+    setMessage("📤 Uploading receipt...");
     setError(null);
 
     try {
@@ -62,8 +57,6 @@ const Deposit = () => {
         setLoading(false);
         return;
       }
-
-      setMessage("📤 Uploading receipt...");
 
       const res = await API.post("/deposits/upload", formData, {
         headers: {
@@ -82,7 +75,7 @@ const Deposit = () => {
         if (fileInputRef.current) fileInputRef.current.value = "";
 
         // Refresh deposit list after upload
-        fetchDeposits();
+        await fetchDeposits();
       } else {
         setError(res.data.message || "Something went wrong");
       }
@@ -94,9 +87,21 @@ const Deposit = () => {
     }
   };
 
-  // ────────────────────────────────
-  // UI
-  // ────────────────────────────────
+  // ✅ Check latest deposit to show persistent message
+  useEffect(() => {
+    if (deposits.length > 0) {
+      const latest = deposits[0];
+      if (latest.status === "pending") {
+        setMessage("⏳ Waiting for admin approval...");
+      } else if (latest.status === "approved") {
+        setMessage("✅ Approved! Your investment is now active.");
+        setTimeout(() => setMessage(null), 15000); // fade after 15s
+      } else if (latest.status === "rejected") {
+        setMessage("❌ Your deposit was rejected. Please re-upload.");
+      }
+    }
+  }, [deposits]);
+
   return (
     <Layout>
       <div className="deposit-container">
@@ -120,12 +125,18 @@ const Deposit = () => {
           <div className="info-card mt-4">
             <h3>Payment Instructions</h3>
             <p>
-              Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to the account below
-              and upload your payment receipt.
+              Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to
+              the account below and upload your receipt.
             </p>
-            <p><strong>Bank:</strong> PalmPay</p>
-            <p><strong>Account Number:</strong> 8984550866</p>
-            <p><strong>Account Name:</strong> Nnaji Kelvin Somtochukwu</p>
+            <p>
+              <strong>Bank:</strong> PalmPay
+            </p>
+            <p>
+              <strong>Account Number:</strong> 8984550866
+            </p>
+            <p>
+              <strong>Account Name:</strong> Nnaji Kelvin Somtochukwu
+            </p>
           </div>
         )}
 
@@ -142,11 +153,19 @@ const Deposit = () => {
           </button>
         </form>
 
-        {message && <p className="success-message" style={{ marginTop: "10px" }}>{message}</p>}
-        {error && <p className="error-message" style={{ marginTop: "10px" }}>{error}</p>}
+        {message && (
+          <p className="success-message" style={{ marginTop: "10px" }}>
+            {message}
+          </p>
+        )}
+        {error && (
+          <p className="error-message" style={{ marginTop: "10px" }}>
+            {error}
+          </p>
+        )}
 
         {/* ────────────────────────────────
-          Deposit Status Section
+            Deposit Status Table
         ──────────────────────────────── */}
         <div className="deposit-history mt-4">
           <h3>Your Deposits</h3>
@@ -167,7 +186,9 @@ const Deposit = () => {
                     <td>₦{dep.amount.toLocaleString()}</td>
                     <td>
                       {dep.status === "pending" && (
-                        <span style={{ color: "orange" }}>⏳ Waiting for approval</span>
+                        <span style={{ color: "orange" }}>
+                          ⏳ Waiting for approval
+                        </span>
                       )}
                       {dep.status === "approved" && (
                         <span style={{ color: "limegreen" }}>✅ Approved</span>
