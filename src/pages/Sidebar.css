@@ -1,145 +1,125 @@
-/* Sidebar container */
+/* Sidebar container /
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: -250px; /* hidden by default */
-  width: 220px;
-  height: 100%;
-  background-color: #111; /* rich black */
-  border-right: 1px solid #333;
-  color: #d4af37; /* gold text */
-  padding: 20px 0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5);
-  transition: left 0.3s ease-in-out;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
+position: fixed;
+top: 0;
+left: -250px; / hidden by default /
+width: 220px;
+height: 100%;
+background-color: #ffffff; / clean white /
+border-right: 1px solid #e0e0e0; / thin straight line */
+color: #333;
+padding: 20px 0;
+box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+transition: left 0.3s ease-in-out;
+z-index: 1000;
+display: flex;
+flex-direction: column;
 }
 
 /* When sidebar is open */
 .sidebar.open {
-  left: 0;
+left: 0;
 }
 
-/* Sidebar title */
+/* Sidebar title /
 .sidebar-title {
-  font-size: 22px;
-  color: #d4af37; /* gold */
-  text-align: center;
-  margin-bottom: 30px;
-  font-weight: bold;
+font-size: 22px;
+color: #d4af37; / gold */
+text-align: center;
+margin-bottom: 30px;
+font-weight: bold;
 }
 
-/* Menu styles */
+/* Menu styles /
 .sidebar-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex: 1;
-  border-top: 1px solid #333;
+list-style: none;
+padding: 0;
+margin: 0;
+flex: 1; / push logout button down /
+border-top: 1px solid #f0f0f0; / thin line */
 }
 
 .sidebar-menu li {
-  margin: 8px 0;
+margin: 8px 0;
 }
 
 .sidebar-menu li a {
-  text-decoration: none;
-  color: #d4af37; /* gold text */
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-  display: block;
-  padding: 10px 16px;
-  border-radius: 6px;
+text-decoration: none;
+color: #333;
+font-size: 16px;
+font-weight: 500;
+transition: all 0.2s ease-in-out;
+display: block;
+padding: 10px 16px;
 }
 
 .sidebar-menu li.active a,
 .sidebar-menu li a:hover {
-  color: #111; /* black text on highlight */
-  background-color: #d4af37; /* gold highlight */
-  font-weight: bold;
-  box-shadow: 0 0 8px #d4af37;
+color: #000;
+background-color: #fff8e7; /* light gold-white highlight */
+font-weight: bold;
+border-radius: 6px;
 }
 
 /* Close button (mobile only) */
 .sidebar-close {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #d4af37;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  cursor: pointer;
+background: none;
+border: none;
+font-size: 20px;
+color: #333;
+position: absolute;
+top: 15px;
+right: 15px;
+cursor: pointer;
 }
 
 /* Hamburger button */
 .hamburger {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  font-size: 22px;
-  background: none;
-  border: none;
-  color: #d4af37; /* gold */
-  cursor: pointer;
-  z-index: 1100;
-  transition: all 0.3s ease-in-out;
+position: fixed;
+top: 15px;
+left: 15px;
+font-size: 22px;
+background: none;
+border: none;
+color: #333;
+cursor: pointer;
+z-index: 1100;
 }
 
-.hamburger:hover {
-  text-shadow: 0 0 8px #d4af37, 0 0 16px #d4af37;
-  transform: scale(1.1);
-}
-
-/* Logout button */
+/* Logout button /
 .sidebar-logout {
-  padding: 15px;
-  border-top: 1px solid #333;
+padding: 15px;
+border-top: 1px solid #f0f0f0; / thin divider line */
 }
 
 .logout-btn {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, #d4af37, #000);
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+width: 100%;
+padding: 10px;
+background: linear-gradient(135deg, #d4af37, #000);
+color: white;
+font-size: 16px;
+font-weight: bold;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.3s ease-in-out;
 }
 
 .logout-btn:hover {
-  background: linear-gradient(135deg, #000, #d4af37);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px #d4af37;
+background: linear-gradient(135deg, #000, #d4af37);
+transform: scale(1.05);
 }
 
 /* Desktop: always open sidebar */
 @media (min-width: 768px) {
-  .sidebar {
-    left: 0;
-  }
-  .hamburger {
-    display: none;
-  }
-  .sidebar-close {
-    display: none;
-  }
+.sidebar {
+left: 0;
+}
+.hamburger {
+display: none;
+}
+.sidebar-close {
+display: none;
+}
 }
 
-/* Main content */
-.layout-content {
-  margin-left: 0;
-  padding: 20px;
-  transition: margin-left 0.3s ease-in-out;
-}
-
-@media (min-width: 768px) {
-  .layout-content {
-    margin-left: 220px;
-  }
-}
