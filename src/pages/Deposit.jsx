@@ -129,13 +129,28 @@ const Deposit = () => {
               the account below and upload your receipt.
             </p>
             <p>
-              <strong>Bank:</strong> PalmPay
+              <strong>Bank:</strong> OPay
             </p>
             <p>
-              <strong>Account Number:</strong> 8984550866
+              <strong>Account Number:</strong> 6108394708{" "}
+              <button
+                type="button"
+                onClick={() => navigator.clipboard.writeText("6108394708")}
+                style={{
+                  marginLeft: "8px",
+                  cursor: "pointer",
+                  padding: "2px 6px",
+                  border: "none",
+                  borderRadius: "4px",
+                  backgroundColor: "#eee",
+                }}
+                title="Copy account number"
+              >
+                📋
+              </button>
             </p>
             <p>
-              <strong>Account Name:</strong> Nnaji Kelvin Somtochukwu
+              <strong>Account Name:</strong> KELVIN SOMTOCHUKWU NNAJI
             </p>
           </div>
         )}
