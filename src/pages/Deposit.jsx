@@ -10,9 +10,10 @@ const Deposit = () => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [deposits, setDeposits] = useState([]);
+  const [copyMessage, setCopyMessage] = useState(""); // For copy feedback
   const fileInputRef = useRef(null);
 
-  // ✅ Fetch user deposits (correct route)
+  // ✅ Fetch user deposits
   const fetchDeposits = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -102,6 +103,13 @@ const Deposit = () => {
     }
   }, [deposits]);
 
+  // ✅ Copy account number with feedback
+  const handleCopy = () => {
+    navigator.clipboard.writeText("6392000298");
+    setCopyMessage("Copied!");
+    setTimeout(() => setCopyMessage(""), 2000); // remove message after 2s
+  };
+
   return (
     <Layout>
       <div className="deposit-container">
@@ -129,13 +137,13 @@ const Deposit = () => {
               the account below and upload your receipt.
             </p>
             <p>
-              <strong>Bank:</strong> OPay
+              <strong>Bank:</strong> Moniepoint MFB
             </p>
             <p>
-              <strong>Account Number:</strong> 6108394708{" "}
+              <strong>Account Number:</strong> 6392000298{" "}
               <button
                 type="button"
-                onClick={() => navigator.clipboard.writeText("6108394708")}
+                onClick={handleCopy}
                 style={{
                   marginLeft: "8px",
                   cursor: "pointer",
@@ -148,6 +156,11 @@ const Deposit = () => {
               >
                 📋
               </button>
+              {copyMessage && (
+                <span style={{ marginLeft: "8px", color: "green" }}>
+                  {copyMessage}
+                </span>
+              )}
             </p>
             <p>
               <strong>Account Name:</strong> KELVIN SOMTOCHUKWU NNAJI
