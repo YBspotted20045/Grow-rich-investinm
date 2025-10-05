@@ -1,5 +1,5 @@
 .dashboard-container {
-  margin-left: 70px; /* shifts content away from sidebar toggle button */
+  margin-left: 70px; /* Shift away from sidebar button */
   padding: 20px;
   text-align: left;
   color: white;
@@ -20,21 +20,18 @@
   color: white;
 }
 
-.loading-text {
-  color: #ffd700;
-  font-size: 1.2rem;
-  text-align: center;
-  margin-top: 100px;
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+/* Vertically stacked layout */
+.vertical-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 20px;
   margin-top: 30px;
+  max-width: 500px; /* narrow and centered column */
 }
 
 .info-card {
+  width: 100%;
   background: #111;
   border: 1px solid #ffd700;
   border-radius: 12px;
@@ -45,7 +42,7 @@
 }
 
 .info-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }
 
@@ -60,10 +57,21 @@
   font-weight: bold;
 }
 
+.loading-text {
+  color: #ffd700;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 100px;
+}
+
 @media (max-width: 768px) {
   .dashboard-container {
     margin-left: 40px;
     padding: 15px;
+  }
+
+  .vertical-cards {
+    align-items: stretch;
   }
 
   .info-card {
