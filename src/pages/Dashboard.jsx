@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import API from "./axios";
@@ -59,16 +58,16 @@ const Dashboard = () => {
     };
     loadData();
 
-    // Refresh every 5 minutes (300000 ms)
-    const interval = setInterval(loadData, 300000);
+    // ⏱ Refresh every 5 minutes instead of 20 seconds
+    const interval = setInterval(loadData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
   if (loading) {
     return (
       <Layout>
-        <div className="dashboard-center">
-          <p>Loading your dashboard...</p>
+        <div className="dashboard-container">
+          <p className="loading-text">Loading your dashboard...</p>
         </div>
       </Layout>
     );
@@ -79,16 +78,15 @@ const Dashboard = () => {
   const maturityDate = approvedAt
     ? new Date(new Date(approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
     : null;
-
   const expectedReturn = amount * 2;
   const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
     <Layout>
-      <div className="dashboard-center">
-        <h2>Your Investment Overview</h2>
-        <p className="success-message">{message}</p>
+      <div className="dashboard-container">
+        <h2 className="dashboard-title">Your Investment Overview</h2>
+        <p className="status-message">{message}</p>
 
         <div className="cards-grid">
           <div className="info-card">
