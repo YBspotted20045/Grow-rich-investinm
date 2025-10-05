@@ -1,29 +1,27 @@
 // src/components/Layout.jsx
 import React, { useState } from "react";
 import Sidebar from "../pages/Sidebar.jsx";
-import "../pages/Sidebar.css"; // fixed path
+import "./Layout.css";
 
 const Layout = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+const toggleSidebar = () => {
+setIsSidebarOpen(!isSidebarOpen);
+};
 
-  return (
-    <div className="layout">
-      {/* Hamburger button */}
-      <button className="hamburger" onClick={toggleSidebar}>
-        ☰
-      </button>
+return (
+<div className="layout">
+{/* Sidebar + Hamburger */}
+<Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-      {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+{/* Page content */}  
+  <main className="layout-content">{children}</main>  
+</div>
 
-      {/* Main content */}
-      <main className="layout-content">{children}</main>
-    </div>
-  );
+);
 };
 
 export default Layout;
+
+  
