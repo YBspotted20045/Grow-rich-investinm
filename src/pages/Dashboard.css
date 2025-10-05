@@ -1,59 +1,73 @@
 .dashboard-container {
-  margin-left: 70px; /* Shift away from sidebar button */
-  padding: 20px;
+  padding: 30px 20px;
   text-align: left;
   color: white;
   background-color: black;
   min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Optional: if you have a sidebar, this ensures content doesn’t overlap */
+@media (min-width: 769px) {
+  .dashboard-container {
+    margin-left: 0; /* remove fixed margin */
+  }
 }
 
 .dashboard-title {
   color: #ffd700;
-  font-size: 1.8rem;
-  margin-bottom: 10px;
+  font-size: 2rem;
+  margin-bottom: 15px;
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  text-align: center;
 }
 
 .status-message {
   font-size: 1rem;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: white;
+  text-align: center;
 }
 
-/* Vertically stacked layout */
+/* Cards centered and wider */
 .vertical-cards {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
+  align-items: center;
+  gap: 25px;
+  width: 100%;
+  max-width: 600px; /* slightly wider */
   margin-top: 30px;
-  max-width: 500px; /* narrow and centered column */
 }
 
 .info-card {
   width: 100%;
   background: #111;
   border: 1px solid #ffd700;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 15px;
+  padding: 25px;
   color: white;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .info-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
 }
 
 .info-card h3 {
   color: #ffd700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin-bottom: 8px;
 }
 
 .info-card p {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
@@ -64,14 +78,15 @@
   margin-top: 100px;
 }
 
+/* Mobile optimization */
 @media (max-width: 768px) {
   .dashboard-container {
-    margin-left: 40px;
-    padding: 15px;
+    padding: 20px 10px;
   }
 
   .vertical-cards {
-    align-items: stretch;
+    width: 100%;
+    max-width: 95%;
   }
 
   .info-card {
@@ -79,6 +94,6 @@
   }
 
   .dashboard-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 }
