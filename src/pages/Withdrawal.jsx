@@ -4,28 +4,41 @@ import axios from "./axios.js";
 import "./Withdrawal.css";
 
 const Withdrawal = () => {
-  const [amount, setAmount] = useState("");
+  const [investment, setInvestment] = useState(null);
   const [message, setMessage] = useState("");
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  // ✅ Fetch all user's withdrawals
+  // ✅ Fetch active investment from backend
+  const fetchInvestment = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found. Please log in again.");
+
+      const res = await axios.get("/investments/my-active", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data?.investment) {
+        setInvestment(res.data.investment);
+      } else {
+        setInvestment(null);
+      }
+    } catch (err) {
+      console.error("Fetch investment error:", err);
+      setInvestment(null);
+    }
+  };
+
+  // ✅ Fetch withdrawal history
   const fetchWithdrawals = async () => {
     try {
       setFetching(true);
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found. Please log in again.");
-
       const res = await axios.get("/withdrawals", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (res.data.success === false) {
-        setMessage(res.data.message || "Failed to load withdrawals.");
-        return;
-      }
-
       setWithdrawals(res.data.withdrawals || []);
     } catch (err) {
       console.error("Fetch withdrawals error:", err);
@@ -39,36 +52,28 @@ const Withdrawal = () => {
   };
 
   useEffect(() => {
+    fetchInvestment();
     fetchWithdrawals();
   }, []);
 
   // ✅ Handle withdrawal request
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!amount || Number(amount) <= 0) {
-      setMessage("⚠️ Please enter a valid withdrawal amount.");
-      return;
-    }
 
     try {
       setLoading(true);
       setMessage("");
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found. Please log in again.");
 
       const res = await axios.post(
         "/withdrawals/request",
-        { amount },
+        {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (res.data.success === false) {
-        throw new Error(res.data.message || "Withdrawal request failed.");
-      }
-
       setMessage(res.data.message || "✅ Withdrawal requested successfully!");
-      setAmount("");
       fetchWithdrawals();
+      fetchInvestment();
     } catch (err) {
       console.error("Withdrawal error:", err);
       setMessage(
@@ -87,25 +92,27 @@ const Withdrawal = () => {
 
       {message && <p className="withdrawal-message">{message}</p>}
 
-      {/* Request Card */}
       <div className="withdrawal-card">
-        <form onSubmit={handleSubmit} className="withdrawal-form">
-          <label htmlFor="amount">Amount (₦)</label>
-          <input
-            id="amount"
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter withdrawal amount"
-            disabled={loading}
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? "Processing..." : "Request Withdrawal"}
-          </button>
-        </form>
+        {investment ? (
+          <form onSubmit={handleSubmit} className="withdrawal-form">
+            <p>
+              <strong>Active Investment:</strong> ₦
+              {Number(investment.amount).toLocaleString()}
+            </p>
+            <p>
+              <strong>Maturity Date:</strong>{" "}
+              {new Date(investment.maturityDate).toLocaleDateString("en-NG")}
+            </p>
+            <button type="submit" disabled={loading}>
+              {loading ? "Processing..." : "Request Withdrawal"}
+            </button>
+          </form>
+        ) : (
+          <p className="no-investment">❌ No active investment</p>
+        )}
       </div>
 
-      {/* History Card */}
+      {/* Withdrawal History */}
       <div className="withdrawal-card">
         <h2>Your Withdrawals</h2>
         {fetching ? (
