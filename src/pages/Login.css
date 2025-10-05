@@ -1,3 +1,6 @@
+/* Login.css */
+
+/* Full page layout */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -6,6 +9,7 @@
   background-color: #fff;
 }
 
+/* Login container */
 .login-container {
   background-color: #000;
   color: #fff;
@@ -14,15 +18,19 @@
   width: 400px;
   max-width: 90%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
 }
 
+/* Title */
 .login-title {
   text-align: center;
   color: #ffd700;
   margin-bottom: 20px;
   font-size: 28px;
+  font-weight: bold;
 }
 
+/* Form structure */
 form {
   display: flex;
   flex-direction: column;
@@ -31,21 +39,42 @@ form {
 label {
   margin-top: 10px;
   margin-bottom: 5px;
+  font-size: 14px;
+  color: #ffd700;
 }
 
+/* Input fields - improved visibility */
 input {
   padding: 10px;
   border-radius: 8px;
-  border: none;
+  border: 1px solid #ffd700;
   margin-bottom: 15px;
+  background-color: #fff; /* ✅ White background */
+  color: #000; /* ✅ Black text */
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
+/* Placeholder text */
+input::placeholder {
+  color: #555; /* ✅ Visible gray placeholder */
+}
+
+/* Focus effect */
+input:focus {
+  outline: none;
+  border: 1px solid #ffc107;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+}
+
+/* Disabled input */
 input:disabled {
-  background-color: #333;
+  background-color: #f2f2f2;
   color: #888;
   cursor: not-allowed;
 }
 
+/* Buttons */
 button {
   padding: 12px;
   background-color: #ffd700;
@@ -62,6 +91,7 @@ button {
 
 button:hover {
   background-color: #ffc107;
+  transform: scale(1.03);
 }
 
 button:disabled {
@@ -69,12 +99,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Error message */
 .error-message {
   color: #ff4d4f;
   margin-bottom: 10px;
   text-align: center;
+  font-weight: 500;
 }
 
+/* Signup link */
 .signup-link {
   text-align: center;
   margin-top: 15px;
@@ -90,7 +123,7 @@ button:disabled {
   text-decoration: underline;
 }
 
-/* Spinner inside button */
+/* Spinner animation */
 .spinner {
   width: 18px;
   height: 18px;
@@ -104,4 +137,9 @@ button:disabled {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Optional: gold glow on active container */
+.login-container:focus-within {
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
 }
