@@ -28,6 +28,8 @@ const Dashboard = () => {
         if (latestApproved) {
           setMessage("✅ Deposit approved successfully!");
           setShowMessage(true);
+
+          // Disappear after 3 minutes
           setTimeout(() => setShowMessage(false), 3 * 60 * 1000);
         } else {
           setMessage("");
@@ -66,9 +68,11 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-container">
-        <p className="loading-text">Loading your dashboard...</p>
-      </div>
+      <Layout>
+        <div className="dashboard-container">
+          <p className="loading-text">Loading your dashboard...</p>
+        </div>
+      </Layout>
     );
   }
 
@@ -82,49 +86,51 @@ const Dashboard = () => {
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
-    <div className="dashboard-container">
-      {/* ✅ Floating Message */}
-      {showMessage && <p className="floating-message">{message}</p>}
+    <Layout>
+      <div className="dashboard-container">
+        {/* ✅ Floating animated message */}
+        {showMessage && <p className="floating-message">{message}</p>}
 
-      {/* ✅ Top Big Curved Card */}
-      <div className="top-card">
-        <h2>Total Income Returned</h2>
-        <p>₦{expectedReturn.toLocaleString()}</p>
-      </div>
-
-      {/* ✅ Bottom Section */}
-      <div className="cards-grid">
-        <div className="info-card">
-          <h3>Amount Deposited</h3>
-          <p>₦{amount.toLocaleString()}</p>
-        </div>
-
-        <div className="info-card">
-          <h3>Expected Return</h3>
+        {/* ✅ Top big curved white card */}
+        <div className="top-card">
+          <h2>Total Income Returned</h2>
           <p>₦{expectedReturn.toLocaleString()}</p>
         </div>
 
-        <div className="info-card">
-          <h3>Approval Date</h3>
-          <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
-        </div>
+        {/* ✅ Bottom section - fixed 2-column arrangement */}
+        <div className="cards-grid">
+          <div className="info-card">
+            <h3>Amount Deposited</h3>
+            <p>₦{amount.toLocaleString()}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Maturity Date</h3>
-          <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
-        </div>
+          <div className="info-card">
+            <h3>Expected Return</h3>
+            <p>₦{expectedReturn.toLocaleString()}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Referral Requirement</h3>
-          <p>{approvedReferrals}/2 referrals have deposited</p>
-        </div>
+          <div className="info-card">
+            <h3>Approval Date</h3>
+            <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
+          </div>
 
-        <div className="info-card">
-          <h3>Withdrawal Eligibility</h3>
-          <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
+          <div className="info-card">
+            <h3>Maturity Date</h3>
+            <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+          </div>
+
+          <div className="info-card">
+            <h3>Referral Requirement</h3>
+            <p>{approvedReferrals}/2 referrals have deposited</p>
+          </div>
+
+          <div className="info-card">
+            <h3>Withdrawal Eligibility</h3>
+            <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
