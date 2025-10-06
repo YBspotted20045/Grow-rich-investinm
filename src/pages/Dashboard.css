@@ -2,111 +2,132 @@
 .dashboard-container {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #000, #111, #222);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  color: white;
   font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* === FLOATING MESSAGE === */
+/* Split background: white top + black-gold gradient bottom */
+.dashboard-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 45%;
+  background: #ffffff;
+  z-index: -2;
+}
+
+.dashboard-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(145deg, #000, #1a1a1a 40%, #b8860b 100%);
+  z-index: -2;
+}
+
+/* === FLOATING MESSAGE (Deposit success, etc.) === */
 .floating-message {
   position: fixed;
-  top: 20px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.4);
+  text-align: center;
   color: #ffd700;
-  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 10px 22px;
   border-radius: 999px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
-  box-shadow: 0 4px 18px rgba(255, 215, 0, 0.2);
-  backdrop-filter: blur(6px);
-  animation: fadeSlide 3s ease-in-out infinite alternate;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  animation: floatPulse 3s ease-in-out infinite;
+  z-index: 10;
 }
 
-@keyframes fadeSlide {
-  0%, 100% {
-    opacity: 0.4;
-    transform: translate(-50%, 0);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -4px);
-  }
+@keyframes floatPulse {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -2px); }
+  50% { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* === TOP BIG CARD === */
+/* === TOP MAIN CARD (transparent white) === */
 .top-card {
   position: relative;
-  background: linear-gradient(145deg, #111, #000);
-  border: 1px solid rgba(255, 215, 0, 0.25);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 30px;
   width: 90%;
   max-width: 700px;
   padding: 45px 30px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.15);
-  margin-bottom: 40px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  margin: 60px 0 40px;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
-/* === GOLD WAVE ANIMATION === */
-.top-card::after,
-.info-card::after {
+.top-card::after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: -30px;
   left: 0;
   width: 200%;
   height: 200%;
   background: radial-gradient(circle at 50% 150%, rgba(255, 215, 0, 0.15) 20%, transparent 70%);
   animation: waveMove 6s linear infinite;
   opacity: 0.25;
+  z-index: 0;
 }
 
 @keyframes waveMove {
-  0% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(0) translateY(10px);
-  }
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
+  0% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(0) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(0); }
 }
 
 .top-card h2 {
-  font-size: 1.8rem;
-  color: #ffd700;
-  margin: 0;
-  text-transform: uppercase;
+  font-size: 2rem;
+  color: #000;
+  margin: 0 0 10px;
+  font-weight: 700;
   letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
 }
 
 .top-card p {
   font-size: 2.4rem;
   font-weight: 700;
-  color: #fff;
-  margin-top: 10px;
+  color: #b8860b;
+  margin: 0;
   position: relative;
   z-index: 1;
 }
 
-/* === SMALL CARDS GRID === */
+/* === SMALL CARDS GRID (side-by-side centered) === */
 .cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;  /* center them horizontally */
+  align-items: center;
+  gap: 22px 40px;            /* row + column spacing */
   width: 90%;
   max-width: 950px;
   margin-top: 10px;
+  margin-bottom: 50px;
+  z-index: 1;
+}
+
+/* create a middle space (imaginary empty card spot) */
+.cards-grid::before {
+  content: "";
+  flex: 0 0 200px; /* reserve empty middle slot */
 }
 
 /* === SMALL INFO CARDS === */
@@ -115,9 +136,11 @@
   background: linear-gradient(145deg, #111, #000);
   border: 1px solid rgba(255, 215, 0, 0.25);
   border-radius: 24px;
-  padding: 20px;
+  padding: 18px;
   text-align: center;
   color: #fff;
+  width: 200px;
+  height: 110px;
   box-shadow: 0 8px 20px rgba(255, 215, 0, 0.08),
               inset 0 0 10px rgba(255, 215, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -125,8 +148,21 @@
 }
 
 .info-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(255, 215, 0, 0.25);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(255, 215, 0, 0.25);
+}
+
+.info-card::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 150%, rgba(255, 215, 0, 0.2) 20%, transparent 70%);
+  animation: waveMove 6s linear infinite;
+  opacity: 0.2;
+  z-index: 0;
 }
 
 .info-card h3 {
@@ -148,13 +184,6 @@
   z-index: 1;
 }
 
-/* === LOADING TEXT === */
-.loading-text {
-  color: #ffd700;
-  margin-top: 80px;
-  font-size: 1.1rem;
-}
-
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .top-card {
@@ -166,6 +195,16 @@
   }
 
   .info-card {
-    padding: 16px;
+    width: 160px;
+    height: 100px;
   }
+
+  .cards-grid {
+    justify-content: center;
+    gap: 16px 24px;
   }
+
+  .cards-grid::before {
+    flex: 0 0 100px; /* smaller center gap on mobile */
+  }
+}
