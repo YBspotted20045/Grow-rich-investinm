@@ -1,78 +1,78 @@
 .dashboard-container {
   padding: 40px 20px;
-  background-color: black;
-  color: white;
   min-height: 100vh;
   width: 100%;
+  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   box-sizing: border-box;
+  background: linear-gradient(135deg, #000000 30%, #C5A300 100%);
+  background-attachment: fixed;
 }
 
+/* Title */
 .dashboard-title {
-  color: #ffd700;
+  color: #c5a300;
   font-size: 2rem;
-  margin-bottom: 25px;
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px rgba(197, 163, 0, 0.6);
   text-align: center;
 }
 
-/* Main card layout */
+/* Approval message */
+.approval-message {
+  color: #c5a300;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(197, 163, 0, 0.5);
+}
+
+/* Card layout */
 .vertical-cards {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 25px;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
 }
 
-/* Card design */
+/* Glass-style card */
 .info-card {
   width: 100%;
-  background: #111;
-  border: 1px solid #ffd700;
-  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(197, 163, 0, 0.4);
+  border-radius: 20px;
   padding: 25px;
-  color: white;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-  transition: transform 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(197, 163, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
 .info-card:hover {
+  box-shadow: 0 0 25px rgba(197, 163, 0, 0.6);
   transform: translateY(-3px);
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
 }
 
-/* Status (message) card */
-.status-card {
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: 600;
+/* Top card larger */
+.large-card {
+  width: 95%;
+  max-width: 720px;
+  padding: 35px;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* Green glow when approved */
-.status-card.success {
-  background: #032d03;
-  border: 1px solid #00ff88;
-  color: #00ff88;
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
-}
-
-/* Yellow/orange glow when warning or no deposit */
-.status-card.warning {
-  background: #2f2303;
-  border: 1px solid #ffcc00;
-  color: #ffcc00;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
-}
-
+/* Text styles */
 .info-card h3 {
-  color: #ffd700;
+  color: #c5a300;
   font-size: 1.2rem;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .info-card p {
@@ -81,18 +81,14 @@
 }
 
 .loading-text {
-  color: #ffd700;
+  color: #c5a300;
   font-size: 1.2rem;
   text-align: center;
   margin-top: 100px;
 }
 
-/* ✅ Mobile Responsive */
+/* Responsive */
 @media (max-width: 768px) {
-  .dashboard-container {
-    padding: 25px 15px;
-  }
-
   .dashboard-title {
     font-size: 1.6rem;
   }
@@ -103,11 +99,10 @@
   }
 
   .info-card {
-    padding: 18px;
+    padding: 20px;
   }
 }
 
-/* ✅ Desktop Layout (side-by-side cards) */
 @media (min-width: 1024px) {
   .vertical-cards {
     flex-direction: row;
@@ -117,11 +112,11 @@
 
   .info-card {
     width: 45%;
-    max-width: 300px;
+    max-width: 320px;
   }
 
-  .status-card {
+  .large-card {
     width: 95%;
-    max-width: 620px;
+    max-width: 700px;
   }
-}
+  }
