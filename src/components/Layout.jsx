@@ -8,26 +8,22 @@ const Layout = ({ children }) => {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
-    // Update when window is resized
     const handleResize = () => setIsDesktop(window.innerWidth >= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <div className="layout">
-      {/* ✅ Show only one sidebar version depending on screen size */}
-      {isDesktop ? (
-        <Sidebar isOpen={true} /> // Always visible on desktop
-      ) : (
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      )}
+      {/* ✅ Only one sidebar should ever exist */}
+      <Sidebar
+        isOpen={isDesktop ? true : isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+      />
 
-      {/* Page content */}
+      {/* ✅ Main content area */}
       <main className="layout-content">{children}</main>
     </div>
   );
