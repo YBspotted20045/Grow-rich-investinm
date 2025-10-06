@@ -1,240 +1,131 @@
-import React, { useState, useRef, useEffect } from "react";
-
+// src/pages/Dashboard.jsx
+import React, { useState, useEffect } from "react";
 import API from "./axios";
-import "./Deposit.css";
+import "./Dashboard.css";
 
-const Deposit = () => {
-  const [amount, setAmount] = useState("");
-  const [receipt, setReceipt] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-  const [deposits, setDeposits] = useState([]);
-  const [copyMessage, setCopyMessage] = useState(""); // For copy feedback
-  const fileInputRef = useRef(null);
+const Dashboard = () => {
+  const [deposit, setDeposit] = useState(null);
+  const [approvedReferrals, setApprovedReferrals] = useState(0);
+  const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch user deposits
   const fetchDeposits = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return;
-
       const res = await API.get("/deposits/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.data.success) {
-        setDeposits(res.data.deposits || []);
+        const deposits = res.data.deposits || [];
+        const latestApproved = deposits
+          .filter((d) => d.status === "approved")
+          .sort((a, b) => new Date(b.approvedAt) - new Date(a.approvedAt))[0];
+
+        setDeposit(latestApproved || null);
+
+        if (latestApproved) {
+          setMessage("✅ Deposit approved successfully!");
+          setShowMessage(true);
+          setTimeout(() => setShowMessage(false), 3 * 60 * 1000);
+        } else {
+          setMessage("");
+          setShowMessage(false);
+        }
+      } else {
+        setMessage("❌ Failed to load deposits.");
       }
     } catch (err) {
       console.error("Error fetching deposits:", err);
+      setMessage("⚠️ Error loading your dashboard.");
+    }
+  };
+
+  const fetchReferrals = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/referrals", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setApprovedReferrals(res.data.approvedReferralCount || 0);
+    } catch (err) {
+      console.error("Error fetching referrals:", err);
     }
   };
 
   useEffect(() => {
-    fetchDeposits();
+    const loadData = async () => {
+      setLoading(true);
+      await fetchDeposits();
+      await fetchReferrals();
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
-  // ✅ Handle file selection
-  const handleFileChange = (e) => {
-    setReceipt(e.target.files[0]);
-  };
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <p className="loading-text">Loading your dashboard...</p>
+      </div>
+    );
+  }
 
-  // ✅ Handle upload
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("📤 Uploading receipt...");
-    setError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append("amount", amount);
-      formData.append("receipt", receipt);
-
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("No token found. Please login again.");
-        setLoading(false);
-        return;
-      }
-
-      const res = await API.post("/deposits/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.data.success) {
-        setMessage("✅ Upload successful! Waiting for admin approval...");
-        setError(null);
-
-        // Clear inputs
-        setAmount("");
-        setReceipt(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-
-        // Refresh deposit list after upload
-        await fetchDeposits();
-      } else {
-        setError(res.data.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error("Deposit error:", err);
-      setError("❌ Error processing deposit. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ✅ Check latest deposit to show persistent message
-  useEffect(() => {
-    if (deposits.length > 0) {
-      const latest = deposits[0];
-      if (latest.status === "pending") {
-        setMessage("⏳ Waiting for admin approval...");
-      } else if (latest.status === "approved") {
-        setMessage("✅ Approved! Your investment is now active.");
-        setTimeout(() => setMessage(null), 15000); // fade after 15s
-      } else if (latest.status === "rejected") {
-        setMessage("❌ Your deposit was rejected. Please re-upload.");
-      }
-    }
-  }, [deposits]);
-
-  // ✅ Copy account number with feedback
-  const handleCopy = () => {
-    navigator.clipboard.writeText("6392000298");
-    setCopyMessage("Copied!");
-    setTimeout(() => setCopyMessage(""), 2000); // remove message after 2s
-  };
+  const amount = deposit?.amount || 0;
+  const approvedAt = deposit?.approvedAt || null;
+  const maturityDate = approvedAt
+    ? new Date(new Date(approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
+    : null;
+  const expectedReturn = amount * 2;
+  const matured = maturityDate ? new Date() >= maturityDate : false;
+  const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
-    <Layout>
-      <div className="deposit-container">
-        <h2>Make a Deposit</h2>
-        <p>Choose an investment amount to proceed:</p>
+    <div className="dashboard-container">
+      {/* ✅ Floating Message */}
+      {showMessage && <p className="floating-message">{message}</p>}
 
-        <div className="cards-grid">
-          {[10000, 20000].map((amt) => (
-            <button
-              key={amt}
-              type="button"
-              className={`info-card ${amount === String(amt) ? "selected" : ""}`}
-              onClick={() => setAmount(String(amt))}
-            >
-              ₦{amt.toLocaleString()}
-            </button>
-          ))}
+      {/* ✅ Top Big Curved Card */}
+      <div className="top-card">
+        <h2>Total Income Returned</h2>
+        <p>₦{expectedReturn.toLocaleString()}</p>
+      </div>
+
+      {/* ✅ Bottom Section */}
+      <div className="cards-grid">
+        <div className="info-card">
+          <h3>Amount Deposited</h3>
+          <p>₦{amount.toLocaleString()}</p>
         </div>
 
-        {amount && (
-          <div className="info-card mt-4">
-            <h3>Payment Instructions</h3>
-            <p>
-              Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to
-              the account below and upload your receipt.
-            </p>
-            <p>
-              <strong>Bank:</strong> Moniepoint MFB
-            </p>
-            <p>
-              <strong>Account Number:</strong> 6392000298{" "}
-              <button
-                type="button"
-                onClick={handleCopy}
-                style={{
-                  marginLeft: "8px",
-                  cursor: "pointer",
-                  padding: "2px 6px",
-                  border: "none",
-                  borderRadius: "4px",
-                  backgroundColor: "#eee",
-                }}
-                title="Copy account number"
-              >
-                📋
-              </button>
-              {copyMessage && (
-                <span style={{ marginLeft: "8px", color: "green" }}>
-                  {copyMessage}
-                </span>
-              )}
-            </p>
-            <p>
-              <strong>Account Name:</strong> KELVIN SOMTOCHUKWU NNAJI
-            </p>
-          </div>
-        )}
+        <div className="info-card">
+          <h3>Expected Return</h3>
+          <p>₦{expectedReturn.toLocaleString()}</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="mt-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-            required
-          />
-          <button type="submit" disabled={loading || !amount || !receipt}>
-            {loading ? "Uploading..." : "Upload Receipt"}
-          </button>
-        </form>
+        <div className="info-card">
+          <h3>Approval Date</h3>
+          <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
+        </div>
 
-        {message && (
-          <p className="success-message" style={{ marginTop: "10px" }}>
-            {message}
-          </p>
-        )}
-        {error && (
-          <p className="error-message" style={{ marginTop: "10px" }}>
-            {error}
-          </p>
-        )}
+        <div className="info-card">
+          <h3>Maturity Date</h3>
+          <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+        </div>
 
-        {/* ────────────────────────────────
-            Deposit Status Table
-        ──────────────────────────────── */}
-        <div className="deposit-history mt-4">
-          <h3>Your Deposits</h3>
-          {deposits.length === 0 ? (
-            <p style={{ color: "#ccc" }}>No deposits yet.</p>
-          ) : (
-            <table className="deposit-table">
-              <thead>
-                <tr>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deposits.map((dep) => (
-                  <tr key={dep._id}>
-                    <td>₦{dep.amount.toLocaleString()}</td>
-                    <td>
-                      {dep.status === "pending" && (
-                        <span style={{ color: "orange" }}>
-                          ⏳ Waiting for approval
-                        </span>
-                      )}
-                      {dep.status === "approved" && (
-                        <span style={{ color: "limegreen" }}>✅ Approved</span>
-                      )}
-                      {dep.status === "rejected" && (
-                        <span style={{ color: "red" }}>❌ Rejected</span>
-                      )}
-                    </td>
-                    <td>{new Date(dep.createdAt).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+        <div className="info-card">
+          <h3>Referral Requirement</h3>
+          <p>{approvedReferrals}/2 referrals have deposited</p>
+        </div>
+
+        <div className="info-card">
+          <h3>Withdrawal Eligibility</h3>
+          <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
-export default Deposit;
+export default Dashboard;
