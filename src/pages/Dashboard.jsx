@@ -1,5 +1,5 @@
+// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
-import Layout from "../components/Layout";
 import API from "./axios";
 import "./Dashboard.css";
 
@@ -66,11 +66,9 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="dashboard-container">
-          <p className="loading-text">Loading your dashboard...</p>
-        </div>
-      </Layout>
+      <div className="dashboard-container">
+        <p className="loading-text">Loading your dashboard...</p>
+      </div>
     );
   }
 
@@ -84,51 +82,49 @@ const Dashboard = () => {
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
   return (
-    <Layout>
-      <div className="dashboard-container">
-        {/* ✅ Floating Message */}
-        {showMessage && <p className="floating-message">{message}</p>}
+    <div className="dashboard-container">
+      {/* ✅ Floating Message */}
+      {showMessage && <p className="floating-message">{message}</p>}
 
-        {/* ✅ Top Big Curved Card */}
-        <div className="top-card">
-          <h2>Total Income Returned</h2>
+      {/* ✅ Top Big Curved Card */}
+      <div className="top-card">
+        <h2>Total Income Returned</h2>
+        <p>₦{expectedReturn.toLocaleString()}</p>
+      </div>
+
+      {/* ✅ Bottom Section */}
+      <div className="cards-grid">
+        <div className="info-card">
+          <h3>Amount Deposited</h3>
+          <p>₦{amount.toLocaleString()}</p>
+        </div>
+
+        <div className="info-card">
+          <h3>Expected Return</h3>
           <p>₦{expectedReturn.toLocaleString()}</p>
         </div>
 
-        {/* ✅ Bottom Section */}
-        <div className="cards-grid">
-          <div className="info-card">
-            <h3>Amount Deposited</h3>
-            <p>₦{amount.toLocaleString()}</p>
-          </div>
+        <div className="info-card">
+          <h3>Approval Date</h3>
+          <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
+        </div>
 
-          <div className="info-card">
-            <h3>Expected Return</h3>
-            <p>₦{expectedReturn.toLocaleString()}</p>
-          </div>
+        <div className="info-card">
+          <h3>Maturity Date</h3>
+          <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+        </div>
 
-          <div className="info-card">
-            <h3>Approval Date</h3>
-            <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
-          </div>
+        <div className="info-card">
+          <h3>Referral Requirement</h3>
+          <p>{approvedReferrals}/2 referrals have deposited</p>
+        </div>
 
-          <div className="info-card">
-            <h3>Maturity Date</h3>
-            <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Referral Requirement</h3>
-            <p>{approvedReferrals}/2 referrals have deposited</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Withdrawal Eligibility</h3>
-            <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
-          </div>
+        <div className="info-card">
+          <h3>Withdrawal Eligibility</h3>
+          <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
