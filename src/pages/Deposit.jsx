@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import Layout from "../components/Layout";
+
 import API from "./axios";
 import "./Deposit.css";
 
