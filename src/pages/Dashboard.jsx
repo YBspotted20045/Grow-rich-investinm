@@ -1,136 +1,75 @@
-import React, { useState, useEffect } from "react";
-import Layout from "../components/Layout";
-import API from "./axios";
-import "./Dashboard.css";
+import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
-  const [deposit, setDeposit] = useState(null);
-  const [approvedReferrals, setApprovedReferrals] = useState(0);
-  const [message, setMessage] = useState("");
-  const [showMessage, setShowMessage] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [showMessage, setShowMessage] = useState(true);
 
-  const fetchDeposits = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await API.get("/deposits/my", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.data.success) {
-        const deposits = res.data.deposits || [];
-        const latestApproved = deposits
-          .filter((d) => d.status === "approved")
-          .sort((a, b) => new Date(b.approvedAt) - new Date(a.approvedAt))[0];
-
-        setDeposit(latestApproved || null);
-
-        if (latestApproved) {
-          setMessage("✅ Deposit approved successfully!");
-          setShowMessage(true);
-
-          // hide after 3 minutes
-          setTimeout(() => setShowMessage(false), 3 * 60 * 1000);
-        } else {
-          setMessage("");
-          setShowMessage(false);
-        }
-      } else {
-        setMessage("❌ Failed to load deposits.");
-      }
-    } catch (err) {
-      console.error("Error fetching deposits:", err);
-      setMessage("⚠️ Error loading your dashboard.");
-    }
-  };
-
-  const fetchReferrals = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await API.get("/referrals", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setApprovedReferrals(res.data.approvedReferralCount || 0);
-    } catch (err) {
-      console.error("Error fetching referrals:", err);
-    }
-  };
-
+  // Hide deposit message after 3 minutes (180000 ms)
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await fetchDeposits();
-      await fetchReferrals();
-      setLoading(false);
-    };
-    loadData();
+    const timer = setTimeout(() => setShowMessage(false), 180000);
+    return () => clearTimeout(timer);
   }, []);
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="dashboard-container">
-          <p className="loading-text">Loading your dashboard...</p>
-        </div>
-      </Layout>
-    );
-  }
-
-  const amount = deposit?.amount || 0;
-  const approvedAt = deposit?.approvedAt || null;
-  const maturityDate = approvedAt
-    ? new Date(new Date(approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
-    : null;
-  const expectedReturn = amount * 2;
-  const matured = maturityDate ? new Date() >= maturityDate : false;
-  const withdrawalEligible = matured && approvedReferrals >= 2;
-
   return (
-    <Layout>
-      <div className="dashboard-container">
-        {/* ✅ Top Curved White Card */}
-        <div className="top-card">
-          <h2>Total Income Returned</h2>
-          <p>₦{expectedReturn.toLocaleString()}</p>
+    <div className="min-h-screen bg-gradient-to-b from-black via-zinc-900 to-yellow-900 text-white p-4 md:p-10">
+      
+      {/* Deposit Approved Message */}
+      {showMessage && (
+        <div className="text-green-400 font-semibold mb-4 animate-pulse">
+          ✅ Deposit approved successfully!
+        </div>
+      )}
+
+      {/* Title */}
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-yellow-400 drop-shadow-lg">
+        Your Investment Overview
+      </h1>
+
+      {/* Cards Section */}
+      <div className="space-y-6">
+        
+        {/* Big Top Card */}
+        <div className="bg-black/70 border border-yellow-500 rounded-2xl p-6 shadow-xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-yellow-500/30">
+          <h2 className="text-lg text-yellow-400 font-semibold">
+            Total Income (Expected Return)
+          </h2>
+          <p className="text-4xl font-bold mt-2 text-white">₦40,000</p>
         </div>
 
-        {/* ✅ Message (appears briefly) */}
-        {showMessage && <p className="floating-message">{message}</p>}
-
-        {/* ✅ Bottom Gold-Black Section */}
-        <div className="bottom-section">
-          <div className="info-card">
-            <h3>Amount Deposited</h3>
-            <p>₦{amount.toLocaleString()}</p>
+        {/* Small Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          
+          {/* Amount Deposited */}
+          <div className="bg-black/70 border border-yellow-500 rounded-2xl p-4 shadow-lg hover:scale-[1.03] hover:shadow-yellow-500/30 transition-all duration-300">
+            <h3 className="text-yellow-400 font-semibold">Amount Deposited</h3>
+            <p className="text-xl font-bold mt-2">₦20,000</p>
           </div>
 
-          <div className="info-card">
-            <h3>Expected Return</h3>
-            <p>₦{expectedReturn.toLocaleString()}</p>
+          {/* Approval Date */}
+          <div className="bg-black/70 border border-yellow-500 rounded-2xl p-4 shadow-lg hover:scale-[1.03] hover:shadow-yellow-500/30 transition-all duration-300">
+            <h3 className="text-yellow-400 font-semibold">Approval Date</h3>
+            <p className="mt-2">Sun Oct 05 2025</p>
           </div>
 
-          <div className="info-card">
-            <h3>Approval Date</h3>
-            <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
+          {/* Maturity Date */}
+          <div className="bg-black/70 border border-yellow-500 rounded-2xl p-4 shadow-lg hover:scale-[1.03] hover:shadow-yellow-500/30 transition-all duration-300">
+            <h3 className="text-yellow-400 font-semibold">Maturity Date</h3>
+            <p className="mt-2">Sun Oct 19 2025</p>
           </div>
 
-          <div className="info-card">
-            <h3>Maturity Date</h3>
-            <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+          {/* Referral Requirement */}
+          <div className="bg-black/70 border border-yellow-500 rounded-2xl p-4 shadow-lg hover:scale-[1.03] hover:shadow-yellow-500/30 transition-all duration-300">
+            <h3 className="text-yellow-400 font-semibold">Referral Requirement</h3>
+            <p className="mt-2">0/2 referrals have deposited</p>
           </div>
 
-          <div className="info-card">
-            <h3>Referral Requirement</h3>
-            <p>{approvedReferrals}/2 referrals have deposited</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Withdrawal Eligibility</h3>
-            <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
+          {/* Withdrawal Eligibility */}
+          <div className="bg-black/70 border border-yellow-500 rounded-2xl p-4 shadow-lg hover:scale-[1.03] hover:shadow-yellow-500/30 transition-all duration-300 sm:col-span-2">
+            <h3 className="text-yellow-400 font-semibold">Withdrawal Eligibility</h3>
+            <p className="mt-2 text-red-500 font-bold">❌ Not Yet</p>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
