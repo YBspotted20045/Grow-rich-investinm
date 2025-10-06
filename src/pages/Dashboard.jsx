@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import API from "./axios";
 import "./Dashboard.css";
@@ -8,6 +7,7 @@ const Dashboard = () => {
   const [deposit, setDeposit] = useState(null);
   const [approvedReferrals, setApprovedReferrals] = useState(0);
   const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchDeposits = async () => {
@@ -27,10 +27,13 @@ const Dashboard = () => {
 
         if (latestApproved) {
           setMessage("✅ Deposit approved successfully!");
-          // Hide after 3 minutes
-          setTimeout(() => setMessage(""), 3 * 60 * 1000);
+          setShowMessage(true);
+
+          // hide after 3 minutes
+          setTimeout(() => setShowMessage(false), 3 * 60 * 1000);
         } else {
-          setMessage("⚠️ No approved deposit yet.");
+          setMessage("");
+          setShowMessage(false);
         }
       } else {
         setMessage("❌ Failed to load deposits.");
@@ -61,9 +64,6 @@ const Dashboard = () => {
       setLoading(false);
     };
     loadData();
-
-    const interval = setInterval(loadData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -88,75 +88,46 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="dashboard-container">
-        <AnimatePresence>
-          {message && message.includes("approved") && (
-            <motion.p
-              key="approval-message"
-              className="approval-message"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.8 }}
-            >
-              {message}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {/* ✅ Top Curved White Card */}
+        <div className="top-card">
+          <h2>Total Income Returned</h2>
+          <p>₦{expectedReturn.toLocaleString()}</p>
+        </div>
 
-        <motion.h2
-          className="dashboard-title"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          Your Investment Overview
-        </motion.h2>
+        {/* ✅ Message (appears briefly) */}
+        {showMessage && <p className="floating-message">{message}</p>}
 
-        <div className="vertical-cards">
-          {/* Top large card - Total Income */}
-          <motion.div
-            className="info-card large-card"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            whileHover={{ scale: 1.03 }}
-          >
-            <h3>Total Income (Expected Return)</h3>
+        {/* ✅ Bottom Gold-Black Section */}
+        <div className="bottom-section">
+          <div className="info-card">
+            <h3>Amount Deposited</h3>
+            <p>₦{amount.toLocaleString()}</p>
+          </div>
+
+          <div className="info-card">
+            <h3>Expected Return</h3>
             <p>₦{expectedReturn.toLocaleString()}</p>
-          </motion.div>
+          </div>
 
-          {/* Smaller cards */}
-          {[
-            { label: "Amount Deposited", value: `₦${amount.toLocaleString()}` },
-            {
-              label: "Approval Date",
-              value: approvedAt ? new Date(approvedAt).toDateString() : "—",
-            },
-            {
-              label: "Maturity Date",
-              value: maturityDate ? maturityDate.toDateString() : "—",
-            },
-            {
-              label: "Referral Requirement",
-              value: `${approvedReferrals}/2 referrals have deposited`,
-            },
-            {
-              label: "Withdrawal Eligibility",
-              value: withdrawalEligible ? "✅ Eligible" : "❌ Not Yet",
-            },
-          ].map((item, idx) => (
-            <motion.div
-              key={idx}
-              className="info-card"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 + idx * 0.1 }}
-              whileHover={{ scale: 1.03 }}
-            >
-              <h3>{item.label}</h3>
-              <p>{item.value}</p>
-            </motion.div>
-          ))}
+          <div className="info-card">
+            <h3>Approval Date</h3>
+            <p>{approvedAt ? new Date(approvedAt).toDateString() : "—"}</p>
+          </div>
+
+          <div className="info-card">
+            <h3>Maturity Date</h3>
+            <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
+          </div>
+
+          <div className="info-card">
+            <h3>Referral Requirement</h3>
+            <p>{approvedReferrals}/2 referrals have deposited</p>
+          </div>
+
+          <div className="info-card">
+            <h3>Withdrawal Eligibility</h3>
+            <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
+          </div>
         </div>
       </div>
     </Layout>
