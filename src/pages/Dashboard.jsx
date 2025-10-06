@@ -1,5 +1,6 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
+import Layout from "../components/Layout";  // ✅ Add this line
 import API from "./axios";
 import "./Dashboard.css";
 
@@ -28,8 +29,6 @@ const Dashboard = () => {
         if (latestApproved) {
           setMessage("✅ Deposit approved successfully!");
           setShowMessage(true);
-
-          // Disappear after 3 minutes
           setTimeout(() => setShowMessage(false), 3 * 60 * 1000);
         } else {
           setMessage("");
@@ -88,16 +87,13 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="dashboard-container">
-        {/* ✅ Floating animated message */}
         {showMessage && <p className="floating-message">{message}</p>}
 
-        {/* ✅ Top big curved white card */}
         <div className="top-card">
           <h2>Total Income Returned</h2>
           <p>₦{expectedReturn.toLocaleString()}</p>
         </div>
 
-        {/* ✅ Bottom section - fixed 2-column arrangement */}
         <div className="cards-grid">
           <div className="info-card">
             <h3>Amount Deposited</h3>
