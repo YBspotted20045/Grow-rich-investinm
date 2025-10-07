@@ -81,13 +81,17 @@ const Dashboard = () => {
   const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
+  // ✅ Signup bonus when user has no deposit
+  const signupBonus = !deposit ? 1000 : 0;
+  const totalIncome = expectedReturn + signupBonus;
+
   return (
     <div className="dashboard-container">
       {showMessage && <p className="floating-message">{message}</p>}
 
       <div className="top-card">
         <h2>Total Income Returned</h2>
-        <p>₦{expectedReturn.toLocaleString()}</p>
+        <p>₦{totalIncome.toLocaleString()}</p>
       </div>
 
       <div className="cards-grid">
