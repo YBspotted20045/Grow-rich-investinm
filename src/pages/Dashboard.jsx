@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [bonus, setBonus] = useState(1000); // ✅ Always include ₦1000 final bonus
+  const [bonus, setBonus] = useState(1000); // ✅ Always include ₦1000 sign-up bonus
 
   const fetchDeposits = async () => {
     try {
@@ -83,12 +83,14 @@ const Dashboard = () => {
   const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
-  // ✅ Total income always includes ₦1000 final bonus
+  // ✅ Total income always includes ₦1000 sign-up bonus
   const totalIncome = expectedReturn + bonus;
 
   return (
     <div className="dashboard-container">
-      {showMessage && <p className="floating-message">{message}</p>}
+      {showMessage && (
+        <p className="floating-message animate-blink">{message}</p>
+      )}
 
       <div className="top-card">
         <h2>Total Income Returned</h2>
@@ -127,9 +129,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* 🎁 Final Bonus Always Visible */}
+      {/* 🎁 Sign-Up Bonus Always Visible */}
       <div className="bonus-card">
-        <h3>🎉 Final Bonus</h3>
+        <h3>🎉 Sign-Up Bonus</h3>
         <p>₦{bonus.toLocaleString()} has been added to your dashboard!</p>
       </div>
     </div>
