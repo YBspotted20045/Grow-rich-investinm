@@ -164,3 +164,13 @@ font-size: 1.2rem;
   font-weight: 500;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
+/* Animated blinking effect for the floating message */
+@keyframes blinkFade {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.animate-blink {
+  animation: blinkFade 1.5s infinite;
+  transition: opacity 0.3s ease-in-out;
+  }
