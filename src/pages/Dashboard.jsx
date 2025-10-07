@@ -121,6 +121,14 @@ const Dashboard = () => {
           <p>{withdrawalEligible ? "✅ Eligible" : "❌ Not Yet"}</p>
         </div>
       </div>
+
+      {/* 🎁 Signup Bonus Section */}
+      {!deposit && (
+        <div className="bonus-card">
+          <h3>🎉 Welcome Bonus</h3>
+          <p>You have received ₦1,000 as a signup bonus!</p>
+        </div>
+      )}
     </div>
   );
 };
