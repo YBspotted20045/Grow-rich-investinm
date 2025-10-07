@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [bonus, setBonus] = useState(0);
 
   const fetchDeposits = async () => {
     try {
@@ -24,6 +25,7 @@ const Dashboard = () => {
           .sort((a, b) => new Date(b.approvedAt) - new Date(a.approvedAt))[0];
 
         setDeposit(latestApproved || null);
+        setBonus(res.data.bonus?.amount || 0);
 
         if (latestApproved) {
           setMessage("✅ Deposit approved successfully!");
@@ -81,9 +83,8 @@ const Dashboard = () => {
   const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
-  // ✅ Signup bonus when user has no deposit
-  const signupBonus = !deposit ? 1000 : 0;
-  const totalIncome = expectedReturn + signupBonus;
+  // ✅ Add bonus to total return
+  const totalIncome = expectedReturn + bonus;
 
   return (
     <div className="dashboard-container">
@@ -101,7 +102,7 @@ const Dashboard = () => {
         </div>
 
         <div className="info-card">
-          <h3>Expected Return</h3>
+          <h3>Expected Return (x2)</h3>
           <p>₦{expectedReturn.toLocaleString()}</p>
         </div>
 
@@ -126,11 +127,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* 🎁 Signup Bonus Section */}
-      {!deposit && (
+      {/* 🎁 Bonus Section */}
+      {bonus > 0 && (
         <div className="bonus-card">
-          <h3>🎉 Welcome Bonus</h3>
-          <p>You have received ₦1,000 as a signup bonus!</p>
+          <h3>🎉 Signup Bonus</h3>
+          <p>₦{bonus.toLocaleString()} has been added to your dashboard!</p>
         </div>
       )}
     </div>
