@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import API from "./axios";
 import "./Dashboard.css";
@@ -9,7 +8,7 @@ const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [bonus, setBonus] = useState(1000); // ✅ Always include ₦1000 sign-up bonus
+  const [bonus] = useState(1000); // ✅ Always include ₦1000 sign-up bonus
 
   const fetchDeposits = async () => {
     try {
@@ -83,13 +82,12 @@ const Dashboard = () => {
   const matured = maturityDate ? new Date() >= maturityDate : false;
   const withdrawalEligible = matured && approvedReferrals >= 2;
 
-  // ✅ Total income always includes ₦1000 sign-up bonus
-  const totalIncome = expectedReturn + bonus;
+  const totalIncome = expectedReturn + bonus; // ✅ Always includes ₦1000 bonus
 
   return (
     <div className="dashboard-container">
       {showMessage && (
-        <p className="floating-message animate-blink">{message}</p>
+        <p className="floating-message fade-in-out">{message}</p>
       )}
 
       <div className="top-card">
@@ -130,7 +128,7 @@ const Dashboard = () => {
       </div>
 
       {/* 🎁 Sign-Up Bonus Always Visible */}
-      <div className="bonus-card">
+      <div className="bonus-card gold-gradient">
         <h3>🎉 Sign-Up Bonus</h3>
         <p>₦{bonus.toLocaleString()} has been added to your dashboard!</p>
       </div>
