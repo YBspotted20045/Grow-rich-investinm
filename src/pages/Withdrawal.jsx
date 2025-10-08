@@ -56,7 +56,7 @@ const Withdrawal = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (res.data.success === false) {
+      if (!res.data.success) {
         throw new Error(res.data.message || "Withdrawal request failed.");
       }
 
@@ -64,6 +64,9 @@ const Withdrawal = () => {
       setMessage(res.data.message || "✅ Withdrawal requested successfully!");
       setAmount("");
       fetchWithdrawals();
+
+      // Fade message after a few seconds
+      setTimeout(() => setMessage(""), 7000);
     } catch (err) {
       console.error("Withdrawal error:", err);
       setMessage(
@@ -71,6 +74,7 @@ const Withdrawal = () => {
           err.message ||
           "❌ Error requesting withdrawal."
       );
+      setTimeout(() => setMessage(""), 7000);
     } finally {
       setLoading(false);
     }
@@ -99,13 +103,14 @@ const Withdrawal = () => {
             padding: "10px",
             borderRadius: "8px",
             marginBottom: "10px",
+            animation: "fadeInOut 2.5s ease-in-out infinite",
           }}
         >
           {message}
         </p>
       )}
 
-      {/* Request Form */}
+      {/* Withdrawal Form */}
       <div className="withdrawal-card">
         <form onSubmit={handleSubmit} className="withdrawal-form">
           <label htmlFor="amount">Amount (₦)</label>
@@ -123,7 +128,7 @@ const Withdrawal = () => {
         </form>
       </div>
 
-      {/* History Section */}
+      {/* Withdrawal History */}
       <div className="withdrawal-card">
         <h2>Your Withdrawals</h2>
         {fetching ? (
