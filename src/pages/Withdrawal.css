@@ -104,3 +104,11 @@
   text-align: center;
   color: #aaa;
 }
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
