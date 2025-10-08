@@ -1,114 +1,179 @@
+/* ✅ Withdrawal.css — GrowRich Golden-Black Responsive Theme */
+
 .withdrawal-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 900px;
+  margin: 100px auto 50px auto;
+  padding: 25px;
+  background: #000;
   color: #fff;
-  background: #000; /* black background */
-  min-height: 100vh;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+  position: relative;
+  z-index: 1;
 }
 
+/* Ensure it doesn’t get hidden behind sidebar */
+@media (min-width: 769px) {
+  .withdrawal-wrapper {
+    margin-left: 240px; /* ✅ Adjust this to your sidebar width */
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .withdrawal-wrapper {
+    margin: 80px 15px 30px 15px;
+    padding: 20px;
+  }
+}
+
+/* Header */
 .withdrawal-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  color: gold;
   text-align: center;
-  color: #d4af37; /* gold */
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+/* Message Box */
 .withdrawal-message {
   text-align: center;
-  margin-bottom: 15px;
-  font-weight: bold;
-  color: #d4af37; /* gold feedback */
-}
-
-.withdrawal-card {
-  background: #111; /* dark card */
-  padding: 20px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  animation: fadeIn 0.5s ease-in;
   margin-bottom: 20px;
-  border-radius: 12px;
-  border: 1px solid #d4af37;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+  padding: 12px;
+  border-radius: 10px;
+  word-wrap: break-word;
 }
 
+/* Card */
+.withdrawal-card {
+  background: #111;
+  border: 1px solid gold;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.08);
+}
+
+/* Form Styles */
 .withdrawal-form {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
 }
 
 .withdrawal-form label {
-  color: #fff;
-  font-weight: 600;
+  color: gold;
+  font-weight: 500;
 }
 
 .withdrawal-form input {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #d4af37;
   background: #000;
+  border: 1px solid gold;
+  border-radius: 8px;
   color: #fff;
+  padding: 10px;
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
 }
 
-.withdrawal-form input::placeholder {
-  color: #aaa;
+.withdrawal-form input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
 }
 
 .withdrawal-form button {
-  background: #d4af37;
+  background: gold;
   color: #000;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
   font-weight: bold;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.3s ease;
 }
 
 .withdrawal-form button:hover {
-  background: #b9962e; /* darker gold */
+  background: #ffdb4d;
+  transform: scale(1.05);
 }
 
+.withdrawal-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Withdrawal List */
 .withdrawal-list {
   list-style: none;
-  padding: 0;
   margin-top: 10px;
+  padding: 0;
 }
 
 .withdrawal-list li {
   display: flex;
   justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid #333;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #222;
+  padding: 10px 0;
   color: #fff;
+  font-size: 0.95rem;
 }
 
-.status {
-  text-transform: capitalize;
-  font-weight: bold;
-}
-
-.status.pending {
-  color: orange;
-}
-
-.status.approved {
-  color: #4caf50; /* green */
-}
-
-.status.rejected {
-  color: red;
-}
-
-.no-withdrawals {
+.withdrawal-list li span {
+  flex: 1;
   text-align: center;
-  color: #aaa;
+  min-width: 100px;
 }
-@keyframes fadeInOut {
-  0%, 100% {
-    opacity: 0.2;
+
+/* No withdrawals */
+.no-withdrawals {
+  color: #ccc;
+  font-style: italic;
+}
+
+/* Status Colors */
+.status.approved {
+  color: #00ff88;
+}
+.status.pending {
+  color: gold;
+}
+.status.rejected {
+  color: #ff4d4d;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
-  50% {
+  to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Make all text visible on all screen sizes */
+@media (max-width: 480px) {
+  .withdrawal-title {
+    font-size: 1.4rem;
+  }
+
+  .withdrawal-form input {
+    font-size: 0.9rem;
+  }
+
+  .withdrawal-list li {
+    flex-direction: column;
+    text-align: center;
   }
 }
