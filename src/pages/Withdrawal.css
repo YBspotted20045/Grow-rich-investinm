@@ -177,3 +177,27 @@
     text-align: center;
   }
 }
+/* ✅ Fix message position so it's always visible and centered */
+.withdrawal-message {
+  position: relative;
+  z-index: 5;
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 15px auto;
+  text-align: center;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-weight: 500;
+  word-wrap: break-word;
+  box-sizing: border-box;
+}
+
+/* Ensure it's not hidden behind sidebar */
+@media (min-width: 769px) {
+  .withdrawal-wrapper {
+    position: relative;
+    z-index: 2;
+    margin-left: 240px; /* adjust if your sidebar width differs */
+  }
+}
