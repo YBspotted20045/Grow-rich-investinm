@@ -7,6 +7,36 @@
   justify-content: center;
   align-items: center;
   background-color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✨ Golden Sparkle Background */
+.login-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,215,0,0.8) 1px, transparent 2px),
+              radial-gradient(circle, rgba(255,215,0,0.6) 1px, transparent 3px),
+              radial-gradient(circle, rgba(255,215,0,0.4) 1px, transparent 2px);
+  background-size: 80px 80px, 100px 100px, 60px 60px;
+  background-position: 0 0, 40px 40px, 20px 60px;
+  animation: sparkleMove 15s linear infinite;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+/* Smooth sparkle animation */
+@keyframes sparkleMove {
+  0% {
+    background-position: 0 0, 40px 40px, 20px 60px;
+  }
+  50% {
+    background-position: 100px 80px, 80px 120px, 60px 100px;
+  }
+  100% {
+    background-position: 0 0, 40px 40px, 20px 60px;
+  }
 }
 
 /* Login container */
@@ -19,6 +49,8 @@
   max-width: 90%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
 /* Title */
@@ -49,15 +81,15 @@ input {
   border-radius: 8px;
   border: 1px solid #ffd700;
   margin-bottom: 15px;
-  background-color: #fff; /* ✅ White background */
-  color: #000; /* ✅ Black text */
+  background-color: #fff;
+  color: #000;
   font-weight: 500;
   transition: all 0.3s ease;
 }
 
 /* Placeholder text */
 input::placeholder {
-  color: #555; /* ✅ Visible gray placeholder */
+  color: #555;
 }
 
 /* Focus effect */
@@ -143,13 +175,14 @@ button:disabled {
 .login-container:focus-within {
   box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
 }
+
+/* Animated background for full page */
 body {
   background: linear-gradient(135deg, #000000, #3b2f1f, #c8a951, #000000);
   background-size: 300% 300%;
   animation: gradientShift 10s ease infinite;
 }
 
-/* Smooth gradient animation */
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
