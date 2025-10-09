@@ -11,17 +11,18 @@
   background-color: #fff;
 }
 
-/* Golden sparkle background */
+/* Golden + Black large sparkle background */
 .login-page::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(255,215,0,0.8) 4px, transparent 6px),
-              radial-gradient(circle, rgba(255,215,0,0.6) 4px, transparent 8px),
-              radial-gradient(circle, rgba(255,215,0,0.4) 4px, transparent 6px);
-  background-size: 320px 320px, 400px 400px, 240px 240px;
+  background:
+    radial-gradient(circle, rgba(255,215,0,0.9) 16px, transparent 20px),  /* big gold dots */
+    radial-gradient(circle, rgba(255,215,0,0.6) 16px, transparent 20px),  /* slightly faded gold */
+    radial-gradient(circle, rgba(0,0,0,0.8) 16px, transparent 20px);      /* black dots */
+  background-size: 300px 300px, 380px 380px, 260px 260px;
   background-position: 0 0, 80px 80px, 40px 120px;
-  animation: sparkleMove 15s linear infinite;
+  animation: sparkleMove 20s linear infinite;
   z-index: 0;
   opacity: 0.9;
 }
@@ -31,7 +32,7 @@
     background-position: 0 0, 80px 80px, 40px 120px;
   }
   to {
-    background-position: 160px 160px, 240px 240px, 200px 360px;
+    background-position: 300px 300px, 400px 400px, 260px 360px;
   }
 }
 
@@ -170,4 +171,4 @@ button:disabled {
 /* Optional: gold glow on active container */
 .login-container:focus-within {
   box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
-}
+  }
