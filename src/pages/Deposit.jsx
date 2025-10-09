@@ -149,7 +149,7 @@ const Deposit = () => {
                   </span>
                 )}
               </p>
-              <p><strong>Account Name:</strong> KELVIN SOMTOCHUKWU NNAJI</p>
+              <p><strong>Account Name:</strong> SOMTOCHUKWU NNAJI</p>
             </div>
           )}
 
