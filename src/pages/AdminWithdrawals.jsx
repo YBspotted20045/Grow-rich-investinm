@@ -1,6 +1,6 @@
 // src/pages/AdminWithdrawals.jsx
 import React, { useEffect, useState } from "react";
-import API from "../axios"; // ✅ fixed import path
+import API from "./axios"; // ✅ fixed import path
 import "./AdminWithdrawals.css";
 
 const AdminWithdrawals = () => {
