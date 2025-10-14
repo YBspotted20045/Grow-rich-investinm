@@ -60,12 +60,10 @@ const Withdrawal = () => {
         throw new Error(res.data.message || "Withdrawal request failed.");
       }
 
-      // ✅ Success
       setMessage(res.data.message || "✅ Withdrawal requested successfully!");
       setAmount("");
       fetchWithdrawals();
 
-      // Fade message after a few seconds
       setTimeout(() => setMessage(""), 7000);
     } catch (err) {
       console.error("Withdrawal error:", err);
@@ -84,31 +82,11 @@ const Withdrawal = () => {
     <div className="withdrawal-wrapper">
       <h1 className="withdrawal-title">💸 Request Withdrawal</h1>
 
-      {message && (
-        <p
-          className="withdrawal-message"
-          style={{
-            background:
-              message.includes("❌") || message.includes("error")
-                ? "#ffefef"
-                : message.includes("✅")
-                ? "#e6ffe6"
-                : "#fffbe6",
-            borderLeft: "5px solid",
-            borderColor: message.includes("❌")
-              ? "red"
-              : message.includes("✅")
-              ? "green"
-              : "orange",
-            padding: "10px",
-            borderRadius: "8px",
-            marginBottom: "10px",
-            animation: "fadeInOut 2.5s ease-in-out infinite",
-          }}
-        >
-          {message}
-        </p>
-      )}
+      {/* 🔔 Rule Box */}
+      <div className="withdrawal-rule">
+        ⚠️ <strong>Important:</strong> You must refer <b>2 new users</b> who have
+        both made <b>approved deposits</b> before you can withdraw.
+      </div>
 
       {/* Withdrawal Form */}
       <div className="withdrawal-card">
@@ -126,6 +104,34 @@ const Withdrawal = () => {
             {loading ? "Processing..." : "Request Withdrawal"}
           </button>
         </form>
+
+        {/* ✅ Message at Bottom of Card */}
+        {message && (
+          <div
+            className="withdrawal-message"
+            style={{
+              background:
+                message.includes("❌") || message.includes("error")
+                  ? "#ffefef"
+                  : message.includes("✅")
+                  ? "#e6ffe6"
+                  : "#fffbe6",
+              borderLeft: "5px solid",
+              borderColor: message.includes("❌")
+                ? "red"
+                : message.includes("✅")
+                ? "green"
+                : "orange",
+              padding: "10px",
+              borderRadius: "8px",
+              marginTop: "15px",
+              fontWeight: "500",
+              animation: "fadeIn 0.4s ease",
+            }}
+          >
+            {message}
+          </div>
+        )}
       </div>
 
       {/* Withdrawal History */}
