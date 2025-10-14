@@ -228,3 +228,92 @@
     transform: translateY(0);
   }
     }
+/* 🔔 Withdrawal Messages (bottom of the card) */
+.withdrawal-message {
+  text-align: center;
+  margin-top: 15px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #222;
+  animation: fadeIn 0.4s ease forwards;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+}
+
+/* ✅ Success (Green) */
+.withdrawal-message.success {
+  background-color: #e8f9e9;
+  border-left: 5px solid #2ecc71;
+}
+
+/* ❌ Error (Red) */
+.withdrawal-message.error {
+  background-color: #fdeaea;
+  border-left: 5px solid #e74c3c;
+}
+
+/* ⚠️ Warning (Gold) */
+.withdrawal-message.warning {
+  background-color: #fff9e6;
+  border-left: 5px solid #f1c40f;
+}
+
+/* ✨ History List (Your Withdrawals) */
+.withdrawal-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.withdrawal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.withdrawal-list li {
+  display: flex;
+  justify-content: space-between;
+  background: #fafafa;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  align-items: center;
+}
+
+.withdrawal-list li:hover {
+  background: #fefcf2;
+  transition: 0.3s;
+}
+
+/* 💬 Status Colors */
+.status.approved {
+  color: green;
+  font-weight: 600;
+}
+.status.pending {
+  color: #f39c12;
+  font-weight: 600;
+}
+.status.rejected {
+  color: red;
+  font-weight: 600;
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+    }
