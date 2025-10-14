@@ -201,3 +201,30 @@
     margin-left: 240px; /* adjust if your sidebar width differs */
   }
 }
+.withdrawal-rule {
+  background-color: #fff8e1;
+  border-left: 5px solid gold;
+  padding: 12px 15px;
+  border-radius: 10px;
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 15px;
+  line-height: 1.5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.withdrawal-message {
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+    }
