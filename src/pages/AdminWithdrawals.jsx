@@ -1,6 +1,6 @@
 // src/pages/AdminWithdrawals.jsx
 import React, { useEffect, useState } from "react";
-import API from "./axios"; // ✅ fixed import path
+import API from "../axios"; // ✅ correct import path
 import "./AdminWithdrawals.css";
 
 const AdminWithdrawals = () => {
@@ -8,6 +8,7 @@ const AdminWithdrawals = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // ✅ Fetch all withdrawals
   const fetchWithdrawals = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -21,8 +22,9 @@ const AdminWithdrawals = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const withdrawalsData = Array.isArray(res.data)
-        ? res.data
+      // ✅ Ensure data is always an array
+      const withdrawalsData = Array.isArray(res.data.withdrawals)
+        ? res.data.withdrawals
         : res.data.withdrawals || [];
 
       setWithdrawals(withdrawalsData);
@@ -34,6 +36,7 @@ const AdminWithdrawals = () => {
     }
   };
 
+  // ✅ Approve withdrawal
   const handleApprove = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -42,13 +45,16 @@ const AdminWithdrawals = () => {
         { action: "approved" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      alert("✅ Withdrawal approved successfully!");
       fetchWithdrawals();
     } catch (err) {
       console.error("Approve error:", err);
-      setError("Failed to approve withdrawal.");
+      setError(err.response?.data?.message || "Failed to approve withdrawal.");
     }
   };
 
+  // ✅ Reject withdrawal
   const handleReject = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -57,10 +63,12 @@ const AdminWithdrawals = () => {
         { action: "rejected" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      alert("❌ Withdrawal rejected.");
       fetchWithdrawals();
     } catch (err) {
       console.error("Reject error:", err);
-      setError("Failed to reject withdrawal.");
+      setError(err.response?.data?.message || "Failed to reject withdrawal.");
     }
   };
 
@@ -96,23 +104,23 @@ const AdminWithdrawals = () => {
           <tbody>
             {withdrawals.map((w) => (
               <tr key={w._id}>
-                <td>{w.user?.username || "Unknown"}</td>
-                <td>{w.user?.email || "N/A"}</td>
-                <td>₦{w.amount?.toLocaleString()}</td>
-                <td>{w.user?.bankName || "N/A"}</td>
-                <td>{w.user?.accountName || "N/A"}</td>
-                <td>{w.user?.accountNumber || "N/A"}</td>
-                <td>{w.user?.walletAddress || "N/A"}</td>
+                <td>{w.userId?.username || "Unknown"}</td>
+                <td>{w.userId?.email || "N/A"}</td>
+                <td>₦{Number(w.amount).toLocaleString()}</td>
+                <td>{w.userId?.bankName || "N/A"}</td>
+                <td>{w.userId?.accountName || "N/A"}</td>
+                <td>{w.userId?.accountNumber || "N/A"}</td>
+                <td>{w.userId?.walletAddress || "N/A"}</td>
                 <td
-                  className={
+                  className={`status ${
                     w.status === "approved"
                       ? "status-approved"
                       : w.status === "rejected"
                       ? "status-rejected"
                       : "status-pending"
-                  }
+                  }`}
                 >
-                  {w.status}
+                  {w.status.charAt(0).toUpperCase() + w.status.slice(1)}
                 </td>
                 <td>
                   <button
