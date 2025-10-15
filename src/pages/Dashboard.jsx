@@ -5,11 +5,13 @@ import "./Dashboard.css";
 const Dashboard = () => {
   const [deposit, setDeposit] = useState(null);
   const [approvedReferrals, setApprovedReferrals] = useState(0);
+  const [eligible, setEligible] = useState(false);
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [bonus] = useState(1000); // ✅ Always include ₦1000 sign-up bonus
+  const [bonus] = useState(1000); // ✅ Sign-up bonus always visible
 
+  // 🧾 Fetch deposits
   const fetchDeposits = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -28,13 +30,11 @@ const Dashboard = () => {
         if (latestApproved) {
           setMessage("✅ Deposit approved successfully!");
           setShowMessage(true);
-          setTimeout(() => setShowMessage(false), 3 * 60 * 1000);
+          setTimeout(() => setShowMessage(false), 3000);
         } else {
           setMessage("");
           setShowMessage(false);
         }
-      } else {
-        setMessage("❌ Failed to load deposits.");
       }
     } catch (err) {
       console.error("Error fetching deposits:", err);
@@ -42,6 +42,7 @@ const Dashboard = () => {
     }
   };
 
+  // 👥 Fetch referral count
   const fetchReferrals = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -54,11 +55,25 @@ const Dashboard = () => {
     }
   };
 
+  // 🔍 Fetch withdrawal eligibility (8-day maturity + 2 referrals)
+  const fetchEligibility = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/users/eligibility", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEligible(res.data.eligible || false);
+    } catch (err) {
+      console.error("Error checking eligibility:", err);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       await fetchDeposits();
       await fetchReferrals();
+      await fetchEligibility();
       setLoading(false);
     };
     loadData();
@@ -75,14 +90,14 @@ const Dashboard = () => {
   const amount = deposit?.amount || 0;
   const approvedAt = deposit?.approvedAt || null;
   const maturityDate = approvedAt
-    ? new Date(new Date(approvedAt).getTime() + 14 * 24 * 60 * 60 * 1000)
+    ? new Date(new Date(approvedAt).getTime() + 8 * 24 * 60 * 60 * 1000)
     : null;
 
   const expectedReturn = amount > 0 ? amount * 2 : 0;
   const matured = maturityDate ? new Date() >= maturityDate : false;
-  const withdrawalEligible = matured && approvedReferrals >= 2;
+  const withdrawalEligible = eligible && matured && approvedReferrals >= 2;
 
-  const totalIncome = expectedReturn + bonus; // ✅ Always includes ₦1000 bonus
+  const totalIncome = expectedReturn + bonus;
 
   return (
     <div className="dashboard-container">
@@ -112,7 +127,7 @@ const Dashboard = () => {
         </div>
 
         <div className="info-card">
-          <h3>Maturity Date</h3>
+          <h3>Maturity Date (8 days)</h3>
           <p>{maturityDate ? maturityDate.toDateString() : "—"}</p>
         </div>
 
@@ -127,7 +142,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* 🎁 Sign-Up Bonus Always Visible */}
       <div className="bonus-card gold-gradient">
         <h3>🎉 Sign-Up Bonus</h3>
         <p>₦{bonus.toLocaleString()} has been added to your dashboard!</p>
