@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "./axios.js";
+import API from "./axios";
 import "./Withdrawal.css";
 
 const Withdrawal = () => {
@@ -16,11 +16,15 @@ const Withdrawal = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found. Please log in again.");
 
-      const res = await axios.get("/withdrawals", {
+      const res = await API.get("/withdrawals", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setWithdrawals(res.data.withdrawals || []);
+      if (res.data.success) {
+        setWithdrawals(res.data.withdrawals || []);
+      } else {
+        setMessage("⚠️ Failed to load withdrawals.");
+      }
     } catch (err) {
       console.error("Fetch withdrawals error:", err);
       setMessage(
@@ -50,7 +54,7 @@ const Withdrawal = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found. Please log in again.");
 
-      const res = await axios.post(
+      const res = await API.post(
         "/withdrawals/request",
         { amount },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -64,7 +68,7 @@ const Withdrawal = () => {
       setAmount("");
       fetchWithdrawals();
 
-      setTimeout(() => setMessage(""), 7000);
+      setTimeout(() => setMessage(""), 8000);
     } catch (err) {
       console.error("Withdrawal error:", err);
       setMessage(
@@ -72,7 +76,7 @@ const Withdrawal = () => {
           err.message ||
           "❌ Error requesting withdrawal."
       );
-      setTimeout(() => setMessage(""), 7000);
+      setTimeout(() => setMessage(""), 8000);
     } finally {
       setLoading(false);
     }
@@ -105,28 +109,24 @@ const Withdrawal = () => {
           </button>
         </form>
 
-        {/* ✅ Message at Bottom of Card */}
+        {/* ✅ Message fixed to bottom of card */}
         {message && (
           <div
-            className="withdrawal-message"
+            className="withdrawal-message bottom-message"
             style={{
               background:
                 message.includes("❌") || message.includes("error")
-                  ? "#ffefef"
+                  ? "#ffe6e6"
                   : message.includes("✅")
-                  ? "#e6ffe6"
-                  : "#fffbe6",
+                  ? "#e8ffe8"
+                  : "#fff6e6",
               borderLeft: "5px solid",
               borderColor: message.includes("❌")
-                ? "red"
+                ? "#d9534f"
                 : message.includes("✅")
-                ? "green"
-                : "orange",
-              padding: "10px",
-              borderRadius: "8px",
-              marginTop: "15px",
-              fontWeight: "500",
-              animation: "fadeIn 0.4s ease",
+                ? "#28a745"
+                : "#f0ad4e",
+              color: "#333",
             }}
           >
             {message}
@@ -135,7 +135,7 @@ const Withdrawal = () => {
       </div>
 
       {/* Withdrawal History */}
-      <div className="withdrawal-card">
+      <div className="withdrawal-card history-card">
         <h2>Your Withdrawals</h2>
         {fetching ? (
           <p>Loading your withdrawals...</p>
@@ -144,7 +144,7 @@ const Withdrawal = () => {
         ) : (
           <ul className="withdrawal-list">
             {withdrawals.map((w) => (
-              <li key={w._id}>
+              <li key={w._id} className="withdrawal-item">
                 <span>₦{Number(w.amount).toLocaleString()}</span>
                 <span
                   className={`status ${w.status.toLowerCase()}`}
@@ -159,7 +159,7 @@ const Withdrawal = () => {
                 >
                   {w.status.charAt(0).toUpperCase() + w.status.slice(1)}
                 </span>
-                <span>
+                <span className="withdrawal-date">
                   {new Date(w.createdAt).toLocaleString("en-NG", {
                     dateStyle: "medium",
                     timeStyle: "short",
