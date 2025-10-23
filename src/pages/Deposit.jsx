@@ -87,7 +87,7 @@ const Deposit = () => {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("6392000298");
+    navigator.clipboard.writeText("3439710130");
     setCopyMessage("Copied!");
     setTimeout(() => setCopyMessage(""), 2000);
   };
@@ -125,9 +125,10 @@ const Deposit = () => {
                 Please pay <strong>₦{Number(amount).toLocaleString()}</strong> to
                 the account below and upload your receipt.
               </p>
-              <p><strong>Bank:</strong> Moniepoint MFB</p>
+              <p><strong>Bank:</strong> 
+branch international financial services</p>
               <p>
-                <strong>Account Number:</strong> 6392000298{" "}
+                <strong>Account Number:</strong> 3439710130{" "}
                 <button
                   type="button"
                   onClick={handleCopy}
@@ -149,7 +150,7 @@ const Deposit = () => {
                   </span>
                 )}
               </p>
-              <p><strong>Account Name:</strong> SOMTOCHUKWU NNAJI</p>
+              <p><strong>Account Name:</strong> Esther linus</p>
             </div>
           )}
 
